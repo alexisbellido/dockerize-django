@@ -11,9 +11,8 @@ RUN . /root/.venv/zinibu/bin/activate \
   && pip install --requirement /tmp/requirements.txt
 
 
-# use VOLUME somewhere to copy the django project, which should be created with django-admin startproject zinibu
-# and then we set that as work dir
-
+# use VOLUME mount the django stuff, which should be created with django-admin startproject zinibu
+VOLUME ["/root/zinibu", "/root/test-data"]
 WORKDIR /root/zinibu
 EXPOSE 8000
 
