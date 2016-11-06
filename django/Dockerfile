@@ -1,6 +1,8 @@
 FROM python:3.5.2-slim
+MAINTAINER Alexis Bellido <a@zinibu.com>
 
 COPY requirements.txt /tmp/
+COPY editable-requirements.txt /tmp/
 COPY entrypoint.sh /root/
 
 #ARG djapps_dir=djapps/
@@ -34,10 +36,9 @@ RUN . /root/.venv/zinibu/bin/activate \
 WORKDIR /root/project
 EXPOSE 8000
 
-# use a bash script with exec form, see https://github.com/evonove/docker-library/blob/master/python/Dockerfile
 # review CMD to accept parameters from docker run
-
-# Set the default command to run when starting the container
-#RUN chmod a+x /root/entrypoint.sh
 #CMD ls -l
-#ENTRYPOINT ["/root/entrypoint.sh"]
+#ENTRYPOINT ["ls", "-l", "/root/djapps/"]
+
+RUN chmod a+x /root/entrypoint.sh
+ENTRYPOINT ["/root/entrypoint.sh"]
