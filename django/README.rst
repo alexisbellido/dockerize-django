@@ -2,7 +2,7 @@ Container for Django project
 ==========================================
 
 
-My Docker Hub user is _alexisbellido_ and I'm calling my network _zinibu_:
+My Docker Hub user is *alexisbellido* and I'm calling my network *zinibu*:
 
 Create a bridge network for your containers on your host.
 
