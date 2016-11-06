@@ -3,9 +3,14 @@ FROM python:3.5.2-slim
 COPY requirements.txt /tmp/
 COPY entrypoint.sh /root/
 
-# Install requisites for building Python packages
+#ARG djapps_dir=djapps/
+#COPY $djapps_dir /root/djapps/
+
+# Install requisites for building Python packages.
+# I need need to avoid error messages from pip freeze.
 RUN apt-get -y update \
   && apt-get install -y curl \
+  && apt-get install -y git \
   && apt-get install -y python3-dev \
   && apt-get install -y postgresql-client-9.4 \
   && apt-get install -y libpq-dev \
