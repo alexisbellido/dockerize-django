@@ -1,16 +1,30 @@
 FROM python:3.5.2-slim
 MAINTAINER Alexis Bellido <a@zinibu.com>
 
+# With some ideas borrowed from https://hub.docker.com/_/postgres/
+# and https://hub.docker.com/_/redis/
+
 COPY requirements.txt /tmp/
 COPY editable-requirements.txt /tmp/
-COPY entrypoint.sh /root/
 
-#ARG djapps_dir=djapps/
-#COPY $djapps_dir /root/djapps/
+ENV GOSU_VERSION 1.9
+RUN set -x \
+  && apt-get update && apt-get install -y --no-install-recommends ca-certificates wget && rm -rf /var/lib/apt/lists/* \
+  && dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" \
+  && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" \
+  && wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc" \
+  && export GNUPGHOME="$(mktemp -d)" \
+  && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
+  && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
+  && rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
+  && chmod +x /usr/local/bin/gosu \
+  && gosu nobody true \
+  && apt-get purge -y --auto-remove ca-certificates wget
 
 # Install requisites for building Python packages.
 # I need need to avoid error messages from pip freeze.
-RUN apt-get -y update \
+RUN set -x \
+  && apt-get -y update \
   && apt-get install -y curl \
   && apt-get install -y git \
   && apt-get install -y python3-dev \
@@ -33,12 +47,13 @@ RUN . /root/.venv/zinibu/bin/activate \
   && pip install --upgrade pip \
   && pip install --requirement /tmp/requirements.txt
 
+# Clean up
+RUN set -x \
+  && apt-get purge -y --auto-remove python3-dev python3-setuptools libpq-dev libjpeg62-turbo-dev libopenjpeg-dev libfreetype6-dev libtiff5-dev liblcms2-dev libwebp-dev tk8.6-dev
+
 WORKDIR /root/project
 EXPOSE 8000
 
-# review CMD to accept parameters from docker run
-#CMD ls -l
-#ENTRYPOINT ["ls", "-l", "/root/djapps/"]
-
-RUN chmod a+x /root/entrypoint.sh
-ENTRYPOINT ["/root/entrypoint.sh"]
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+CMD ["runserver"]
