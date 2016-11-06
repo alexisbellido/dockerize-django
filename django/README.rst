@@ -2,10 +2,15 @@ Container for Django project
 ==========================================
 
 
-Create a bridge network for your containers on your host. I'm calling mine `zinibu`:
+My Docker Hub user is _alexisbellido_ and I'm calling my network _zinibu_:
+
+Create a bridge network for your containers on your host.
 
   ``docker network create -d bridge zinibu``
 
+Build the image from this directory:
+
+  ``docker build -t alexisbellido/python:v5 .``
 
 Run a container from the image:
 
