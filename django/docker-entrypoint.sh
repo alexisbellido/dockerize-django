@@ -1,5 +1,4 @@
 #! /bin/bash
-set -e
 
 source /root/.venv/project/bin/activate
 
