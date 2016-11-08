@@ -40,20 +40,19 @@ RUN set -x \
   && apt-get install -y tk8.6-dev \
   && apt-get install -y python3-tk
 
-RUN /usr/local/bin/pyvenv /root/.venv/project
+ENV PROJECT_NAME project
+ENV PORT 8000
+ENV SETTINGS_MODULE local
 
-RUN . /root/.venv/project/bin/activate \
+RUN /usr/local/bin/pyvenv /root/.venv/django
+
+RUN . /root/.venv/django/bin/activate \
   && curl https://bootstrap.pypa.io/get-pip.py | python \
   && pip install --upgrade pip \
   && pip install --requirement /tmp/requirements.txt
 
-# Clean up (not so sure about one of these, which may be messing up Pillow)
-#RUN set -x \
-#  && apt-get purge -y --auto-remove python3-dev python3-setuptools libpq-dev libjpeg62-turbo-dev libopenjpeg-dev libfreetype6-dev libtiff5-dev liblcms2-dev libwebp-dev tk8.6-dev
-
-WORKDIR /root/project
-EXPOSE 8000
+EXPOSE $PORT
 
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
-CMD ["runserver"]
+CMD ["development"]
