@@ -3,9 +3,27 @@
 # Activate virtual environment
 source /root/.venv/django/bin/activate
 
-# Variables from Dockerfile: PROJECT_NAME, PORT, SETTINGS_MODULE
+export HOSTNAME=`cat /etc/hostname`
+
+# Django variables from Dockerfile and/or docker run: 
+# PROJECT_NAME, PORT, SETTINGS_MODULE
+# POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB, POSTGRES_HOST, POSTGRES_PORT
+
 export PROJECTDIR=/root/$PROJECT_NAME
 export DJANGO_SETTINGS_MODULE=$PROJECT_NAME.settings.$SETTINGS_MODULE
+
+#  replace to use variables used by postgres Docker image
+
+export PROJECT_DATABASES_ENGINE=postgresql
+export PROJECT_DATABASES_DEFAULT_NAME=$POSTGRES_DB
+export PROJECT_DATABASES_DEFAULT_USER=$POSTGRES_USER
+export PROJECT_DATABASES_DEFAULT_PASSWORD=$POSTGRES_PASSWORD
+
+export PROJECT_DATABASES_DEFAULT_HOST=$POSTGRES_HOST
+export PROJECT_DATABASES_DEFAULT_PORT=$POSTGRES_PORT
+
+#export PROJECT_REDIS_HOST=192.168.33.17
+#export PROJECT_REDIS_PORT=6379
 
 cd $PROJECTDIR
 
@@ -23,7 +41,7 @@ elif [ "$1" == "production" ]; then
 	export USER=root
     	export GROUP=root
 	export NUM_WORKERS=3
-	export BIND_HOST=`cat /etc/hostname`
+	export BIND_HOST=$HOSTNAME
 	export BIND_PORT=$PORT
 	export LOGFILE=/var/log/$PROJECT_NAME.log
 
