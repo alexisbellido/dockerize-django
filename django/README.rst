@@ -30,19 +30,19 @@ PORT
 TODO
 
 move db to postgresql (uses postgres user?)
-add nginx 
+add nginx using my own default.conf
+if not using s3, create local static and media directories inside project (better just use s3)
 make it all work
 docker compose
 back to add varnish
 haproxy
 docker compose
+logrotate
 
 Latest docker run:
 
-run again with corrected POSTGRES_HOST
-docker run -itd --network=zinibu -v /home/alexis/mydocker/zinibu:/root/zinibu -v /home/alexis/mydocker/djapps:/root/djapps --env PROJECT_NAME=zinibu --env PORT=8000 --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 -P --hostname=app1 --name=app1 alexisbellido/python:v11
-
-docker run -d --network=zinibu --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --hostname=db1 --name=db1 postgres:9.4
+postgresql
+docker run -itd --network=zinibu -v /home/alexis/mydocker/zinibu:/root/zinibu -v /home/alexis/mydocker/djapps:/root/djapps --env PROJECT_NAME=zinibu --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 -p 33333:8000 --hostname=app1 --name=app1 alexisbellido/python:v11
 
 access psql:
 
@@ -51,3 +51,10 @@ docker exec -it db1 psql -h db1 -U user1 -d db1
 check mount and restore from db dump
 docker inspect db1
 docker exec -it db1 psql -h db1 -U user1 -d db1 -f /var/lib/postgresql/data/db1_11112016_0157.sql
+
+nginx 
+docker run --network=zinibu --name some-nginx -v /home/alexis/mydocker/zinibu/static:/usr/share/nginx/html -p 33334:80 -d nginx:1.10.2
+
+gunicorn with django project
+docker run -d --network=zinibu --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --hostname=db1 --name=db1 postgres:9.4
+
