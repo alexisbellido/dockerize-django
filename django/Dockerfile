@@ -27,18 +27,18 @@ RUN set -x \
   && apt-get -y update \
   && apt-get install -y curl \
   && apt-get install -y git \
-  && apt-get install -y python3-dev \
-  && apt-get install -y postgresql-client-9.4 \
   && apt-get install -y libpq-dev \
-  && apt-get install -y python3-setuptools \
   && apt-get install -y libjpeg62-turbo-dev \
   && apt-get install -y libopenjpeg-dev \
   && apt-get install -y libfreetype6-dev \
   && apt-get install -y libtiff5-dev \
   && apt-get install -y liblcms2-dev \
   && apt-get install -y libwebp-dev \
-  && apt-get install -y tk8.6-dev \
-  && apt-get install -y python3-tk
+  && apt-get install -y postgresql-client-9.4 \
+  && apt-get install -y python3-dev \
+  && apt-get install -y python3-setuptools \
+  && apt-get install -y python3-tk \
+  && apt-get install -y tk8.6-dev
 
 ENV PROJECT_NAME project
 ENV PORT 8000

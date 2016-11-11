@@ -27,8 +27,27 @@ PORT
 
 ==
 
+TODO
+
+move db to postgresql (uses postgres user?)
+add nginx 
+make it all work
+docker compose
+back to add varnish
+haproxy
+docker compose
+
 Latest docker run:
 
-docker run -itd --network=zinibu -v /home/alexis/mydocker/zinibu:/root/zinibu -v /home/alexis/mydocker/djapps:/root/djapps --env PROJECT_NAME=zinibu --env PORT=8000 --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=app1 -P --hostname=app1 --name=app1 alexisbellido/python:v11
+run again with corrected POSTGRES_HOST
+docker run -itd --network=zinibu -v /home/alexis/mydocker/zinibu:/root/zinibu -v /home/alexis/mydocker/djapps:/root/djapps --env PROJECT_NAME=zinibu --env PORT=8000 --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 -P --hostname=app1 --name=app1 alexisbellido/python:v11
 
 docker run -d --network=zinibu --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --hostname=db1 --name=db1 postgres:9.4
+
+access psql:
+
+docker exec -it db1 psql -h db1 -U user1 -d db1
+
+check mount and restore from db dump
+docker inspect db1
+docker exec -it db1 psql -h db1 -U user1 -d db1 -f /var/lib/postgresql/data/db1_11112016_0157.sql
