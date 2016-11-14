@@ -59,6 +59,10 @@ sub vcl_recv {
         return (synth(751, "health check OK!"));
     }
 
+    if ( (req.http.host ~ "^(?i)www.zinibu.com" || req.http.host ~ "^(?i)zinibu.com") && req.http.X-Forwarded-Proto !~ "(?i)https") {
+        return (synth(750, ""));
+    }
+
     # send all traffic to the bar director:
     set req.backend_hint = bar.backend();
 
@@ -390,6 +394,13 @@ sub vcl_synth {
         set resp.status = 200;
         return (deliver);
     }
+
+    if (resp.status == 750) {
+        set resp.status = 301;
+        set resp.http.Location = "https://www.zinibu.com" + req.url;
+        return(deliver);
+    }
+
     set resp.http.Content-Type = "text/html; charset=utf-8";
     set resp.http.Retry-After = "5";
     synthetic ("Error");
