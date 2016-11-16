@@ -29,9 +29,19 @@ PORT
 
 TODO
 
+make haproxy work without ssl first and with ssl later. I have an haproxy directory, map to either or haproxy.cfg or haproxy-ssl.cfg with the rest of the stack, If using haproxy-ssl.cfg map the ssl cert
+do not use a second frontend from varnish servers, instead pass from each varnish to its own nginx
+
+Dockerfile has to create dir for ssl
+
+pass my haproxy conf files using volume mapping:
+docker run -d --name my-running-haproxy -v /path/to/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro haproxy:1.5
+
+pass my nginx conf files using volume mapping:
+docker run --name some-nginx -v /some/nginx.conf:/etc/nginx/nginx.conf:ro -d nginx
+
 I have a varnish directory, varnish contains the defaults for the daemon, default.vcl is the original used for haproxy and default.vcl.2 works with elb
 
-I have an haproxy directory, haproxy.cfg is default for haproxy with the rest of the stack
 
 I have stopped zinibu, nginx and varnish on znbweb2 and modified varnish's default.vcl for znbweb1 with what's below (original in znbweb1:~/backup)
 
@@ -123,3 +133,7 @@ docker run --network=zinibu --name some-nginx -v /home/alexis/mydocker/zinibu/st
 gunicorn with django project
 docker run -d --network=zinibu --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --hostname=db1 --name=db1 postgres:9.4
 
+haproxy non-ssl:
+docker run -d --network zinibu -p 35001:8998 -p 35002:80 -p 35003:443 --name lb1 -v /home/alexis/mydocker/dockerize-django/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro alexisbellido/haproxy:v2
+
+use docker compose to automate the initial complete setup and then see how to add more containers to running setup
