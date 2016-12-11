@@ -30,3 +30,15 @@ SETTINGS_MODULE, used for DJANGO_SETTINGS_MODULE
 PROJECT_NAME, the name of your project
 PORT
 
+You can inspect the logs of any running container (-f works like in tail) to confirm it's working as expected:
+  ``docker logs -f CONTAINER``
+
+SSH into a container to take a closer look:
+  ``docker exec -it CONTAINER /bin/bash``
+
+Find out details about run command used to start a container:
+  ``docker inspect -f '{{.Config.Entrypoint}} {{.Config.Cmd}}' CONTAINER``
+  ``docker inspect -f '{{.Config.Env}}' CONTAINER``
+
+And to inspect everything about the container:
+  ``docker inspect CONTAINER | less``

@@ -1,5 +1,7 @@
 document instructions for launching the stack manually, container by container, and then with docker composer
 
+should I automate the docker run commands with just bash or some salt?
+
 make haproxy work without ssl first and with ssl later. I have an haproxy directory, map to either or haproxy.cfg or haproxy-ssl.cfg with the rest of the stack, If using haproxy-ssl.cfg map the ssl cert
 do not use a second frontend from varnish servers, instead pass from each varnish to its own nginx
 
@@ -66,16 +68,18 @@ and then I need an external LB going to varnish servers and internal LB to go fr
 
 move db to postgresql (uses postgres user?)
 
-add nginx using my own default.conf, create my image to accept paramater for default.conf to connect to gunicorn instance on same host
+add nginx bind mount my default.conf to /etc/nginx/conf.d/default.conf and find a way to modify default.conf with same host for nginx and gunicorn before running the nginx container and mapping the default.conf
+
 uses upstream in nginx conf for proxy_pass server, see: http://scottwb.com/blog/2013/10/28/always-on-https-with-nginx-behind-an-elb/ and http://nginx.org/en/docs/http/ngx_http_upstream_module.html
+
 for gunicorn see tcp example of http://docs.gunicorn.org/en/stable/deploy.html
-the rewrite should be:
-rewrite ^ http://example.com$request_uri? permanent; # see https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/#taxing-rewrites
 
 # investigate: add Strict-Transport-Security to server block in nginx to prevent man in the middle attacks
 add_header Strict-Transport-Security "max-age=31536000"; 
 # Add HTTP Strict Transport Security for good measure.
 add_header Strict-Transport-Security "max-age=31536000; includeSubDomains;";
+
+the rewrite from non-www and non-https is being done by varnish
 
 if not using s3, create local static and media directories inside project (better just use s3)
 make it all work
@@ -104,6 +108,8 @@ docker run --network=zinibu --name some-nginx -v /home/alexis/mydocker/zinibu/st
 gunicorn with django project
 docker run -d --network=zinibu --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --hostname=db1 --name=db1 postgres:9.4
 
+https://hub.docker.com/_/haproxy/
+The haproxy.cfg copied in Dockerfile is overriden if running via bind mount
 haproxy non-ssl:
 docker run -d --network zinibu -p 35001:8998 -p 35002:80 -p 35003:443 --name lb1 -v /home/alexis/mydocker/dockerize-django/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro alexisbellido/haproxy:v2
 
