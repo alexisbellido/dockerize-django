@@ -10,8 +10,11 @@ Dockerfile has to create dir for ssl
 pass my haproxy conf files using volume mapping:
 docker run -d --name my-running-haproxy -v /path/to/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro haproxy:1.5
 
-pass my nginx conf files using volume mapping:
-docker run --name some-nginx -v /some/nginx.conf:/etc/nginx/nginx.conf:ro -d nginx
+fix default.conf in nginx to work with gunicorn
+
+passing variable pointing to gunicorn to nginx conf files using volume mapping:
+
+docker run --network=zinibu --name some-nginx-3b -v /home/alexis/mydocker/zinibu/static:/usr/share/nginx/html --env APP_HOST=app1 --env APP_PORT=9000 -p 33338:80 -d alexisbellido/nginx:v3
 
 I have a varnish directory, varnish contains the defaults for the daemon, default.vcl is the original used for haproxy and default.vcl.2 works with elb
 
