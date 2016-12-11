@@ -77,11 +77,6 @@ uses upstream in nginx conf for proxy_pass server, see: http://scottwb.com/blog/
 
 for gunicorn see tcp example of http://docs.gunicorn.org/en/stable/deploy.html
 
-# investigate: add Strict-Transport-Security to server block in nginx to prevent man in the middle attacks
-add_header Strict-Transport-Security "max-age=31536000"; 
-# Add HTTP Strict Transport Security for good measure.
-add_header Strict-Transport-Security "max-age=31536000; includeSubDomains;";
-
 the rewrite from non-www and non-https is being done by varnish
 
 if not using s3, create local static and media directories inside project (better just use s3)
@@ -105,11 +100,16 @@ check mount and restore from db dump
 docker inspect db1
 docker exec -it db1 psql -h db1 -U user1 -d db1 -f /var/lib/postgresql/data/db1_11112016_0157.sql
 
-nginx 
+nginx basic static
 docker run --network=zinibu --name some-nginx -v /home/alexis/mydocker/zinibu/static:/usr/share/nginx/html -p 33334:80 -d nginx:1.10.2
+
+nginx proxying to gunicorn (volume mapping zinibu matches PROJECT_NAME)
+docker run --network=zinibu --name web1 -v /home/alexis/mydocker/zinibu:/root/zinibu --env APP_HOST=app1 --env APP_PORT=8000 --env PROJECT_NAME=zinibu -p 33340:80 -d alexisbellido/nginx:v5
 
 gunicorn with django project
 docker run -d --network=zinibu --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --hostname=db1 --name=db1 postgres:9.4
+
+add redis support to django image
 
 https://hub.docker.com/_/haproxy/
 The haproxy.cfg copied in Dockerfile is overriden if running via bind mount
