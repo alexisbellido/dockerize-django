@@ -103,8 +103,8 @@ docker exec -it db1 psql -h db1 -U user1 -d db1 -f /var/lib/postgresql/data/db1_
 nginx basic static
 docker run --network=zinibu --name some-nginx -v /home/alexis/mydocker/zinibu/static:/usr/share/nginx/html -p 33334:80 -d nginx:1.10.2
 
-nginx proxying to gunicorn (volume mapping zinibu matches PROJECT_NAME)
-docker run --network=zinibu --name web1 -v /home/alexis/mydocker/zinibu:/root/zinibu --env APP_HOST=app1 --env APP_PORT=8000 --env PROJECT_NAME=zinibu -p 33340:80 -d alexisbellido/nginx:v5
+nginx proxying to gunicorn (final part of volume mapping directory, /usr/share/nginx/zinibu, matches PROJECT_NAME)
+docker run --network=zinibu --name web1 -v /home/alexis/mydocker/zinibu:/usr/share/nginx/zinibu --env APP_HOST=app1 --env APP_PORT=8000 --env PROJECT_NAME=zinibu -p 33340:80 -d alexisbellido/nginx:v6
 
 gunicorn with django project
 docker run -d --network=zinibu --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --hostname=db1 --name=db1 postgres:9.4
