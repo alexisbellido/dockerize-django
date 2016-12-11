@@ -13,7 +13,7 @@ Create a bridge network for your containers on your host.
 
   ``docker network create -d bridge zinibu``
 
-Build the image from this directory:
+Build the image for a Django/Python container in the django directory:
 
   ``docker build -t alexisbellido/python:v5 .``
 

@@ -1,3 +1,5 @@
+document instructions for launching the stack manually, container by container, and then with docker composer
+
 make haproxy work without ssl first and with ssl later. I have an haproxy directory, map to either or haproxy.cfg or haproxy-ssl.cfg with the rest of the stack, If using haproxy-ssl.cfg map the ssl cert
 do not use a second frontend from varnish servers, instead pass from each varnish to its own nginx
 
@@ -106,3 +108,7 @@ haproxy non-ssl:
 docker run -d --network zinibu -p 35001:8998 -p 35002:80 -p 35003:443 --name lb1 -v /home/alexis/mydocker/dockerize-django/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro alexisbellido/haproxy:v2
 
 use docker compose to automate the initial complete setup and then see how to add more containers to running setup
+
+==
+
+make applications from django/editable-requirements.txt available in PyPi and document that they can be kept editable during development
