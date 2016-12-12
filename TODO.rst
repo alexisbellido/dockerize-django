@@ -1,6 +1,12 @@
+how to get env variables into /usr/local/etc/haproxy/haproxy.cfg and /etc/varnish/default.vcl
+
+If using SSL:
+for local dev with haproxy and use haproxy to terminate ssl and redirect non-www, non-https to https://www.
+for AWS use ELB to terminate SSL and use varnish to redirect non-www, non-https to https://www.
+
 document instructions for launching the stack manually, container by container, and then with docker composer
 
-should I automate the docker run commands with just bash or some salt?
+should I automate the docker run commands with just bash or some salt? maybe they are not that many commands and manual and some composer will be enough
 
 make haproxy work without ssl first and with ssl later. I have an haproxy directory, map to either or haproxy.cfg or haproxy-ssl.cfg with the rest of the stack, If using haproxy-ssl.cfg map the ssl cert
 do not use a second frontend from varnish servers, instead pass from each varnish to its own nginx
@@ -114,7 +120,7 @@ add redis support to django image
 https://hub.docker.com/_/haproxy/
 The haproxy.cfg copied in Dockerfile is overriden if running via bind mount
 haproxy non-ssl:
-docker run -d --network zinibu -p 35001:8998 -p 35002:80 -p 35003:443 --name lb1 -v /home/alexis/mydocker/dockerize-django/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro alexisbellido/haproxy:v2
+docker run -d --network zinibu -p 35004:8998 -p 35005:80 -p 35006:443 --name lb2 -v /home/alexis/mydocker/dockerize-django/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg alexisbellido/haproxy:v2
 
 use docker compose to automate the initial complete setup and then see how to add more containers to running setup
 
