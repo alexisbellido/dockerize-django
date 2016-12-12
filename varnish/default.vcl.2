@@ -1,9 +1,4 @@
-# Current copy of what's running on AWS znbweb1
-# This is an example VCL file for Varnish.
-#
-# It does not do anything by default, delegating control to the
-# builtin VCL. The builtin VCL is called when there is no explicit
-# return statement.
+# For running on AWS with ELB or local development with HAProxy.
 #
 # See the VCL chapters in the Users Guide at https://www.varnish-cache.org/docs/
 # and https://www.varnish-cache.org/trac/wiki/VCLExamples for more examples.
@@ -20,7 +15,6 @@ backend bk_appsrv_static_znblb1 {
   #.port = "80";
   .port = "81";
   .probe = {
-    #.url = "/haproxycheck";
     .url = "/app-check/";
     .expected_response = 200;
     .timeout = 1s;
@@ -121,16 +115,6 @@ sub vcl_recv {
 
     set req.http.X-Varnish-Use-Cache = "TRUE";
 
-# disable to test elb
-#    # unless Django's sessionid or message cookies are in the request, don't pass ANY cookies (referral_source, utm, etc)
-#    # also, anything inside /media or /static should be cached
-#    if (req.url ~ "^/media" || req.url ~ "^/static" || (req.http.Cookie !~ "logged_in" && req.http.Cookie !~ "sessionid" && req.http.Cookie !~ "messages" && req.http.Cookie !~ "csrftoken")) {
-#      unset req.http.Cookie;
-#      return (hash);
-#    }
-# end disable to test elb
-
-# enable to test elb
     if (req.url ~ "^/media" || req.url ~ "^/static") {
       unset req.http.Cookie;
       return (hash);
@@ -139,7 +123,6 @@ sub vcl_recv {
     if (req.http.Cookie ~ "logged_in") {
       return (pass);
     }
-# end enable to test elb
 
     # Large static files are delivered directly to the end-user without
     # waiting for Varnish to fully read the file first.

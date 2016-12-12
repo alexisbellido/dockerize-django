@@ -1,7 +1,16 @@
 Docker images to build a Django project
 ==========================================
 
-I intend to recreate the architecture of a Django project using Docker.
+A Django stack running with Docker.
+
+
+Overview
+==========================================
+
+If running locally for development, it uses one HAProxy container to load balance containers running Varnish that cache Nginx in front Gunicorn. Usually just one Docker host takes care of all containers.
+
+If running on AWS, it uses ELB to load balance containers running Varnish that cache Nginx in front Gunicorn. The default setup assumes three containers running on each Docker host: Varnish, Nginx and Gunicorn.
+
 
 Container for Django project
 ==========================================

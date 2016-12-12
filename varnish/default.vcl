@@ -1,8 +1,5 @@
-# This is an example VCL file for Varnish.
-#
-# It does not do anything by default, delegating control to the
-# builtin VCL. The builtin VCL is called when there is no explicit
-# return statement.
+# For running a local development setup with HAProxy.
+# TODO see if we compare to default.vcl.2 to see if this can be removed to use that.
 #
 # See the VCL chapters in the Users Guide at https://www.varnish-cache.org/docs/
 # and https://www.varnish-cache.org/trac/wiki/VCLExamples for more examples.
