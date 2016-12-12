@@ -1,5 +1,4 @@
-# For running a local development setup with HAProxy.
-# TODO see if we compare to default.vcl.2 to see if this can be removed to use that.
+# For running on AWS with ELB or local development with HAProxy.
 #
 # See the VCL chapters in the Users Guide at https://www.varnish-cache.org/docs/
 # and https://www.varnish-cache.org/trac/wiki/VCLExamples for more examples.
@@ -11,10 +10,12 @@ vcl 4.0;
 import std;
 import directors;
 backend bk_appsrv_static_znblb1 {
-  .host = "172.31.63.150";
-  .port = "80";
+  #.host = "172.31.63.150";
+  .host = "znbweb1";
+  #.port = "80";
+  .port = "81";
   .probe = {
-    .url = "/haproxycheck";
+    .url = "/app-check/";
     .expected_response = 200;
     .timeout = 1s;
     .interval = 3s;
@@ -49,6 +50,11 @@ sub vcl_recv {
     if (req.url == "/varnishcheck") {
         return (synth(751, "health check OK!"));
     }
+
+    # If using https and no haproxy, redirect non-https and non-www URLs to https://www.zinibu.com
+    #if ( (req.http.host ~ "^(?i)www.zinibu.com" && req.http.X-Forwarded-Proto !~ "(?i)https") || (req.http.host ~ "^(?i)zinibu.com") ) {
+    #    return (synth(750, ""));
+    #}
 
     # send all traffic to the bar director:
     set req.backend_hint = bar.backend();
@@ -108,11 +114,14 @@ sub vcl_recv {
     }
 
     set req.http.X-Varnish-Use-Cache = "TRUE";
-    # unless Django's sessionid or message cookies are in the request, don't pass ANY cookies (referral_source, utm, etc)
-    # also, anything inside /media or /static should be cached
-    if (req.url ~ "^/media" || req.url ~ "^/static" || (req.http.Cookie !~ "logged_in" && req.http.Cookie !~ "sessionid" && req.http.Cookie !~ "messages" && req.http.Cookie !~ "csrftoken")) {
+
+    if (req.url ~ "^/media" || req.url ~ "^/static") {
       unset req.http.Cookie;
       return (hash);
+    }
+
+    if (req.http.Cookie ~ "logged_in") {
+      return (pass);
     }
 
     # Large static files are delivered directly to the end-user without
@@ -367,6 +376,13 @@ sub vcl_synth {
         set resp.status = 200;
         return (deliver);
     }
+
+    if (resp.status == 750) {
+        set resp.status = 301;
+        set resp.http.Location = "https://www.zinibu.com" + req.url;
+        return(deliver);
+    }
+
     set resp.http.Content-Type = "text/html; charset=utf-8";
     set resp.http.Retry-After = "5";
     synthetic ("Error");
