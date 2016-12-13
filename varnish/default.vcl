@@ -9,15 +9,14 @@ vcl 4.0;
 
 import std;
 import directors;
-backend bk_appsrv_static_znblb1 {
-  #.host = "172.31.63.150";
-  .host = "znbweb1";
-  #.port = "80";
-  .port = "81";
+
+backend bk_app {
+  .host = "web1";
+  .port = "80";
   .probe = {
     .url = "/app-check/";
     .expected_response = 200;
-    .timeout = 1s;
+    .timeout = 5s;
     .interval = 3s;
     .window = 2;
     .threshold = 2;
@@ -27,7 +26,7 @@ backend bk_appsrv_static_znblb1 {
 
 sub vcl_init {
     new bar = directors.round_robin();
-    bar.add_backend(bk_appsrv_static_znblb1);
+    bar.add_backend(bk_app);
 }
 
 acl purge {

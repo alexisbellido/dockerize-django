@@ -13,8 +13,8 @@ RUN set -x \
   && apt-get -y install varnish
 
 COPY default.vcl /etc/varnish/default.vcl
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
 EXPOSE 83 6082
 
-# use ENTRYPOINT?
-CMD ["varnishd", "-F", "-a", ":83", "-T", ":6082", "-f", "/etc/varnish/default.vcl", "-s", "malloc,1G"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
