@@ -12,6 +12,11 @@ RUN set -x \
   && apt-get update \
   && apt-get -y install varnish
 
+ENV WEB_HOST web_host
+ENV WEB_PORT 80
+ENV DOMAIN_NAME example.com
+ENV SSL_WWW_REDIRECT 0
+
 COPY default.vcl /etc/varnish/default.vcl
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 

@@ -11,8 +11,8 @@ import std;
 import directors;
 
 backend bk_app {
-  .host = "web1";
-  .port = "80";
+  .host = "WEB_HOST";
+  .port = "WEB_PORT";
   .probe = {
     .url = "/app-check/";
     .expected_response = 200;
@@ -50,10 +50,10 @@ sub vcl_recv {
         return (synth(751, "health check OK!"));
     }
 
-    # If using https and no haproxy, redirect non-https and non-www URLs to https://www.zinibu.com
-    #if ( (req.http.host ~ "^(?i)www.zinibu.com" && req.http.X-Forwarded-Proto !~ "(?i)https") || (req.http.host ~ "^(?i)zinibu.com") ) {
-    #    return (synth(750, ""));
-    #}
+    #SED# If using https and no HAProxy, which is the case with AWS ELB, redirect non-https and non-www URLs to https://www.DOMAIN_NAME
+    #SEDif ( (req.http.host ~ "^(?i)www.DOMAIN_NAME" && req.http.X-Forwarded-Proto !~ "(?i)https") || (req.http.host ~ "^(?i)DOMAIN_NAME") ) {
+    #SED    return (synth(750, ""));
+    #SED}
 
     # send all traffic to the bar director:
     set req.backend_hint = bar.backend();
@@ -378,7 +378,7 @@ sub vcl_synth {
 
     if (resp.status == 750) {
         set resp.status = 301;
-        set resp.http.Location = "https://www.zinibu.com" + req.url;
+        set resp.http.Location = "https://www.DOMAIN_NAME" + req.url;
         return(deliver);
     }
 

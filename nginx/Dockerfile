@@ -8,4 +8,6 @@ ENV PROJECT_NAME project
 COPY default.conf /etc/nginx/conf.d/default.conf
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
+EXPOSE 80
+
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
