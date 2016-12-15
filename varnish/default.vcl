@@ -47,7 +47,12 @@ sub vcl_recv {
 
     # Health Checking
     if (req.url == "/varnishcheck") {
-        return (synth(751, "health check OK!"));
+        if (!std.healthy(req.backend_hint)) {
+            return (synth(753, "No backends available"));
+        }
+        else {
+            return (synth(751, "health check OK!"));
+        }
     }
 
     #SED# If using https and no HAProxy, which is the case with AWS ELB, redirect non-https and non-www URLs to https://www.DOMAIN_NAME
@@ -370,9 +375,15 @@ sub vcl_purge {
 }
 
 sub vcl_synth {
-    # Health check
+    # Health check ok
     if (resp.status == 751) {
         set resp.status = 200;
+        return (deliver);
+    }
+
+    # Health check error
+    if (resp.status == 753) {
+        set resp.status = 503;
         return (deliver);
     }
 
