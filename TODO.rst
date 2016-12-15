@@ -1,3 +1,5 @@
+do that thing with haproxy returning via varnish see salt stack formula for haproxy
+
 continue testing varnish to see if some env variables are needed, try login/logout too
 
 how to get env variables into /usr/local/etc/haproxy/haproxy.cfg and /etc/varnish/default.vcl

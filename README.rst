@@ -88,11 +88,11 @@ To map an existing VCL file:
 
 To pass parameters to modify the included VCL:
 
-  ``docker run -d --network=zinibu -p 33345:83 --env WEB_HOST=web1 --env WEB_PORT=80 --env DOMAIN_NAME=zinibu.com --hostname=cache1 --name=cache1 alexisbellido/varnish:4.1``
+  ``docker run -d --network=zinibu -p 33345:83 --env WEB_HOST=web1 --env WEB_PORT=80 --env DOMAIN_NAME=example.com --hostname=cache1 --name=cache1 alexisbellido/varnish:4.1``
 
 To pass parameters to modify the included VCL and redirect to SSL and www version:
 
-  ``docker run -d --network=zinibu -p 33355:83 --env WEB_HOST=web1 --env WEB_PORT=80 --env DOMAIN_NAME=zinibu.com --env SSL_WWW_REDIRECT=1 --hostname=cache1-ssl --name=cache1-ssl alexisbellido/varnish:4.1``
+  ``docker run -d --network=zinibu -p 33355:83 --env WEB_HOST=web1 --env WEB_PORT=80 --env DOMAIN_NAME=example.com --env SSL_WWW_REDIRECT=1 --hostname=cache1-ssl --name=cache1-ssl alexisbellido/varnish:4.1``
 
 Django needs to allow Nginx or Varnish's probe won't work. Include this in your Django settings:
 ALLOWED_HOSTS = ['*']
@@ -112,11 +112,33 @@ https://hub.docker.com/_/haproxy/
 The haproxy.cfg copied in Dockerfile is overriden if running via bind mount
 
 haproxy non-ssl:
-  ``docker run -d --network zinibu -v /home/alexis/mydocker/dockerize-django/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg -p 35004:8998 -p 35005:80 -p 35006:443 --hostname=lb --name=lb alexisbellido/haproxy:v2``
+  ``docker run -d --network zinibu -v /home/alexis/mydocker/dockerize-django/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg -p 35004:8998 -p 35005:80 -p 35006:443 --hostname=lb --name=lb alexisbellido/haproxy:1.6.10``
 
 haproxy ssl:
-  ``docker run -d --network zinibu -v /home/alexis/mydocker/zinibu-ssl/zinibu_com.pem:/srv/haproxy/ssl/certificate.pem -v /home/alexis/mydocker/dockerize-django/haproxy/haproxy-ssl.cfg:/usr/local/etc/haproxy/haproxy.cfg -p 35104:8998 -p 35105:80 -p 35106:443 --hostname=lb-ssl --name=lb-ssl alexisbellido/haproxy:v2``
+  ``docker run -d --network zinibu -v /home/alexis/mydocker/ssl/example_com.pem:/usr/local/etc/haproxy/ssl/example_com.pem -v /home/alexis/mydocker/dockerize-django/haproxy/haproxy-ssl.cfg:/usr/local/etc/haproxy/haproxy.cfg -p 35104:8998 -p 35105:80 -p 35106:443 --hostname=lb-ssl --name=lb-ssl alexisbellido/haproxy:1.6.10``
 
+  
+To create a self-signed SSL certificate
+========================================
+
+When asked for a fully qualified domain name (FQDN) you can enter subdomain.example.com or *.example.com
+
+  ``$ mkdir ssl``
+  ``$ cd ssl``
+  ``$ openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout example_com.key -out example_com.crt``
+  ``$ cat example_com.crt example_com.key > example_com.pem``
+
+
+Create .pem to use with HAProxy from Comodo PositiveSSL
+=========================================================
+
+For this example we're creating a new file at /srv/haproxy/ssl/example_com.pem using the key file generated when requesting the certificate and the bundle and crt files provided by Comodo.
+
+  ``$ cd /srv/haproxy/ssl``
+  ``$ rm example_com.pem``
+  ``$ cat example_com.key >> example_com.pem``
+  ``$ cat example_com.crt >> example_com.pem``
+  ``$ cat example_com.ca-bundle >> example_com.pem``
 
 Useful commands
 ==========================================
