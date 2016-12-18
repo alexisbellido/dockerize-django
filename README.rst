@@ -31,16 +31,21 @@ app1: Django application running on Gunicorn.
 PostgreSQL
 ==========================================
 
-access psql:
+Run the container passing parameters.
 
-docker exec -it db1 psql -h db1 -U user1 -d db1
+  ``docker run -d --network=zinibu --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --hostname=db1 --name=db1 postgres:9.4``
 
-check mount and restore from db dump
-docker inspect db1
-docker exec -it db1 psql -h db1 -U user1 -d db1 -f /var/lib/postgresql/data/db1_11112016_0157.sql
+Access psql:
 
-gunicorn with django project
-docker run -d --network=zinibu --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --hostname=db1 --name=db1 postgres:9.4
+  ``docker exec -it db1 psql -h db1 -U user1 -d db1``
+
+Use docker cp to copy a dump of the database to the container and restore it.
+
+  ``docker exec -it db1 psql -h db1 -U user1 -d db1 -f /tmp/db1.sql``
+
+Don't forget to delete the temporary database by logging in to the container and deleting it from bash.
+
+  ``docker exec -it /bin/bash``
 
 
 Python and Django
