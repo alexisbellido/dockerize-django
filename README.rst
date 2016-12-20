@@ -71,6 +71,14 @@ Build the image from the nginx directory, which contains the corresponding Docke
   ``docker build -t alexisbellido/3.5.2-slim .``
 
 
+Check logs of running container (-f works like in tail) to confirm it's working as expected:
+
+  ``docker logs -f CONTAINER``
+
+Make sure to check for ALLOWED_HOSTS issues in the Django settings file:
+
+  ``ALLOWED_HOSTS = ['*']``
+
 
 Nginx
 ==========================================
@@ -84,45 +92,6 @@ Build the image from the nginx directory, which contains the corresponding Docke
   ``docker build -t alexisbellido/nginx:1.10.2 .``
 
 
-Varnish
-==========================================
-
-To map an existing VCL file:
-
-  ``docker run -d --network=zinibu -v /home/alexis/mydocker/dockerize-django/varnish/default.vcl:/etc/varnish/default.vcl -p 33335:83 --hostname=cache-map-1 --name=cache-map-1 alexisbellido/varnish:4.1``
-
-To pass parameters to modify the included VCL:
-
-  ``docker run -d --network=zinibu -p 33345:83 --env WEB_HOST=web1 --env WEB_PORT=80 --env DOMAIN_NAME=example.com --hostname=cache1 --name=cache1 alexisbellido/varnish:4.1``
-
-To pass parameters to modify the included VCL and redirect to SSL and www version:
-
-  ``docker run -d --network=zinibu -p 33355:83 --env WEB_HOST=web1 --env WEB_PORT=80 --env DOMAIN_NAME=example.com --env SSL_WWW_REDIRECT=1 --hostname=cache1-ssl --name=cache1-ssl alexisbellido/varnish:4.1``
-
-Django needs to allow Nginx or Varnish's probe won't work. Include this in your Django settings:
-ALLOWED_HOSTS = ['*']
-
-Of course, you can provide the hostname for Nginx.
-Use curl from the Varnish container to the Nginx container to debug.
-
-Build the image from the nginx directory, which contains the corresponding Dockerfile, with:
-
-  ``docker build -t alexisbellido/varnish:4.1 .``
-
-
-HAProxy
-==========================================
-
-https://hub.docker.com/_/haproxy/
-The haproxy.cfg copied in Dockerfile is overriden if running via bind mount
-
-haproxy non-ssl:
-  ``docker run -d --network zinibu -v /home/alexis/mydocker/dockerize-django/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg -p 35004:8998 -p 35005:80 -p 35006:443 --hostname=lb --name=lb alexisbellido/haproxy:1.6.10``
-
-haproxy ssl:
-  ``docker run -d --network zinibu -v /home/alexis/mydocker/ssl/example_com.pem:/usr/local/etc/haproxy/ssl/example_com.pem -v /home/alexis/mydocker/dockerize-django/haproxy/haproxy-ssl.cfg:/usr/local/etc/haproxy/haproxy.cfg -p 35104:8998 -p 35105:80 -p 35106:443 --hostname=lb-ssl --name=lb-ssl alexisbellido/haproxy:1.6.10``
-
-  
 To create a self-signed SSL certificate
 ========================================
 
@@ -145,6 +114,54 @@ For this example we're creating a new file at /srv/haproxy/ssl/example_com.pem u
   ``$ cat example_com.crt >> example_com.pem``
   ``$ cat example_com.ca-bundle >> example_com.pem``
 
+
+Varnish
+==========================================
+
+To pass parameters to modify the included VCL:
+
+  ``docker run -d --network=zinibu -p 33345:83 --env WEB_HOST=web1 --env WEB_PORT=80 --env DOMAIN_NAME=example.com --hostname=cache1 --name=cache1 alexisbellido/varnish:4.1``
+
+To pass parameters to modify the included VCL and redirect to SSL and www version:
+
+  ``docker run -d --network=zinibu -p 33355:83 --env WEB_HOST=web1 --env WEB_PORT=80 --env DOMAIN_NAME=example.com --env SSL_WWW_REDIRECT=1 --hostname=cache1-ssl --name=cache1-ssl alexisbellido/varnish:4.1``
+
+To map an existing VCL file:
+
+  ``docker run -d --network=zinibu -v /home/alexis/mydocker/dockerize-django/varnish/default.vcl:/etc/varnish/default.vcl -p 33335:83 --hostname=cache-map-1 --name=cache-map-1 alexisbellido/varnish:4.1``
+
+Django needs to allow Nginx or Varnish's probe won't work. Include this in your Django settings:
+
+  ``ALLOWED_HOSTS = ['*']``
+
+Of course, you can provide the hostname for Nginx.
+Use curl from the Varnish container to the Nginx container to debug.
+
+Build the image from the nginx directory, which contains the corresponding Dockerfile, with:
+
+  ``docker build -t alexisbellido/varnish:4.1 .``
+
+
+HAProxy
+==========================================
+
+haproxy non-ssl:
+  ``docker run -d --network zinibu -v /home/alexis/mydocker/dockerize-django/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg -p 35004:8998 -p 35005:80 -p 35006:443 --hostname=lb --name=lb alexisbellido/haproxy:1.6.10``
+
+Default HAProxy stats at http://example.com:35004/admin?stats (user: admin, password: admin)
+
+haproxy ssl:
+  ``docker run -d --network zinibu -v /home/alexis/mydocker/ssl/example_com.pem:/usr/local/etc/haproxy/ssl/example_com.pem -v /home/alexis/mydocker/dockerize-django/haproxy/haproxy-ssl.cfg:/usr/local/etc/haproxy/haproxy.cfg -p 35104:8998 -p 35105:80 -p 35106:443 --hostname=lb-ssl --name=lb-ssl alexisbellido/haproxy:1.6.10``
+
+Default HAProxy stats at http://example.com:35104/admin?stats  (user: admin, password: admin)
+
+haproxy.cfg copied in Dockerfile is overriden when running via bind mount.
+
+Build the image from the haproxy directory, which contains the corresponding Dockerfile, with:
+
+  ``docker build -t alexisbellido/haproxy:1.6.10 .``
+
+  
 Useful commands
 ==========================================
 
