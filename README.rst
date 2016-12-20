@@ -118,6 +118,8 @@ For this example we're creating a new file at /srv/haproxy/ssl/example_com.pem u
 Varnish
 ==========================================
 
+The provided default.vcl exposes a /varnishcheck URL to be used by load balancers health checks. Varnish uses std.healthy(req.backend_hint) to return a value based on health of its backend server.
+
 To pass parameters to modify the included VCL:
 
   ``docker run -d --network=zinibu -p 33345:83 --env WEB_HOST=web1 --env WEB_PORT=80 --env DOMAIN_NAME=example.com --hostname=cache1 --name=cache1 alexisbellido/varnish:4.1``
