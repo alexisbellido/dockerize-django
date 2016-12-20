@@ -128,7 +128,7 @@ To pass parameters to modify the included VCL and redirect to SSL and www versio
 
 To map an existing VCL file:
 
-  ``docker run -d --network=zinibu -v /home/alexis/mydocker/dockerize-django/varnish/default.vcl:/etc/varnish/default.vcl -p 33335:83 --hostname=cache-map-1 --name=cache-map-1 alexisbellido/varnish:4.1``
+  ``docker run -d --network=zinibu -v /home/alexis/mydocker/dockerize-django/varnish/default-test.vcl:/etc/varnish/default.vcl -p 33335:83 --env WEB_HOST=web1 --env WEB_PORT=80 --env DOMAIN_NAME=example.com --hostname=cache-map-1 --name=cache-map-1 alexisbellido/varnish:4.1``
 
 Django needs to allow Nginx or Varnish's probe won't work. Include this in your Django settings:
 
