@@ -43,6 +43,8 @@ RUN set -x \
 ENV PROJECT_NAME project
 ENV PORT 8000
 ENV POSTGRES_PORT 5432
+ENV REDIS_HOST none
+ENV REDIS_PORT 6379
 ENV SETTINGS_MODULE local
 
 RUN /usr/local/bin/pyvenv /root/.venv/django

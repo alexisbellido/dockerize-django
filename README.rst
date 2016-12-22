@@ -45,7 +45,19 @@ Use docker cp to copy a dump of the database to the container and restore it.
 
 Don't forget to delete the temporary database by logging in to the container and deleting it from bash.
 
-  ``docker exec -it /bin/bash``
+  ``docker exec -it db1 /bin/bash``
+
+
+Redis
+==========================================
+
+  ``docker run -d --network=zinibu --hostname=redis1 --name=redis1 redis:3.2.6``
+
+Exposes port 6379 so you can connect from the application container on the same network using the name.
+
+You can monitor connections with:
+
+  ``docker exec -it redis1 redis-cli monitor``
 
 
 Python and Django
@@ -56,10 +68,12 @@ Run the container passing parameters.
 For Django development server:
   ``docker run -d --network=zinibu -v /home/alexis/mydocker/zinibu:/root/zinibu -v /home/alexis/mydocker/djapps:/root/djapps --env PROJECT_NAME=zinibu --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 -p 33332:8000 --hostname=app1-dev --name=app1-dev alexisbellido/python:3.5.2-slim development``
 
-For Django via gunicorn (specifying how to map the port on the host):
+To use Redis pass REDIS_HOST and, for the sake of being implicit, REDIS_PORT:
+  ``docker run -d --network=zinibu -v /home/alexis/mydocker/zinibu:/root/zinibu -v /home/alexis/mydocker/djapps:/root/djapps --env PROJECT_NAME=zinibu --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 --env REDIS_HOST=redis1 --env REDIS_PORT=6379 -p 33336:8000 --hostname=app2-dev --name=app2-dev alexisbellido/python:3.5.2-slim development``
 
-  ``docker run -d --network=zinibu -v /home/alexis/mydocker/zinibu:/root/zinibu -v /home/alexis/mydocker/djapps:/root/djapps --env PROJECT_NAME=zinibu --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 -p 33333:8000 --hostname=app1 --name=app1 alexisbellido/python:3.5.2-slim production``
+For Django via gunicorn (specifying how to map the port on the host) and using Redis:
 
+  ``docker run -d --network=zinibu -v /home/alexis/mydocker/zinibu:/root/zinibu -v /home/alexis/mydocker/djapps:/root/djapps --env PROJECT_NAME=zinibu --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 --env REDIS_HOST=redis1 --env REDIS_PORT=6379 -p 33333:8000 --hostname=app1 --name=app1 alexisbellido/python:3.5.2-slim production``
 
 Note the environment variables:
 SETTINGS_MODULE, used for DJANGO_SETTINGS_MODULE
@@ -68,7 +82,7 @@ PORT
 
 Build the image from the nginx directory, which contains the corresponding Dockerfile, with:
 
-  ``docker build -t alexisbellido/3.5.2-slim .``
+  ``docker build -t alexisbellido/python:3.5.2-slim .``
 
 
 Check logs of running container (-f works like in tail) to confirm it's working as expected:
