@@ -1,19 +1,17 @@
-do that thing with haproxy returning via varnish see salt stack formula for haproxy
+document instructions for launching the stack with docker composer (it's just docker-compose up -d from directory compose-complete)
 
-continue testing varnish to see if some env variables are needed, try login/logout too
+get new dump from AWS
 
-how to get env variables into /usr/local/etc/haproxy/haproxy.cfg and /etc/varnish/default.vcl
 
-If using SSL:
-for local dev with haproxy and use haproxy to terminate ssl and redirect non-www, non-https to https://www.
-for AWS use ELB to terminate SSL and use varnish to redirect non-www, non-https to https://www.
-
-document instructions for launching the stack manually, container by container, and then with docker composer
 
 should I automate the docker run commands with just bash or some salt? maybe they are not that many commands and manual and some composer will be enough
 
 make haproxy work without ssl first and with ssl later. I have an haproxy directory, map to either or haproxy.cfg or haproxy-ssl.cfg with the rest of the stack, If using haproxy-ssl.cfg map the ssl cert
 do not use a second frontend from varnish servers, instead pass from each varnish to its own nginx
+
+If using SSL:
+for local dev with haproxy and use haproxy to terminate ssl and redirect non-www, non-https to https://www.
+for AWS use ELB to terminate SSL and use varnish to redirect non-www, non-https to https://www.
 
 Dockerfile has to create dir for ssl
 
