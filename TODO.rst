@@ -1,8 +1,6 @@
 document instructions for launching the stack with docker composer (it's just docker-compose up -d from directory compose-complete)
 
-get new dump from AWS
-
-
+continue with other containers from docker compose
 
 should I automate the docker run commands with just bash or some salt? maybe they are not that many commands and manual and some composer will be enough
 

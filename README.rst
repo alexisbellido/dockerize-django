@@ -39,9 +39,21 @@ Access psql:
 
   ``docker exec -it db1 psql -h db1 -U user1 -d db1``
 
-Use docker cp to copy a dump of the database to the container and restore it.
+To restore from a dump created with just psql:
 
   ``docker exec -it db1 psql -h db1 -U user1 -d db1 -f /tmp/db1.sql``
+
+Create compressed database dump from AWS RDS:
+
+  ``pg_dump -Fc -v -h somehostname.us-east-1.rds.amazonaws.com -U user dbname > dbname.dump``
+
+Use docker cp to copy a database dump, created with pg_dump, and restore it to a container.
+
+  ``docker cp /home/user/backup/dbname.dump db1:/tmp/dbname.dump``
+
+Restore using -c to drop database objects before recreating them.
+
+  ``docker-compose exec db1 pg_restore -v -c -h db1 -U user1 -d db1 /tmp/dbname.dump``
 
 Don't forget to delete the temporary database by logging in to the container and deleting it from bash.
 
