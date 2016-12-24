@@ -1,0 +1,41 @@
+version: '2'
+
+services:
+  web2:
+    container_name: web2
+    image: "alexisbellido/nginx:1.10.2"
+    networks:
+      - zinibu
+    restart: always
+    environment:
+      - APP_HOST=app2-dev
+      - APP_PORT=8000
+      - PROJECT_NAME=zinibu
+    ports:
+      - "40002:80"
+    depends_on:
+      - app2-dev
+  app2-dev:
+    container_name: app2-dev
+    image: "alexisbellido/python:3.5.2-slim"
+    networks:
+      - zinibu
+    restart: always
+    environment:
+      - SETTINGS_MODULE=locals3
+      - POSTGRES_USER=user1
+      - POSTGRES_PASSWORD=user_secret
+      - POSTGRES_DB=db1
+      - POSTGRES_HOST=db1 
+      - PROJECT_NAME=zinibu
+    command: development
+    ports:
+      - "40001:8000"
+    volumes:
+      - /home/alexis/mydocker/zinibu:/root/zinibu
+      - /home/alexis/mydocker/djapps:/root/djapps
+
+networks:
+  zinibu:
+    external: true
+
