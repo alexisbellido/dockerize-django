@@ -45,15 +45,18 @@ services:
       - POSTGRES_PASSWORD=user_secret
       - POSTGRES_DB=db2
       - POSTGRES_HOST=db2
+      - REDIS_HOST=redis2
+      - REDIS_PORT=6379
       - PROJECT_NAME=zinibu
     command: production
     ports:
-      - "40001:8000"
+      - "40011:8000"
     volumes:
       - /home/alexis/mydocker/zinibu:/root/zinibu
       - /home/alexis/mydocker/djapps:/root/djapps
     depends_on:
       - db2
+      - redis2
 
   web2:
     container_name: web2
@@ -78,8 +81,18 @@ services:
       - DOMAIN_NAME=example.com
     ports:
       - "40003:83"
-    volumes:
-      - /home/alexis/mydocker/zinibu:/root/zinibu
-      - /home/alexis/mydocker/djapps:/root/djapps
     depends_on:
-      - db2
+      - web2
+
+  lb2:
+    container_name: lb2
+    image: "alexisbellido/haproxy:1.6.10"
+    restart: always
+    volumes:
+      - /home/alexis/mydocker/dockerize-django/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    ports:
+      - "40004:80"
+      - "40005:443"
+      - "40006:8998"
+    depends_on:
+      - cache2
