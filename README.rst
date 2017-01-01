@@ -101,6 +101,14 @@ Check logs of running container (-f works like in tail) to confirm it's working 
 
   ``docker logs -f CONTAINER``
 
+You can run a few Django commands from the container using /usr/local/bin/docker-entrypoint.sh, for example:
+
+  ``docker exec -it CONTAINER docker-entrypoint.sh collectstatic``
+
+  ``docker exec -it CONTAINER docker-entrypoint.sh shell``
+
+You can modify docker-entrypoint.sh script as needed. It already contains the environment variables used by the Django project.
+
 Make sure to check for ALLOWED_HOSTS issues in the Django settings file:
 
   ``ALLOWED_HOSTS = ['*']``
