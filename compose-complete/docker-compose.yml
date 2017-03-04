@@ -68,6 +68,8 @@ services:
       - PROJECT_NAME=zinibu
     ports:
       - "40002:80"
+    volumes:
+      - /home/alexis/mydocker/zinibu:/usr/share/nginx/zinibu
     depends_on:
       - app2-dev
 
