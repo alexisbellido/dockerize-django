@@ -43,9 +43,18 @@ To restore from a dump created with just psql:
 
   ``docker exec -it db1 psql -h db1 -U user1 -d db1 -f /tmp/db1.sql``
 
+Create compressed database dump from the container (note this is saving to /tmp just as an example, you should use a non-public location):
+
+  ``docker exec -it db2 /bin/bash``
+  ``pg_dump -Fc -v -h db2 -U user2 db2 > /tmp/db2-$(date +"%m%d%Y-%H%M%S").dump``
+
 Create compressed database dump from AWS RDS:
 
   ``pg_dump -Fc -v -h somehostname.us-east-1.rds.amazonaws.com -U user dbname > dbname.dump``
+
+Copy a database dump from a container (db2) to the current directory on the host:
+
+  ``docker cp db2:/tmp/dbname.dump .``
 
 Use docker cp to copy a database dump, created with pg_dump, and restore it to a container.
 
@@ -92,7 +101,7 @@ SETTINGS_MODULE, used for DJANGO_SETTINGS_MODULE
 PROJECT_NAME, the name of your project
 PORT
 
-Build the image from the nginx directory, which contains the corresponding Dockerfile, with:
+Build the image from the directory that contains the corresponding Dockerfile, with:
 
   ``docker build -t alexisbellido/python:3.5.2-slim .``
 
@@ -121,7 +130,7 @@ Nginx proxying to Gunicorn (final part of volume mapping directory, /usr/share/n
 
   ``docker run -d --network=zinibu -v /home/alexis/mydocker/zinibu:/usr/share/nginx/zinibu --env APP_HOST=app1 --env APP_PORT=8000 --env PROJECT_NAME=zinibu -p 33334:80 --hostname=web1 --name=web1 alexisbellido/nginx:1.10.2``
 
-Build the image from the nginx directory, which contains the corresponding Dockerfile, with:
+Build the image from the directory that contains the corresponding Dockerfile, with:
 
   ``docker build -t alexisbellido/nginx:1.10.2 .``
 
@@ -173,7 +182,7 @@ Django needs to allow Nginx or Varnish's probe won't work. Include this in your 
 Of course, you can provide the hostname for Nginx.
 Use curl from the Varnish container to the Nginx container to debug.
 
-Build the image from the nginx directory, which contains the corresponding Dockerfile, with:
+Build the image from the directory contains the corresponding Dockerfile, with:
 
   ``docker build -t alexisbellido/varnish:4.1 .``
 
