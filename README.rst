@@ -60,7 +60,12 @@ Use docker cp to copy a database dump, created with pg_dump, and restore it to a
 
   ``docker cp /home/user/backup/dbname.dump db1:/tmp/dbname.dump``
 
-Restore using -c to drop database objects before recreating them.
+Restore using -c to drop database objects before recreating them.  You may need to ssh into the container before you can restore with pg_restore:
+
+  ``docker exec -it db2 /bin/bash``
+  ``pg_restore -v -c -h db2 -U user2 -d db2 /tmp/dbname.dump``
+
+This connects to a container creater with Docker Compose and doesn't need to ssh first:
 
   ``docker-compose exec db1 pg_restore -v -c -h db1 -U user1 -d db1 /tmp/dbname.dump``
 
