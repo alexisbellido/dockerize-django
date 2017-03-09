@@ -65,6 +65,11 @@ Restore using -c to drop database objects before recreating them.  You may need 
   ``docker exec -it db2 /bin/bash``
   ``pg_restore -v -c -h db2 -U user2 -d db2 /tmp/dbname.dump``
 
+
+You can also use Docker Compose to launch all the containers for your stack at once.::
+    cd compose-complete
+    docker-compose up
+
 This connects to a container creater with Docker Compose and doesn't need to ssh first:
 
   ``docker-compose exec db1 pg_restore -v -c -h db1 -U user1 -d db1 /tmp/dbname.dump``
