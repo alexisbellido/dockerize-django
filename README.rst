@@ -67,6 +67,7 @@ Restore using -c to drop database objects before recreating them.  You may need 
 
 
 You can also use Docker Compose to launch all the containers for your stack at once.::
+
     cd compose-complete
     docker-compose up
 
