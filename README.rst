@@ -68,8 +68,8 @@ Restore using -c to drop database objects before recreating them.  You may need 
 
 You can also use Docker Compose to launch all the containers for your stack at once.::
 
-    ``cd compose-complete``
-    ``docker-compose up``
+    cd compose-complete
+    docker-compose up
 
 This connects to a container creater with Docker Compose and doesn't need to ssh first:
 
