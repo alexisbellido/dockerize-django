@@ -127,6 +127,12 @@ You can run a few Django commands from the container using /usr/local/bin/docker
 
   ``docker exec -it CONTAINER docker-entrypoint.sh shell``
 
+Or you can ssh into the container, set the environment from the bash script and then run Django commands from there
+
+  ``docker exec -it CONTAINER /bin/bash``
+  ``source /usr/local/bin/docker-entrypoint.sh setenv``
+  ``django-admin help --pythonpath=$(pwd)``
+
 You can modify docker-entrypoint.sh script as needed. It already contains the environment variables used by the Django project.
 
 Make sure to check for ALLOWED_HOSTS issues in the Django settings file:
