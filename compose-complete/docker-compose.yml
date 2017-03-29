@@ -3,6 +3,7 @@ version: '2'
 services:
   db2:
     container_name: db2
+    hostname: db2
     image: "postgres:9.4"
     restart: always
     environment:
@@ -12,11 +13,13 @@ services:
 
   redis2:
     container_name: redis2
+    hostname: redis2
     image: "redis:3.2.6"
     restart: always
 
   app2-dev:
     container_name: app2-dev
+    hostname: app2-dev
     image: "alexisbellido/python:3.5.2-slim"
     restart: always
     environment:
@@ -37,6 +40,7 @@ services:
 
   app2:
     container_name: app2
+    hostname: app2
     image: "alexisbellido/python:3.5.2-slim"
     restart: always
     environment:
@@ -60,6 +64,7 @@ services:
 
   web2:
     container_name: web2
+    hostname: web2
     image: "alexisbellido/nginx:1.10.2"
     restart: always
     environment:
@@ -75,6 +80,7 @@ services:
 
   cache2:
     container_name: cache2
+    hostname: cache2
     image: "alexisbellido/varnish:4.1"
     restart: always
     environment:
@@ -88,6 +94,7 @@ services:
 
   lb2:
     container_name: lb2
+    hostname: lb2
     image: "alexisbellido/haproxy:1.6.10"
     restart: always
     volumes:
