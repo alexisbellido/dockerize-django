@@ -85,3 +85,22 @@ use docker compose to automate the initial complete setup and then see how to ad
 ==
 
 make applications from django/editable-requirements.txt available in PyPi and document that they can be kept editable during development
+
+==
+
+dumping postgresql and running django commands with docker
+
+docker exec -it db2 psql -h db2 -U user2 -d db2
+docker exec -it db2 pg_dump -Fc -v -h db2 -U user2 db2 > db2-$(date +"%m%d%Y-%H%M%S").dump
+docker exec -it db2 "pg_dump -Fc -v -h db2 -U user2 db2 > db2-$(date +"%m%d%Y-%H%M%S").dump"
+docker exec -it db2 pg_dump -Fc -v -h db2 -U user2 -W db2 > db2-$(date +"%m%d%Y-%H%M%S").dump
+docker exec -it db2 /bin/bash
+docker cp db2:/tmp/db2-* .
+docker cp db2:/tmp/db2-03042017-215219.dump .
+cd mydocker/
+docker ps
+cd mydocker/
+cd dockerize-django/
+docker ps
+docker inspect app2-dev | less
+docker exec -it app2-dev docker-entrypoint.sh shell
