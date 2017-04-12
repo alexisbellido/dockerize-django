@@ -104,3 +104,6 @@ cd dockerize-django/
 docker ps
 docker inspect app2-dev | less
 docker exec -it app2-dev docker-entrypoint.sh shell
+
+update elasticsearch (24 hours * 300 days with $(()) bash calculation)
+docker exec -it app2-dev docker-entrypoint.sh update_index $((24*360))
