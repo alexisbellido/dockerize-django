@@ -7,17 +7,32 @@ A Django stack running with Docker.
 Overview
 ------------------------------------------
 
+* Create a directory for your project and clone this repository inside it.
+* Clone your Django project in the project directory and call it *django-project".
+* Create another directory containing your custom Django applications and call it *django-apps*.
+
+Your directory structure should look like this:
+
+- project
+-- dockerize-django (this repository)
+-- django-project
+-- django-apps
+---- django-awesome-app
+---- django--tiny-app
+
+Most Docker commands here should be run from the project directory and will refer to it as "$PWD".
+
 If running locally for development, it uses one HAProxy container to load balance containers running Varnish that cache Nginx in front Gunicorn. Usually just one Docker host takes care of all containers.
 
 If running on AWS, it uses ELB to load balance containers running Varnish that cache Nginx in front Gunicorn. The default setup assumes three containers running on each Docker host: Varnish, Nginx and Gunicorn.
 
-My Docker Hub user is *alexisbellido* and I'm calling my network *zinibu*:
+My Docker Hub user is *alexisbellido* and I'm calling my network *project-network*:
 
 Create a bridge network for your containers on your host.
 
 .. code-block:: bash
 
-  $ docker network create -d bridge zinibu
+  $ docker network create -d bridge project-network
 
 
 The examples below assume a basic architecture like this:
@@ -129,7 +144,7 @@ For Django development server:
 
 .. code-block:: bash
 
-  $ docker run -d --network=zinibu -v /home/alexis/mydocker/zinibu:/root/zinibu -v /home/alexis/mydocker/djapps:/root/djapps --env PROJECT_NAME=zinibu --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 -p 33332:8000 --hostname=app1-dev --name=app1-dev alexisbellido/django:1.11 development
+  $ docker run -d --network=project-network -v "$PWD"/django-project:/root/django-project -v "$PWD"/django-apps:/root/django-apps --env PROJECT_NAME=django-project --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 -p 33332:8000 --hostname=app1-dev --name=app1-dev alexisbellido/django:1.11 development
 
 To use Redis pass REDIS_HOST and, for the sake of being implicit, REDIS_PORT:
 

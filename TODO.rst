@@ -1,6 +1,10 @@
 TODO
 ==================================================
 
+WARNING: the pyenv script is deprecated in favour of `python3.6 -m venv`
+
+replace network zinibu with project-network in README.rst and update all Docker commands to use generic project names
+
 Find a way to install project-specific Python packages on the virtual environment inside the container. Ansible?
 
 

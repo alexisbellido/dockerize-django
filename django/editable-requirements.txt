@@ -1,2 +1,2 @@
 # Editable applications
--e /root/djapps/django-zinibu-cache/
+-e /root/django-apps/django-zinibu-cache/
