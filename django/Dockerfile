@@ -1,4 +1,4 @@
-FROM python:3.5.2-slim
+FROM python:3.6.1-slim
 MAINTAINER Alexis Bellido <a@zinibu.com>
 
 # With some ideas borrowed from https://hub.docker.com/_/postgres/

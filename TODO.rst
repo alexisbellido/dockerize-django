@@ -1,3 +1,9 @@
+TODO
+==================================================
+
+Find a way to install project-specific Python packages on the virtual environment inside the container. Ansible?
+
+
 document instructions for launching the stack with docker composer (it's just docker-compose up -d from directory compose-complete)
 
 continue with other containers from docker compose

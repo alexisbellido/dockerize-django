@@ -28,10 +28,10 @@ export PROJECT_REDIS_PORT=$REDIS_PORT
 cd $PROJECTDIR
 
 # Install editable applications from mounted volume if required
-python -c 'import znbcache' 
-if [ $? -eq 1 ]; then
-	pip install --requirement /tmp/editable-requirements.txt
-fi
+#python -c 'import znbcache' 
+#if [ $? -eq 1 ]; then
+#	pip install --requirement /tmp/editable-requirements.txt
+#fi
 
 if [ "$1" == "development" ]; then
 	export PROJECT_RUNNING_DEV=true
