@@ -322,6 +322,18 @@ Build the image from the haproxy directory, which contains the corresponding Doc
 
   $ docker build -t alexisbellido/haproxy:1.6.10 .
 
+
+Ansible
+------------------------------------------
+
+Some Ansible examples that assume the control machine has its public key on the remote machines' ``~/.ssh/authorized_keys`` file and the remote machines have ssh authentication setup for GitHub and any other remote server used.
+
+Running git clone from GitHub. 
+
+.. code-block:: bash
+
+  $ ansible all -m git -a "repo=git@github.com:alexisbellido/django-zinibu-skeleton.git dest=/root/django-apps/django-zinibu-skeleton version=master accept_hostkey=yes"
+
   
 Useful commands
 ------------------------------------------
