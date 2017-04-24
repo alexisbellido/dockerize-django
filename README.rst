@@ -350,3 +350,9 @@ And to inspect everything about the container:
 .. code-block:: bash
 
   $ docker inspect CONTAINER | less
+
+
+Troubleshooting
+------------------------------------------
+
+  * When forwarding ssh agent into the container, make sure that the private key file from the host is the one loaded by ssh-agent. You may need to use ``ssh-add`` to list, delete and/or re-add identities (private keys).

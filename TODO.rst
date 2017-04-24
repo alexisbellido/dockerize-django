@@ -5,6 +5,7 @@ test setuptools stuff to put apps inside django project or separate dirs from ot
 
 Find a way to install project-specific Python packages on the virtual environment inside the container. Ansible?
 
+merge feature/django1.11 into master when I have a basic django 1.11 project running
 
 document instructions for launching the stack with docker composer (it's just docker-compose up -d from directory compose-complete)
 
