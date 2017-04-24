@@ -47,7 +47,7 @@ ENV REDIS_HOST none
 ENV REDIS_PORT 6379
 ENV SETTINGS_MODULE local
 
-RUN /usr/local/bin/pyvenv /root/.venv/django
+RUN /usr/local/bin/python3.6 -m venv /root/.venv/django
 
 RUN . /root/.venv/django/bin/activate \
   && curl https://bootstrap.pypa.io/get-pip.py | python \

@@ -54,7 +54,7 @@ Run the container passing parameters.
 
 .. code-block:: bash
 
-  $ docker run -d --network=zinibu --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --hostname=db1 --name=db1 postgres:9.4
+  $ docker run -d --network=project-network --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --hostname=db1 --name=db1 postgres:9.4
 
 Access psql:
 
@@ -126,7 +126,7 @@ Redis
 
 .. code-block:: bash
 
-  $ docker run -d --network=zinibu --hostname=redis1 --name=redis1 redis:3.2.6
+  $ docker run -d --network=project-network --hostname=redis1 --name=redis1 redis:3.2.6
 
 Exposes port 6379 so you can connect from the application container on the same network using the name.
 
@@ -152,13 +152,19 @@ To use Redis pass REDIS_HOST and, for the sake of being implicit, REDIS_PORT:
 
 .. code-block:: bash
    
-  $ docker run -d --network=zinibu -v /home/alexis/mydocker/zinibu:/root/zinibu -v /home/alexis/mydocker/djapps:/root/djapps --env PROJECT_NAME=zinibu --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 --env REDIS_HOST=redis1 --env REDIS_PORT=6379 -p 33336:8000 --hostname=app2-dev --name=app2-dev alexisbellido/django:1.11 development
+  $ docker run -d --network=project-network -v /home/alexis/mydocker/zinibu:/root/zinibu -v /home/alexis/mydocker/djapps:/root/djapps --env PROJECT_NAME=zinibu --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 --env REDIS_HOST=redis1 --env REDIS_PORT=6379 -p 33336:8000 --hostname=app2-dev --name=app2-dev alexisbellido/django:1.11 development
 
 For Django via gunicorn (specifying how to map the port on the host) and using Redis:
 
 .. code-block:: bash
 
-  $ docker run -d --network=zinibu -v /home/alexis/mydocker/zinibu:/root/zinibu -v /home/alexis/mydocker/djapps:/root/djapps --env PROJECT_NAME=zinibu --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 --env REDIS_HOST=redis1 --env REDIS_PORT=6379 -p 33333:8000 --hostname=app1 --name=app1 alexisbellido/django:1.11 production
+  $ docker run -d --network=project-network -v /home/alexis/mydocker/zinibu:/root/zinibu -v /home/alexis/mydocker/djapps:/root/djapps --env PROJECT_NAME=zinibu --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 --env REDIS_HOST=redis1 --env REDIS_PORT=6379 -p 33333:8000 --hostname=app1 --name=app1 alexisbellido/django:1.11 production
+
+If you just want to get to the shell for some testing, bypassing the entrypoint script, use ``--entrypoint``. Note the ``-it`` option to run an interactive process in the foreground and ``--rm`` to remove the container automatically after it stops:
+
+.. code-block:: bash
+
+  $ docker run -it --rm --network=project-network -v "$PWD"/django-project:/root/django-project -v "$PWD"/django-apps:/root/django-apps --env PROJECT_NAME=django-project --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 -p 33332:8000 --hostname=app1-dev --name=app1-dev --entrypoint /bin/bash alexisbellido/django:1.11
 
 Note the environment variables:
 
@@ -208,7 +214,7 @@ Nginx proxying to Gunicorn (final part of volume mapping directory, /usr/share/n
 
 .. code-block:: bash
 
-  $ docker run -d --network=zinibu -v /home/alexis/mydocker/zinibu:/usr/share/nginx/zinibu --env APP_HOST=app1 --env APP_PORT=8000 --env PROJECT_NAME=zinibu -p 33334:80 --hostname=web1 --name=web1 alexisbellido/nginx:1.10.2
+  $ docker run -d --network=project-network -v /home/alexis/mydocker/zinibu:/usr/share/nginx/zinibu --env APP_HOST=app1 --env APP_PORT=8000 --env PROJECT_NAME=zinibu -p 33334:80 --hostname=web1 --name=web1 alexisbellido/nginx:1.10.2
 
 Build the image from the directory that contains the corresponding Dockerfile, with:
 
@@ -253,19 +259,19 @@ To pass parameters to modify the included VCL:
 
 .. code-block:: bash
 
-  $ docker run -d --network=zinibu -p 33345:83 --env WEB_HOST=web1 --env WEB_PORT=80 --env DOMAIN_NAME=example.com --hostname=cache1 --name=cache1 alexisbellido/varnish:4.1
+  $ docker run -d --network=project-network -p 33345:83 --env WEB_HOST=web1 --env WEB_PORT=80 --env DOMAIN_NAME=example.com --hostname=cache1 --name=cache1 alexisbellido/varnish:4.1
 
 To pass parameters to modify the included VCL and redirect to SSL and www version:
 
 .. code-block:: bash
 
-  $ docker run -d --network=zinibu -p 33355:83 --env WEB_HOST=web1 --env WEB_PORT=80 --env DOMAIN_NAME=example.com --env SSL_WWW_REDIRECT=1 --hostname=cache1-ssl --name=cache1-ssl alexisbellido/varnish:4.1
+  $ docker run -d --network=project-network -p 33355:83 --env WEB_HOST=web1 --env WEB_PORT=80 --env DOMAIN_NAME=example.com --env SSL_WWW_REDIRECT=1 --hostname=cache1-ssl --name=cache1-ssl alexisbellido/varnish:4.1
 
 To map an existing VCL file:
 
 .. code-block:: bash
 
-  $ docker run -d --network=zinibu -v /home/alexis/mydocker/dockerize-django/varnish/default-test.vcl:/etc/varnish/default.vcl -p 33335:83 --env WEB_HOST=web1 --env WEB_PORT=80 --env DOMAIN_NAME=example.com --hostname=cache-map-1 --name=cache-map-1 alexisbellido/varnish:4.1
+  $ docker run -d --network=project-network -v /home/alexis/mydocker/dockerize-django/varnish/default-test.vcl:/etc/varnish/default.vcl -p 33335:83 --env WEB_HOST=web1 --env WEB_PORT=80 --env DOMAIN_NAME=example.com --hostname=cache-map-1 --name=cache-map-1 alexisbellido/varnish:4.1
 
 Django needs to allow Nginx or Varnish's probe won't work. Include this in your Django settings:
 

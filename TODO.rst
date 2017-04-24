@@ -1,9 +1,9 @@
 TODO
 ==================================================
 
-WARNING: the pyenv script is deprecated in favour of `python3.6 -m venv`
+push my image django to docker hub
 
-replace network zinibu with project-network in README.rst and update all Docker commands to use generic project names
+test setuptopols stuff to put apps inside django project or separate dir as serpatae repos
 
 Find a way to install project-specific Python packages on the virtual environment inside the container. Ansible?
 
