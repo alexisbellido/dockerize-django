@@ -326,7 +326,11 @@ Build the image from the haproxy directory, which contains the corresponding Doc
 Ansible
 ------------------------------------------
 
-Some Ansible examples that assume the control machine has its public key on the remote machines' ``~/.ssh/authorized_keys`` file and the remote machines have ssh authentication setup for GitHub and any other remote server used.
+Some Ansible examples that assume you are running as root, the control machine has its public key on the remote machines' ``~/.ssh/authorized_keys``, and the remote machines have ssh authentication setup for GitHub and any other remote server used.
+
+.. code-block:: bash
+
+   $ pip install ansible
 
 Running git clone from GitHub. 
 
