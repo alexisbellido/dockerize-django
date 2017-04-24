@@ -27,6 +27,7 @@ RUN set -x \
   && apt-get -y update \
   && apt-get install -y curl \
   && apt-get install -y git \
+  && apt-get install -y openssh-client \
   && apt-get install -y libpq-dev \
   && apt-get install -y libjpeg62-turbo-dev \
   && apt-get install -y libopenjpeg-dev \
@@ -39,6 +40,10 @@ RUN set -x \
   && apt-get install -y python3-setuptools \
   && apt-get install -y python3-tk \
   && apt-get install -y tk8.6-dev
+
+
+RUN mkdir -p /root/.ssh \
+  && echo "StrictHostKeyChecking no " > /root/.ssh/config
 
 ENV PROJECT_NAME project
 ENV PORT 8000

@@ -1,9 +1,7 @@
 TODO
 ==================================================
 
-push my image django to docker hub
-
-test setuptopols stuff to put apps inside django project or separate dir as serpatae repos
+test setuptools stuff to put apps inside django project or separate dirs from other repos, with ansible?
 
 Find a way to install project-specific Python packages on the virtual environment inside the container. Ansible?
 

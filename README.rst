@@ -140,13 +140,21 @@ You can monitor connections with:
 Python and Django
 ------------------------------------------
 
-Run the container passing parameters.
+This image contains openssh-client and the examples below use a data volume to forward the host's ssh agent to the container. This is helpful if the container needs to use ssh to connect to other servers (like private git repositories or GitHub) using the host's ssh key. The key parameters in the ``docker run`` command are ``-v ~/.ssh/id_rsa:/root/.ssh/id_rsa -v $SSH_AUTH_SOCK:/run/ssh_agent -e SSH_AUTH_SOCK=/run/ssh_agent``.
 
-For Django development server:
+Once a container is running and assuming your host has its private key authorized on example.com or github.com you can test the ssh connection from the container.
 
 .. code-block:: bash
 
-  $ docker run -d --network=project-network -v "$PWD"/django-project:/root/django-project -v "$PWD"/django-apps:/root/django-apps --env PROJECT_NAME=django-project --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 -p 33332:8000 --hostname=app1-dev --name=app1-dev alexisbellido/django:1.11 development
+  $ ssh user@example.com
+  $ ssh -T git@github.com
+
+Run a Django development server:
+
+
+.. code-block:: bash
+
+  $ docker run -d --network=project-network -v ~/.ssh/id_rsa:/root/.ssh/id_rsa -v $SSH_AUTH_SOCK:/run/ssh_agent -e SSH_AUTH_SOCK=/run/ssh_agent -v "$PWD"/django-project:/root/django-project -v "$PWD"/django-apps:/root/django-apps --env PROJECT_NAME=django-project --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 -p 33332:8000 --hostname=app1-dev --name=app1-dev alexisbellido/django:1.11 development
 
 To use Redis pass REDIS_HOST and, for the sake of being implicit, REDIS_PORT:
 
@@ -164,7 +172,7 @@ If you just want to get to the shell for some testing, bypassing the entrypoint 
 
 .. code-block:: bash
 
-  $ docker run -it --rm --network=project-network -v "$PWD"/django-project:/root/django-project -v "$PWD"/django-apps:/root/django-apps --env PROJECT_NAME=django-project --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 -p 33332:8000 --hostname=app1-dev --name=app1-dev --entrypoint /bin/bash alexisbellido/django:1.11
+  $ docker run -it --rm --network=project-network -v ~/.ssh/id_rsa:/root/.ssh/id_rsa -v $SSH_AUTH_SOCK:/run/ssh_agent -e SSH_AUTH_SOCK=/run/ssh_agent -v "$PWD"/django-project:/root/django-project -v "$PWD"/django-apps:/root/django-apps --env PROJECT_NAME=django-project --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 -p 33332:8000 --hostname=app1-dev --name=app1-dev --entrypoint /bin/bash alexisbellido/django:1.11
 
 Note the environment variables:
 
