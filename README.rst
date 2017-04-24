@@ -16,11 +16,11 @@ Your directory structure should look like this:
 .. code-block:: bash
 
   - project
-  -- dockerize-django (this repository)
-  -- django-project
-  -- django-apps
-  ---- django-awesome-app
-  ---- django--tiny-app
+    -- dockerize-django (this repository)
+    -- django-project
+    -- django-apps
+      ---- django-awesome-app
+      ---- django--tiny-app
 
 Most Docker commands here should be run from the project directory and will refer to it as "$PWD".
 
