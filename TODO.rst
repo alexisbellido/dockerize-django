@@ -3,6 +3,8 @@ TODO
 
 ansible talks to docker, investigate
 
+server is removed from the load balancer before it’s upgraded
+
 test setuptools stuff to put apps inside django project or separate dirs from other repos, with ansible?
 
 Find a way to install project-specific Python packages on the virtual environment inside the container. Ansible?
