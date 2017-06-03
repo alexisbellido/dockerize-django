@@ -221,7 +221,15 @@ There's `a bug <https://github.com/docker/for-mac/issues/307>`_ that causes Dock
       },
   }
   
-And then you can add logging calls, logger.info or logger.error, in the appropiate parts of your code. 
+And then you can add logging calls in the appropiate parts of your code. I'm adding pretty printing here:
+
+.. code-block:: bash
+
+  import logging
+  import pprint
+  logger = logging.getLogger(__name__)
+  logger.info(pprint.pformat(vars(object)))
+ 
 
 See `Django logging documentation <https://docs.djangoproject.com/en/1.11/topics/logging/>`_ for details.
 
