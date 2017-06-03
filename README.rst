@@ -193,6 +193,38 @@ Check logs of running container (-f works like in tail) to confirm it's working 
 
   $ docker logs -f CONTAINER
 
+There's `a bug <https://github.com/docker/for-mac/issues/307>`_ that causes Docker not to follow the logs making it difficult to see console output and debug using Django's development server or Gunicorn from the Django application. To work around this use Django's logging system. Start by adding this to your settings file:
+
+.. code-block:: bash
+
+  LOGGING = {
+      'version': 1,
+      'disable_existing_loggers': False,
+      'formatters': {
+          'verbose': {
+              'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+          },
+      },
+      'handlers': {
+          'console': {
+              'level': 'INFO',
+              'class': 'logging.FileHandler',
+              'filename': '/var/log/debug.log',
+              'formatter': 'verbose'
+          },
+      },
+      'loggers': {
+          '': {
+              'handlers': ['console'],
+              'level': 'INFO',
+          }
+      },
+  }
+  
+And then you can add logging calls, logger.info or logger.error, in the appropiate parts of your code. 
+
+See `Django logging documentation <https://docs.djangoproject.com/en/1.11/topics/logging/>`_ for details.
+
 You can run a few Django commands from the container using /usr/local/bin/docker-entrypoint.sh, for example:
 
 .. code-block:: bash
