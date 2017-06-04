@@ -185,6 +185,13 @@ If you want to run some tests in the container, you can pass a parameter not con
 .. code-block:: bash
 
     $ docker run -it --network=project-network -w /root -v ~/.ssh/id_rsa:/root/.ssh/id_rsa -v $SSH_AUTH_SOCK:/run/ssh_agent -e SSH_AUTH_SOCK=/run/ssh_agent -v "$PWD"/django-project:/root/django-project -v "$PWD"/django-apps:/root/django-apps --env PROJECT_NAME=django-project --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 -p 33332:8000 --hostname=app1-test --name= alexisbellido/django:1.11 /bin/bash
+    
+Because it's running in the foreground, if you exit this container it will stop. Start it and ssh into it again running:
+
+.. code-block:: bash
+
+  $ docker start app1-test
+  $ docker exec -it app1-test /bin/bash
 
 This container will have the Python virtual environment of the project activated by default and you can create a new virtual environment with:
 
