@@ -190,7 +190,7 @@ This container will have the Python virtual environment of the project activated
 
 .. code-block:: bash
   
-  /usr/local/bin/python3.6 -m venv /root/.venv/my-project
+  $ /usr/local/bin/python3.6 -m venv /root/.venv/my-project
 
 and activate it with:
 
@@ -204,7 +204,7 @@ You can deactivate a Python virtual environment running:
 
     $ deactivate
     
-For some reason, deactivate won't be available for the default virtual environment and you need to explicitly activate a virtual environment first to have access to deactivate. Read more about `venv <https://docs.python.org/3/library/venv.html>`_.
+Note that deactivate is created when sourcing the activate script so it may not be available from the shell when you first ssh into the container. Read more about `venv <https://docs.python.org/3/library/venv.html>`_.
     
 To bypass the entrypoint script, use ``--entrypoint``. This also uses ``-it`` and adds ``--rm`` to remove the container automatically after it stops.
 
