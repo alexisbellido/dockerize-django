@@ -148,27 +148,65 @@ Once a container is running and assuming your host has its private key authorize
 
   $ ssh user@example.com
   $ ssh -T git@github.com
+  
+The image's entrypoint, copied to the container and defined with ENTRYPOINT in the Dockerfile, accepts parameters that can be passed at the end of the docker run command. If no parameter is passed, the value of CMD in the Dockerfile is used (usually "development").
 
-Run a Django development server:
+Here are some of the parameters the entrypoint accepts:
 
+* development: runs Django development server.
+* production: runs Django with Gunicorn and accepts an optional second paramater --log-level=debug or --log-level=critical. If the second parameter is not passed --log-level=info is assumed.
+* update_index: runs Haystack's update_index and accepts an optional second parameter used as --age. See Haystack's help for more details. 
+* shell: runs Django shell.
+* setenv: does nothing after activating the virtual the Python environment, useful when run from inside the container, see notes about running Django commands below.
+* collectstatic: runs Django collectstatic.
+
+If you pass any paramater not considered by the entrypoint script, it will be just executed with exec "$@".
+
+Run a Django development server passing the parameter "development":
 
 .. code-block:: bash
 
   $ docker run -d --network=project-network -w /root -v ~/.ssh/id_rsa:/root/.ssh/id_rsa -v $SSH_AUTH_SOCK:/run/ssh_agent -e SSH_AUTH_SOCK=/run/ssh_agent -v "$PWD"/django-project:/root/django-project -v "$PWD"/django-apps:/root/django-apps --env PROJECT_NAME=django-project --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 -p 33332:8000 --hostname=app1-dev --name=app1-dev alexisbellido/django:1.11 development
 
-To use Redis pass REDIS_HOST and, for the sake of being implicit, REDIS_PORT:
+To use Redis pass REDIS_HOST and, for the sake of being implicit, REDIS_PORT, with the same development server:
 
 .. code-block:: bash
 
   $ docker run -d --network=project-network -w /root -v ~/.ssh/id_rsa:/root/.ssh/id_rsa -v $SSH_AUTH_SOCK:/run/ssh_agent -e SSH_AUTH_SOCK=/run/ssh_agent -v "$PWD"/django-project:/root/django-project -v "$PWD"/django-apps:/root/django-apps --env PROJECT_NAME=django-project --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 --env REDIS_HOST=redis1 --env REDIS_PORT=6379 -p 33332:8000 --hostname=app1-dev --name=app1-dev alexisbellido/django:1.11 development
   
-For Django via gunicorn (specifying how to map the port on the host) and using Redis:
+For Django via gunicorn (specifying how to map the port on the host) and using Redis, use the "production" paramater:
 
 .. code-block:: bash
 
   $ docker run -d --network=project-network -w /root -v ~/.ssh/id_rsa:/root/.ssh/id_rsa -v $SSH_AUTH_SOCK:/run/ssh_agent -e SSH_AUTH_SOCK=/run/ssh_agent -v "$PWD"/django-project:/root/django-project -v "$PWD"/django-apps:/root/django-apps --env PROJECT_NAME=django-project --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 --env REDIS_HOST=redis1 --env REDIS_PORT=6379 -p 33333:8000 --hostname=app1 --name=app1 alexisbellido/django:1.11 production
+  
+If you want to run some tests in the container, you can pass a parameter not considered by the entrypoint script, like /bin/bash and you will get to a Bash command line. Note the ``-it`` option to run an interactive process in the foreground.
+  
+.. code-block:: bash
 
-If you just want to get to the shell for some testing, bypassing the entrypoint script, use ``--entrypoint``. Note the ``-it`` option to run an interactive process in the foreground and ``--rm`` to remove the container automatically after it stops:
+    $ docker run -it --network=project-network -w /root -v ~/.ssh/id_rsa:/root/.ssh/id_rsa -v $SSH_AUTH_SOCK:/run/ssh_agent -e SSH_AUTH_SOCK=/run/ssh_agent -v "$PWD"/django-project:/root/django-project -v "$PWD"/django-apps:/root/django-apps --env PROJECT_NAME=django-project --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 -p 33332:8000 --hostname=app1-test --name= alexisbellido/django:1.11 /bin/bash
+
+This container will have the Python virtual environment of the project activated by default and you can create a new virtual environment with:
+
+.. code-block:: bash
+  
+  /usr/local/bin/python3.6 -m venv /root/.venv/my-project
+
+and activate it with:
+
+.. code-block:: bash
+
+    $ source /root/.venv/my-project/bin/activate
+
+You can deactivate a Python virtual environment running:
+
+.. code-block:: bash
+
+    $ deactivate
+    
+For some reason, deactivate won't be available for the default virtual environment and you need to explicitly activate a virtual environment first to have access to deactivate. Read more about `venv <https://docs.python.org/3/library/venv.html>`_.
+    
+To bypass the entrypoint script, use ``--entrypoint``. This also uses ``-it`` and adds ``--rm`` to remove the container automatically after it stops.
 
 .. code-block:: bash
 
@@ -239,7 +277,7 @@ You can run a few Django commands from the container using /usr/local/bin/docker
   $ docker exec -it CONTAINER docker-entrypoint.sh collectstatic
   $ docker exec -it CONTAINER docker-entrypoint.sh shell
 
-Or you can ssh into the container, set the environment from the bash script and then run Django commands from there
+Or you can ssh into the container, set the environment from the bash script and then run Django commands from there.
 
 .. code-block:: bash
 

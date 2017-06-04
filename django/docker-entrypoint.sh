@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 # Activate virtual environment
 source /root/.venv/django/bin/activate
@@ -32,6 +32,8 @@ cd $PROJECTDIR
 #if [ $? -eq 1 ]; then
 #	pip install --requirement /tmp/editable-requirements.txt
 #fi
+
+# See Dockerfile's CMD to see parameter passed as default
 
 if [ "$1" == "development" ]; then
 	export PROJECT_RUNNING_DEV=true

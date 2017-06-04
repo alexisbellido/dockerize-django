@@ -22,7 +22,7 @@ RUN set -x \
   && apt-get purge -y --auto-remove ca-certificates wget
 
 # Install requisites for building Python packages.
-# I need need to avoid error messages from pip freeze.
+# I need to avoid error messages from pip freeze.
 RUN set -x \
   && apt-get -y update \
   && apt-get install -y curl \
@@ -40,7 +40,6 @@ RUN set -x \
   && apt-get install -y python3-setuptools \
   && apt-get install -y python3-tk \
   && apt-get install -y tk8.6-dev
-
 
 RUN mkdir -p /root/.ssh \
   && echo "StrictHostKeyChecking no " > /root/.ssh/config
