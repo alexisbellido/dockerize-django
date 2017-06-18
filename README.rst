@@ -284,6 +284,8 @@ You can run a few Django commands from the container using /usr/local/bin/docker
   $ docker exec -it CONTAINER docker-entrypoint.sh collectstatic
   $ docker exec -it CONTAINER docker-entrypoint.sh shell
 
+TODO: do I have no-input and ignore-admin set for django-admin collectstatic --pythonpath=$(pwd) --no-input --ignore admin*?
+
 Or you can ssh into the container, set the environment from the bash script and then run Django commands from there.
 
 .. code-block:: bash
