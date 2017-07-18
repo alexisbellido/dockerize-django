@@ -22,6 +22,8 @@ export PROJECT_DATABASES_DEFAULT_PASSWORD=$POSTGRES_PASSWORD
 export PROJECT_DATABASES_DEFAULT_HOST=$POSTGRES_HOST
 export PROJECT_DATABASES_DEFAULT_PORT=$POSTGRES_PORT
 
+export PROJECT_RUNNING_DEV=true
+
 export PROJECT_REDIS_HOST=$REDIS_HOST
 export PROJECT_REDIS_PORT=$REDIS_PORT
 
@@ -34,12 +36,11 @@ if [ $? -eq 1 ]; then
 fi
 
 if [ "$1" == "development" ]; then
-	export PROJECT_RUNNING_DEV=true
 	exec gosu root django-admin runserver --pythonpath=$(pwd) 0.0.0.0:$PORT
 elif [ "$1" == "production" ]; then
 	export PROJECT_RUNNING_DEV=false
 	export USER=root
-    	export GROUP=root
+	export GROUP=root
 	export NUM_WORKERS=3
 	export BIND_HOST=$HOSTNAME
 	export BIND_PORT=$PORT
