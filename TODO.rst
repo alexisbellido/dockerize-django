@@ -4,6 +4,9 @@ TODO
 configure Django local settings without S3 for Docker setup
 
 use symlinks for nginx to get static files directly from webpack's directory without using collectstatic, maybe include something in Django's settings files to make it  easier.
+static produced by webpack is in /home/alexis/mydocker/djapps/django-zinibu-main/znbmain/static
+inspect nginx container to see what directory should be symlinked, or maybe change zinibu.settings.local right from Django to use a different static dir
+docker inspect web2 | less
 
 update composer (use version 3?) specific to local development and use variations of app server to use local, s3, etc. the new composer should use a shorter name to create easier own network and try to use Django project and djapps with relative paths (https://docs.docker.com/compose/compose-file/#volumes)
 
