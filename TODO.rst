@@ -1,6 +1,23 @@
 TODO
 ==================================================
 
+configure Django local settings without S3 for Docker setup
+
+use symlinks for nginx to get static files directly from webpack's directory without using collectstatic, maybe include something in Django's settings files to make it  easier.
+
+update composer (use version 3?) specific to local development and use variations of app server to use local, s3, etc. the new composer should use a shorter name to create easier own network and try to use Django project and djapps with relative paths (https://docs.docker.com/compose/compose-file/#volumes)
+
+make sure image alexisbellido/django:1.11 works and push it to Docker Hub before getting to compose
+
+update compose to use app2-local with 
+    image: "alexisbellido/django:1.11"
+
+Why this error:
+root@app2-local $ source /usr/local/bin/docker-entrypoint.sh setenv
+root@app2-local $ django-admin.py help --pythonpath=$(pwd)
+Note that only Django core commands are listed as settings are not properly configured (error: Set the PROJECT_RUNNING_DEV environment variable).
+
+
 ansible talks to docker, investigate
 
 server is removed from the load balancer before it’s upgraded

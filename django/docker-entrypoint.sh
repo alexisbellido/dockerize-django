@@ -22,11 +22,14 @@ export PROJECT_DATABASES_DEFAULT_PASSWORD=$POSTGRES_PASSWORD
 export PROJECT_DATABASES_DEFAULT_HOST=$POSTGRES_HOST
 export PROJECT_DATABASES_DEFAULT_PORT=$POSTGRES_PORT
 
+export PROJECT_RUNNING_DEV=true
+
 export PROJECT_REDIS_HOST=$REDIS_HOST
 export PROJECT_REDIS_PORT=$REDIS_PORT
 
 cd $PROJECTDIR
 
+# TODO find another way to install editable packages, compare to master branch
 # Install editable applications from mounted volume if required
 #python -c 'import znbcache' 
 #if [ $? -eq 1 ]; then
@@ -36,7 +39,6 @@ cd $PROJECTDIR
 # See Dockerfile's CMD to see parameter passed as default
 
 if [ "$1" == "development" ]; then
-	export PROJECT_RUNNING_DEV=true
 	exec gosu root django-admin runserver --pythonpath=$(pwd) 0.0.0.0:$PORT
 elif [ "$1" == "production" ]; then
 	export PROJECT_RUNNING_DEV=false
