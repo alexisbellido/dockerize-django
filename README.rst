@@ -30,7 +30,7 @@ If running on AWS, it uses ELB to load balance containers running Varnish that c
 
 My Docker Hub user is *alexisbellido* and I'm calling my network *project-network*:
 
-Create a bridge network for your containers on your host.
+Create a bridge network for your containers on your host. This steps is unnecessary if using the provided Docker Compose compose-complete/docker-compose.yml, which creates its own network,
 
 .. code-block:: bash
 
@@ -160,7 +160,7 @@ Here are some of the parameters the entrypoint accepts:
 * setenv: does nothing after activating the virtual the Python environment, useful when run from inside the container, see notes about running Django commands below.
 * collectstatic: runs Django collectstatic.
 
-If you pass any paramater not considered by the entrypoint script, it will be just executed with exec "$@".
+If you pass any parameter not considered by the entrypoint script, it will be just executed with exec "$@".
 
 Run a Django development server passing the parameter "development":
 
@@ -180,7 +180,7 @@ For Django via gunicorn (specifying how to map the port on the host) and using R
 
   $ docker run -d --network=project-network -w /root -v ~/.ssh/id_rsa:/root/.ssh/id_rsa -v $SSH_AUTH_SOCK:/run/ssh_agent -e SSH_AUTH_SOCK=/run/ssh_agent -v "$PWD"/django-project:/root/django-project -v "$PWD"/django-apps:/root/django-apps --env PROJECT_NAME=django-project --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 --env REDIS_HOST=redis1 --env REDIS_PORT=6379 -p 33333:8000 --hostname=app1 --name=app1 alexisbellido/django:1.11 production
   
-If you want to run some tests in the container, you can pass a parameter not considered by the entrypoint script, like /bin/bash and you will get to a Bash command line. Note the ``-it`` option to run an interactive process in the foreground.
+If you want to run some tests in the container, you can pass a parameter not considered by the entrypoint script, like /bin/bash and you will get to a Bash command line. Note the ``-it`` option to run an interactive process in the foreground. This is useful to test Python packages.
   
 .. code-block:: bash
 

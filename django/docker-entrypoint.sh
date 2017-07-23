@@ -29,12 +29,12 @@ export PROJECT_REDIS_PORT=$REDIS_PORT
 
 cd $PROJECTDIR
 
-# TODO find another way to install editable packages, compare to master branch
-# Install editable applications from mounted volume if required
-#python -c 'import znbcache' 
-#if [ $? -eq 1 ]; then
-#	pip install --requirement /tmp/editable-requirements.txt
-#fi
+# Install editable applications from mounted volume if required.
+# It has to be done here because the volume is not accessible yet when running Dockerfile.
+python -c 'import znbcache' 
+if [ $? -eq 1 ]; then
+	pip install --requirement /tmp/editable-requirements.txt
+fi
 
 # See Dockerfile's CMD to see parameter passed as default
 

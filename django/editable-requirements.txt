@@ -1,2 +1,8 @@
-# Editable applications
--e /root/django-apps/django-zinibu-cache/
+# Editable Zinibu applications
+-e /root/djapps/django-zinibu-cache/
+-e /root/djapps/django-zinibu-comment
+-e /root/djapps/django-zinibu-download
+-e /root/djapps/django-zinibu-main
+-e /root/djapps/django-zinibu-seo
+-e /root/djapps/django-zinibu-social
+-e /root/djapps/django-zinibu-store
