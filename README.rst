@@ -9,7 +9,7 @@ Overview
 
 * Create a directory for your project and clone this repository inside it.
 * Clone your Django project in the project directory and call it *django-project".
-* Create another directory containing your custom Django applications and call it *django-apps*.
+* Create another directory called "django-apps" and clone your custom Django applications there.
 
 Your directory structure should look like this:
 
@@ -184,7 +184,7 @@ If you want to run some tests in the container, you can pass a parameter not con
   
 .. code-block:: bash
 
-    $ docker run -it --network=project-network -w /root -v ~/.ssh/id_rsa:/root/.ssh/id_rsa -v $SSH_AUTH_SOCK:/run/ssh_agent -e SSH_AUTH_SOCK=/run/ssh_agent -v "$PWD"/django-project:/root/django-project -v "$PWD"/django-apps:/root/django-apps --env PROJECT_NAME=django-project --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 -p 33332:8000 --hostname=app1-test --name= alexisbellido/django:1.11 /bin/bash
+    $ docker run -it --network=project-network -w /root -v ~/.ssh/id_rsa:/root/.ssh/id_rsa -v $SSH_AUTH_SOCK:/run/ssh_agent -e SSH_AUTH_SOCK=/run/ssh_agent -v "$PWD"/django-project:/root/django-project -v "$PWD"/django-apps:/root/django-apps --env PROJECT_NAME=django-project --env SETTINGS_MODULE=local --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 -p 33332:8000 --hostname=app1-test --name=app1-test alexisbellido/django:1.11 /bin/bash
     
 Because it's running in the foreground, if you exit this container it will stop. Start it and ssh into it again running:
 
@@ -225,11 +225,13 @@ Note the environment variables:
 * ``PROJECT_NAME, the name of your project
 * ``PORT``
 
-Build the image from the directory that contains the corresponding Dockerfile, with:
+Build the image from the directory that contains the corresponding Dockerfile, login to Docker Hub and push the image with:
 
 .. code-block:: bash
 
   $ docker build -t alexisbellido/django:1.11 .
+  $ docker login
+  $ docker push alexisbellido/django:1.11
 
 Check logs of running container (-f works like in tail) to confirm it's working as expected:
 

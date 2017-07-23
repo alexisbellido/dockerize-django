@@ -31,6 +31,7 @@ cd $PROJECTDIR
 
 # Install editable applications from mounted volume if required.
 # It has to be done here because the volume is not accessible yet when running Dockerfile.
+# Check to install editable requirements only if not already installed.
 python -c 'import znbcache' 
 if [ $? -eq 1 ]; then
 	pip install --requirement /tmp/editable-requirements.txt
