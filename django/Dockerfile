@@ -1,4 +1,4 @@
-FROM python:3.5.2-slim
+FROM python:3.6.1-slim
 MAINTAINER Alexis Bellido <a@zinibu.com>
 
 # With some ideas borrowed from https://hub.docker.com/_/postgres/
@@ -22,11 +22,12 @@ RUN set -x \
   && apt-get purge -y --auto-remove ca-certificates wget
 
 # Install requisites for building Python packages.
-# I need need to avoid error messages from pip freeze.
+# I need to avoid error messages from pip freeze.
 RUN set -x \
   && apt-get -y update \
   && apt-get install -y curl \
   && apt-get install -y git \
+  && apt-get install -y openssh-client \
   && apt-get install -y libpq-dev \
   && apt-get install -y libjpeg62-turbo-dev \
   && apt-get install -y libopenjpeg-dev \
@@ -40,6 +41,9 @@ RUN set -x \
   && apt-get install -y python3-tk \
   && apt-get install -y tk8.6-dev
 
+RUN mkdir -p /root/.ssh \
+  && echo "StrictHostKeyChecking no " > /root/.ssh/config
+
 ENV PROJECT_NAME project
 ENV PORT 8000
 ENV POSTGRES_PORT 5432
@@ -47,7 +51,7 @@ ENV REDIS_HOST none
 ENV REDIS_PORT 6379
 ENV SETTINGS_MODULE local
 
-RUN /usr/local/bin/pyvenv /root/.venv/django
+RUN /usr/local/bin/python3.6 -m venv /root/.venv/django
 
 RUN . /root/.venv/django/bin/activate \
   && curl https://bootstrap.pypa.io/get-pip.py | python \

@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 # Activate virtual environment
 source /root/.venv/django/bin/activate
@@ -29,11 +29,15 @@ export PROJECT_REDIS_PORT=$REDIS_PORT
 
 cd $PROJECTDIR
 
-# Install editable applications from mounted volume if required
+# Install editable applications from mounted volume if required.
+# It has to be done here because the volume is not accessible yet when running Dockerfile.
+# Check to install editable requirements only if not already installed.
 python -c 'import znbcache' 
 if [ $? -eq 1 ]; then
 	pip install --requirement /tmp/editable-requirements.txt
 fi
+
+# See Dockerfile's CMD to see parameter passed as default
 
 if [ "$1" == "development" ]; then
 	exec gosu root django-admin runserver --pythonpath=$(pwd) 0.0.0.0:$PORT

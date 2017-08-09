@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 
 services:
   db2:
@@ -16,6 +16,27 @@ services:
     hostname: redis2
     image: "redis:3.2.6"
     restart: always
+
+  app2-local:
+    container_name: app2-local
+    hostname: app2-local
+    image: "alexisbellido/python:3.5.2-slim"
+    restart: always
+    environment:
+      - SETTINGS_MODULE=local
+      - POSTGRES_USER=user2
+      - POSTGRES_PASSWORD=user_secret
+      - POSTGRES_DB=db2
+      - POSTGRES_HOST=db2
+      - PROJECT_NAME=zinibu
+    command: development
+    ports:
+      - "40021:8000"
+    volumes:
+      - /home/alexis/mydocker/zinibu:/root/zinibu
+      - /home/alexis/mydocker/djapps:/root/djapps
+    depends_on:
+      - db2
 
   app2-dev:
     container_name: app2-dev
