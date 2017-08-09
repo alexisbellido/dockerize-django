@@ -8,7 +8,7 @@ Overview
 ------------------------------------------
 
 * Create a directory for your project and clone this repository inside it.
-* Clone your Django project in the project directory and call it *django-project".
+* Clone your Django project in the project directory and call it "django-project" [verify this is correct as Django may need to keep its original directory name].
 * Create another directory called "django-apps" and clone your custom Django applications there.
 
 Your directory structure should look like this:
@@ -459,4 +459,4 @@ And to inspect everything about the container:
 Troubleshooting
 ------------------------------------------
 
-  * When forwarding ssh agent into the container, make sure that the private key file from the host is the one loaded by ssh-agent. You may need to use ``ssh-add`` to list, delete and/or re-add identities (private keys).
+  * When forwarding ssh agent into the container, make sure that the private key file from the host is the one loaded by ssh-agent. You may need to use ``ssh-add`` to list, delete and/or re-add identities (private keys). This may also be needed if the host is restarted and the containers can't remount the key data.

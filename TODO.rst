@@ -5,11 +5,6 @@ update composer (use version 3?) specific to local development and use variation
 
 ansible to create directory structure and other basics
 
-use symlinks for nginx to get static files directly from webpack's directory without using collectstatic, maybe include something in Django's settings files to make it  easier.
-static produced by webpack is in /home/alexis/mydocker/djapps/django-zinibu-main/znbmain/static
-inspect nginx container to see what directory should be symlinked, or maybe change zinibu.settings.local right from Django to use a different static dir
-docker inspect web2 | less
-
 make sure image alexisbellido/django:1.11 works and push it to Docker Hub before getting to compose
 
 update compose to use app2-local with 
