@@ -3,7 +3,7 @@ Docker images to build a Django project
 
 A Django stack running with Docker.
 
-See also: `Ansible and Django project <https://github.com/alexisbellido/ansible-and-django/>`_ for more details.
+See also the `Ansible and Django <https://github.com/alexisbellido/ansible-and-docker/>`_ project.
 
 Overview
 ------------------------------------------
