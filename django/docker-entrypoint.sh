@@ -5,7 +5,7 @@ source /root/.venv/django/bin/activate
 
 export HOSTNAME=`cat /etc/hostname`
 
-# Django variables from Dockerfile and/or docker run: 
+# Django variables from Dockerfile and/or docker run:
 # PROJECT_NAME, PORT, SETTINGS_MODULE
 # POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB, POSTGRES_HOST, POSTGRES_PORT
 
@@ -32,10 +32,12 @@ cd $PROJECTDIR
 # Install editable applications from mounted volume if required.
 # It has to be done here because the volume is not accessible yet when running Dockerfile.
 # Check to install editable requirements only if not already installed.
-python -c 'import znbcache' 
-if [ $? -eq 1 ]; then
-	pip install --requirement /tmp/editable-requirements.txt
-fi
+
+# TODO maybe check if directory for application exists, clone if it doesn't, and install
+# python -c 'import znbcache'
+# if [ $? -eq 1 ]; then
+# 	pip install --requirement /tmp/editable-requirements.txt
+# fi
 
 # See Dockerfile's CMD to see parameter passed as default
 
