@@ -29,11 +29,10 @@ export PROJECT_REDIS_PORT=$REDIS_PORT
 
 cd $PROJECTDIR
 
-# Install editable applications from mounted volume if required.
-# It has to be done here because the volume is not accessible yet when running Dockerfile.
-# Check to install editable requirements only if not already installed.
+# Editable Python packages have to be installed later
+# because the volume is not accessible when running Dockerfile.
+# This is a way to check and install editable requirements only if not already installed.
 
-# TODO maybe check if directory for application exists, clone if it doesn't, and install
 # python -c 'import znbcache'
 # if [ $? -eq 1 ]; then
 # 	pip install --requirement /tmp/editable-requirements.txt
@@ -43,6 +42,7 @@ cd $PROJECTDIR
 
 if [ "$1" == "development" ]; then
 	exec gosu root django-admin runserver --pythonpath=$(pwd) 0.0.0.0:$PORT
+
 elif [ "$1" == "production" ]; then
 	export PROJECT_RUNNING_DEV=false
 	export USER=root
@@ -69,15 +69,38 @@ elif [ "$1" == "shell" ]; then
 	django-admin.py shell --pythonpath=$(pwd)
 
 elif [ "$1" == "setenv" ]; then
+	# Nothing done here, the source at the top is enough to activate the virtual
+	# environment
 	echo "==================================="
 	echo "Done! The environment variables have been set to run the $PROJECT_NAME project."
 	echo "==================================="
+
+elif [ "$1" == "pip-install" ]; then
+	# Loop over list of packages in a file and pip -e install them
+	if [ -z "$2" ]
+		then
+    	echo "Provide a file with list of packages to install. Follow pip's requirements format."
+		else
+			for package in `cat $2`
+			do
+				if [ -d "$package" ]; then
+					echo "Processing $package"
+					pip install $package
+				fi
+			done
+		fi
+
+elif [ "$1" == "collectstatic-all" ]; then
+	echo "==================================="
+	echo "Django collect static files including admin files"
+	echo "==================================="
+	django-admin.py collectstatic --pythonpath=$(pwd) --noinput
 
 elif [ "$1" == "collectstatic" ]; then
 	echo "==================================="
 	echo "Django collect static files"
 	echo "==================================="
-	django-admin.py collectstatic --pythonpath=$(pwd) --noinput
+	django-admin.py collectstatic --pythonpath=$(pwd) --noinput --ignore admin*
 
 else
 	exec "$@"

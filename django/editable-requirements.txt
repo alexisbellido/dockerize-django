@@ -1,4 +1,3 @@
-# Editable Zinibu applications
 -e /root/django-apps/django-zinibu-cache/
 -e /root/django-apps/django-zinibu-comment
 -e /root/django-apps/django-zinibu-download

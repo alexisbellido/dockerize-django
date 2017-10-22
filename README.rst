@@ -194,7 +194,7 @@ Because it's running in the foreground, if you exit this container it will stop.
   $ docker start app1-test
   $ docker exec -it app1-test /bin/bash
 
-This container will have the Python virtual environment of the project activated by default and you can create a new virtual environment with:
+You can create a new virtual environment with:
 
 .. code-block:: bash
 
@@ -286,8 +286,6 @@ You can run a few Django commands from the container using /usr/local/bin/docker
   $ docker exec -it CONTAINER docker-entrypoint.sh collectstatic
   $ docker exec -it CONTAINER docker-entrypoint.sh shell
 
-TODO: do I have no-input and ignore-admin set for django-admin collectstatic --pythonpath=$(pwd) --no-input --ignore admin*?
-
 Or you can ssh into the container, set the environment from the bash script and then run Django commands from there.
 
 .. code-block:: bash
@@ -296,11 +294,52 @@ Or you can ssh into the container, set the environment from the bash script and 
   $ source /usr/local/bin/docker-entrypoint.sh setenv
   $ django-admin help --pythonpath=$(pwd)
 
+This is another way of activating the default environment (called *django*) on the container.
+
+.. code-block:: bash
+
+  source /root/.venv/django/bin/activate
+
 You can modify docker-entrypoint.sh script as needed. It already contains the environment variables used by the Django project.
 
 Make sure to check for ALLOWED_HOSTS issues in the Django settings file:
 
   ``ALLOWED_HOSTS = ['*']``
+
+Installing Python packages on containers
+---------------------------------------------------
+
+I can see the packages installed in the ``django`` virtual environment of a container.
+
+.. code-block:: bash
+
+$ docker exec -it CONTAINER /bin/bash -c "source /root/.venv/django/bin/activate && pip freeze"
+
+Install one editable package from a mapped directory.
+
+.. code-block:: bash
+
+  $ docker exec -it CONTAINER /bin/bash -c "source /root/.venv/django/bin/activate && pip install -e /root/django-apps/django-zinibu-comment"
+
+
+Or use a requirements file. This example uses the file included with the image but I could use any other file that I can put in a mapped directory so that the container can access it.
+
+.. code-block:: bash
+
+  $ docker exec -it CONTAINER /bin/bash -c "source /root/.venv/django/bin/activate && pip install --requirement /tmp/editable-requirements.txt"
+
+Install editable Python packages from host.
+
+.. code-block:: bash
+
+  $ docker exec -it CONTAINER /bin/bash -c "source /usr/local/bin/docker-entrypoint.sh pip-install /tmp/editable-requirements.txt"
+
+
+Install editable Python packages from inside container.
+
+.. code-block:: bash
+
+  $ source /usr/local/bin/docker-entrypoint.sh pip-install /tmp/editable-requirements.txt
 
 Nginx
 ------------------------------------------
