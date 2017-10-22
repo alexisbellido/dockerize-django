@@ -76,7 +76,7 @@ elif [ "$1" == "setenv" ]; then
 	echo "==================================="
 
 elif [ "$1" == "pip-install" ]; then
-	# Loop over list of packages in a file and pip -e install them
+	# Loop over list of packages in a file and pip install them
 	if [ -z "$2" ]
 		then
     	echo "Provide a file with list of packages to install. Follow pip's requirements format."
