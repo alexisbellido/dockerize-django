@@ -8,22 +8,22 @@ See also the `Ansible and Django <https://github.com/alexisbellido/ansible-and-d
 Overview
 ------------------------------------------
 
-* Create a directory for your project and clone this repository inside it. This is what we'll call the project directory.
-* Clone your Django project in the project directory and call it *django-project".
+* Create a directory for your project, *your-project* in the example below, and clone this repository inside it. We'll call this the main project directory.
+* Clone your Django project in the main project directory and call it *django-project".
 * Create another directory called "django-apps" and clone your custom Django applications there.
 
 Your directory structure should look like this:
 
 .. code-block:: bash
 
-  - project
+  - ~/your-project
     -- dockerize-django (this repository)
     -- django-project
     -- django-apps
       ---- django-awesome-app
       ---- django--tiny-app
 
-Most Docker commands here should be run from the project directory and will refer to it as "$PWD".
+Most Docker commands in this document should be run from the main project directory and will refer to it as "$PWD".
 
 If running locally for development, it uses one HAProxy container to load balance containers running Varnish that cache Nginx in front Gunicorn. Usually just one Docker host takes care of all containers.
 
@@ -148,7 +148,7 @@ Once a container is running and assuming your host has its private key authorize
   $ ssh user@example.com
   $ ssh -T git@github.com
 
-The image's entrypoint, copied to the container and defined with ENTRYPOINT in the Dockerfile, accepts parameters that can be passed at the end of the docker run command. If no parameter is passed, the value of CMD in the Dockerfile is used (usually "development").
+The image's entrypoint (*/usr/local/bin/docker-entrypoint.sh*, copied to the container and defined with ENTRYPOINT in the Dockerfile) always sets the Python virtual environment first and then accepts parameters that can be passed at the end of the docker run command. If no parameter is passed, the value of CMD in the Dockerfile is used (usually "development").
 
 Here are some of the parameters the entrypoint accepts:
 
@@ -157,11 +157,13 @@ Here are some of the parameters the entrypoint accepts:
 - *update_index* runs Haystack's update_index and accepts an optional second parameter used as --age. See Haystack's help for more details.
 - *shell* runs Django shell.
 - *setenv* does nothing after activating the virtual the Python environment, useful when run from inside the container, see notes about running Django commands below.
-- *collectstatic* runs Django's collectstatic.
+- *collectstatic* runs Django's collectstatic without including admin files.
+- *collectstatic-all* runs Django's collectstatic including admin files.
+- *building* does nothing; it's only used when building the Docker image.
 
 If you pass any parameter not considered by the entrypoint script, it will be just executed with exec "$@".
 
-Note that the environment variable PROJECT_NAME has to match with the name used for the project directory (*django-project* in the examples listed here) to follow the directory structure created by Django's django-admin startproject.
+Note that the environment variable PROJECT_NAME has to match with the name used inside the main project directory (*django-project* in the examples listed here) to follow the directory structure created by Django's django-admin startproject.
 
 Run a Django development server passing the parameter *development*:
 
@@ -285,6 +287,9 @@ You can run a few Django commands from the container using /usr/local/bin/docker
 
   $ docker exec -it CONTAINER docker-entrypoint.sh collectstatic
   $ docker exec -it CONTAINER docker-entrypoint.sh shell
+  $ docker exec -it CONTAINER docker-entrypoint.sh pip freeze
+
+Note the example passing `pip freeze` as the last parameter uses docker-entrypoint.sh just to activate the Python environment. Also, the full path is optional because it should already be in the default $PATH but I'm still including it in some of the examples for clarity.
 
 Or you can ssh into the container, set the environment from the bash script and then run Django commands from there.
 
@@ -321,25 +326,29 @@ Install one editable package from a mapped directory.
 
   $ docker exec -it CONTAINER /bin/bash -c "source /root/.venv/django/bin/activate && pip install -e /root/django-apps/django-zinibu-comment"
 
-
 Or use a requirements file. This example uses the file included with the image but I could use any other file that I can put in a mapped directory so that the container can access it.
 
 .. code-block:: bash
 
-  $ docker exec -it CONTAINER /bin/bash -c "source /root/.venv/django/bin/activate && pip install --requirement /tmp/editable-requirements.txt"
+  $ docker exec -it CONTAINER /bin/bash -c "source /root/.venv/django/bin/activate && pip install -r /tmp/editable-requirements.txt"
 
-Install editable Python packages from host.
+Install editable Python packages from host using an option in django/docker-entrypoint.sh.
 
 .. code-block:: bash
 
-  $ docker exec -it CONTAINER /bin/bash -c "source /usr/local/bin/docker-entrypoint.sh pip-install /tmp/editable-requirements.txt"
-
+  $ docker exec -it CONTAINER /bin/bash -c "source /usr/local/bin/docker-entrypoint.sh pip-install -r /tmp/editable-requirements.txt"
 
 Install editable Python packages from inside container.
 
 .. code-block:: bash
 
   $ source /usr/local/bin/docker-entrypoint.sh pip-install /tmp/editable-requirements.txt
+  
+But using the pip-install option in the bash script is not necessary as the script will run whatever is passed and this will have the same effect.
+
+.. code-block:: bash
+
+  $ docker exec -it pytest-1 /bin/bash -c "source /usr/local/bin/docker-entrypoint.sh pip install -r /tmp/editable-requirements.txt"
 
 Nginx
 ------------------------------------------

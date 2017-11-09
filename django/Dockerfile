@@ -4,9 +4,6 @@ MAINTAINER Alexis Bellido <a@zinibu.com>
 # With some ideas borrowed from https://hub.docker.com/_/postgres/
 # and https://hub.docker.com/_/redis/
 
-COPY requirements.txt /tmp/
-COPY editable-requirements.txt /tmp/
-
 ENV GOSU_VERSION 1.9
 RUN set -x \
   && apt-get update && apt-get install -y --no-install-recommends ca-certificates wget && rm -rf /var/lib/apt/lists/* \
@@ -46,7 +43,10 @@ RUN mkdir -p /root/.ssh \
   && echo "StrictHostKeyChecking no " > /root/.ssh/config
 
 ENV PROJECT_NAME project
+
 ENV PORT 8000
+EXPOSE $PORT
+
 ENV POSTGRES_PORT 5432
 ENV REDIS_HOST none
 ENV REDIS_PORT 6379
@@ -56,11 +56,14 @@ RUN /usr/local/bin/python3.6 -m venv /root/.venv/django
 
 RUN . /root/.venv/django/bin/activate \
   && curl https://bootstrap.pypa.io/get-pip.py | python \
-  && pip install --upgrade pip \
-  && pip install --requirement /tmp/requirements.txt
-
-EXPOSE $PORT
+  && pip install --upgrade pip
 
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
-CMD ["development"]
+
+# This is a dummy command to avoid calling not-yet-installed Python packages
+# from the entrypoint while building the image because mapped volumes are not
+# available yet.
+# The Python packages will be installed later with a tool such as Ansible.
+
+CMD ["building"]

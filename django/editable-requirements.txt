@@ -1,7 +1,0 @@
--e /root/django-apps/django-zinibu-cache/
--e /root/django-apps/django-zinibu-comment
--e /root/django-apps/django-zinibu-download
--e /root/django-apps/django-zinibu-main
--e /root/django-apps/django-zinibu-seo
--e /root/django-apps/django-zinibu-social
--e /root/django-apps/django-zinibu-store

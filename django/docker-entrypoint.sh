@@ -29,18 +29,26 @@ export PROJECT_REDIS_PORT=$REDIS_PORT
 
 cd $PROJECTDIR
 
-# Editable Python packages have to be installed later
-# because the volume is not accessible when running Dockerfile.
-# This is a way to check and install editable requirements only if not already installed.
-
-# python -c 'import znbcache'
-# if [ $? -eq 1 ]; then
-# 	pip install --requirement /tmp/editable-requirements.txt
-# fi
-
 # See Dockerfile's CMD to see parameter passed as default
 
-if [ "$1" == "development" ]; then
+if [ "$1" == "production" ] || [ "$1" == "development" ]
+then
+	# Won't install already installed packages so it's all right
+	pip install -r requirements.txt
+fi
+
+if [ "$1" == "building" ]; then
+	# Building image, do nothing because editable Python packages can be in mounted
+	# volumes that are not accessible while running Dockerfile.
+	
+	# This is a way to check and install editable requirements only if not already installed.
+	# python -c 'import znbcache'
+	# if [ $? -eq 1 ]; then
+	# 	pip install --requirement /tmp/editable-requirements.txt
+	# fi
+	echo "Just building..."
+
+elif [ "$1" == "development" ]; then
 	exec gosu root django-admin runserver --pythonpath=$(pwd) 0.0.0.0:$PORT
 
 elif [ "$1" == "production" ]; then
