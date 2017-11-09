@@ -3,12 +3,13 @@ Docker images to build a Django project
 
 A Django stack running with Docker.
 
+See also the `Ansible and Django <https://github.com/alexisbellido/ansible-and-docker/>`_ project.
 
 Overview
 ------------------------------------------
 
-* Create a directory for your project and clone this repository inside it.
-* Clone your Django project in the project directory and call it "django-project" [verify this is correct as Django may need to keep its original directory name].
+* Create a directory for your project and clone this repository inside it. This is what we'll call the project directory.
+* Clone your Django project in the project directory and call it *django-project".
 * Create another directory called "django-apps" and clone your custom Django applications there.
 
 Your directory structure should look like this:
@@ -30,22 +31,22 @@ If running on AWS, it uses ELB to load balance containers running Varnish that c
 
 My Docker Hub user is *alexisbellido* and I'm calling my network *project-network*:
 
-Create a bridge network for your containers on your host. This steps is unnecessary if using the provided Docker Compose compose-complete/docker-compose.yml, which creates its own network,
+Create a bridge network for your containers on your host. This step is unnecessary if using the provided Docker Compose compose-complete/docker-compose.yml, which creates its own network.
 
 .. code-block:: bash
 
   $ docker network create -d bridge project-network
 
-
 The examples below assume a basic architecture like this:
 
-lb --> cache1 --> web1 --> app1
+.. code-block:: bash
 
-lb: load balancer, optional HAProxy for local development.
-cache1: Varnish. There are alternative versions with SSL or mapping a VCL file.
-web1: Nginx.
-app1: Django application running on Gunicorn.
+  lb --> cache1 --> web1 --> app1
 
+- lb: load balancer, optional HAProxy for local development
+- cache1: Varnish. There are alternative versions with SSL or mapping a VCL file
+- web1: Nginx
+- app1: Django application running on Gunicorn
 
 PostgreSQL
 ------------------------------------------
@@ -56,32 +57,32 @@ Run the container passing parameters.
 
   $ docker run -d --network=project-network --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --hostname=db1 --name=db1 postgres:9.4
 
-Access psql:
+Access psql.
 
 .. code-block:: bash
 
   $ docker exec -it db1 psql -h db1 -U user1 -d db1
 
-To restore from a dump created with just psql:
+To restore from a dump created with just psql.
 
 .. code-block:: bash
 
   $ docker exec -it db1 psql -h db1 -U user1 -d db1 -f /tmp/db1.sql
 
-Create compressed database dump from the container (note this is saving to /tmp just as an example, you should use a non-public location):
+Create compressed database dump from the container (note this is saving to /tmp just as an example, you should use a non-public location).
 
 .. code-block:: bash
 
   $ docker exec -it db2 /bin/bash``
   $ pg_dump -Fc -v -h db2 -U user2 db2 > /tmp/db2-$(date +"%m%d%Y-%H%M%S").dump
 
-Create compressed database dump from AWS RDS:
+Create compressed database dump from AWS RDS.
 
 .. code-block:: bash
 
   $ pg_dump -Fc -v -h somehostname.us-east-1.rds.amazonaws.com -U user dbname > dbname.dump
 
-Copy a database dump from a container (db2) to the current directory on the host:
+Copy a database dump from a container (db2) to the current directory on the host.
 
 .. code-block:: bash
 
@@ -93,22 +94,21 @@ Use docker cp to copy a database dump, created with pg_dump, and restore it to a
 
   $ docker cp /home/user/backup/dbname.dump db1:/tmp/dbname.dump
 
-Restore using -c to drop database objects before recreating them.  You may need to ssh into the container before you can restore with pg_restore:
+Restore using -c to drop database objects before recreating them.  You may need to ssh into the container before you can restore with pg_restore.
 
 .. code-block:: bash
 
   $ docker exec -it db2 /bin/bash
   $ pg_restore -v -c -h db2 -U user2 -d db2 /tmp/dbname.dump
 
-
-You can also use Docker Compose to launch all the containers for your stack at once.::
+You can also use Docker Compose to launch all the containers for your stack at once.
 
 .. code-block:: bash
 
-    $ cd compose-complete
-    $ docker-compose up
+  $ cd compose-complete
+  $ docker-compose up
 
-This connects to a container creater with Docker Compose and doesn't need to ssh first:
+This connects to a container creater with Docker Compose and doesn't need to ssh first.
 
 .. code-block:: bash
 
@@ -119,7 +119,6 @@ Don't forget to delete the temporary database by logging in to the container and
 .. code-block:: bash
 
   $ docker exec -it db1 /bin/bash
-
 
 Redis
 ------------------------------------------
@@ -148,21 +147,23 @@ Once a container is running and assuming your host has its private key authorize
 
   $ ssh user@example.com
   $ ssh -T git@github.com
-  
+
 The image's entrypoint, copied to the container and defined with ENTRYPOINT in the Dockerfile, accepts parameters that can be passed at the end of the docker run command. If no parameter is passed, the value of CMD in the Dockerfile is used (usually "development").
 
 Here are some of the parameters the entrypoint accepts:
 
-* development: runs Django development server.
-* production: runs Django with Gunicorn and accepts an optional second paramater --log-level=debug or --log-level=critical. If the second parameter is not passed --log-level=info is assumed.
-* update_index: runs Haystack's update_index and accepts an optional second parameter used as --age. See Haystack's help for more details. 
-* shell: runs Django shell.
-* setenv: does nothing after activating the virtual the Python environment, useful when run from inside the container, see notes about running Django commands below.
-* collectstatic: runs Django collectstatic.
+- *development* runs Django development server.
+- *production* runs Django with Gunicorn and accepts an optional second paramater --log-level=debug or --log-level=critical. If the second parameter is not passed --log-level=info is assumed.
+- *update_index* runs Haystack's update_index and accepts an optional second parameter used as --age. See Haystack's help for more details.
+- *shell* runs Django shell.
+- *setenv* does nothing after activating the virtual the Python environment, useful when run from inside the container, see notes about running Django commands below.
+- *collectstatic* runs Django's collectstatic.
 
 If you pass any parameter not considered by the entrypoint script, it will be just executed with exec "$@".
 
-Run a Django development server passing the parameter "development":
+Note that the environment variable PROJECT_NAME has to match with the name used for the project directory (*django-project* in the examples listed here) to follow the directory structure created by Django's django-admin startproject.
+
+Run a Django development server passing the parameter *development*:
 
 .. code-block:: bash
 
@@ -173,30 +174,30 @@ To use Redis pass REDIS_HOST and, for the sake of being implicit, REDIS_PORT, wi
 .. code-block:: bash
 
   $ docker run -d --network=project-network -w /root -v ~/.ssh/id_rsa:/root/.ssh/id_rsa -v $SSH_AUTH_SOCK:/run/ssh_agent -e SSH_AUTH_SOCK=/run/ssh_agent -v "$PWD"/django-project:/root/django-project -v "$PWD"/django-apps:/root/django-apps --env PROJECT_NAME=django-project --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 --env REDIS_HOST=redis1 --env REDIS_PORT=6379 -p 33332:8000 --hostname=app1-dev --name=app1-dev alexisbellido/django:1.11 development
-  
-For Django via gunicorn (specifying how to map the port on the host) and using Redis, use the "production" paramater:
+
+For Django via gunicorn (specifying how to map the port on the host) and using Redis, use the *production* parameter:
 
 .. code-block:: bash
 
   $ docker run -d --network=project-network -w /root -v ~/.ssh/id_rsa:/root/.ssh/id_rsa -v $SSH_AUTH_SOCK:/run/ssh_agent -e SSH_AUTH_SOCK=/run/ssh_agent -v "$PWD"/django-project:/root/django-project -v "$PWD"/django-apps:/root/django-apps --env PROJECT_NAME=django-project --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 --env REDIS_HOST=redis1 --env REDIS_PORT=6379 -p 33333:8000 --hostname=app1 --name=app1 alexisbellido/django:1.11 production
-  
+
 If you want to run some tests in the container, you can pass a parameter not considered by the entrypoint script, like /bin/bash and you will get to a Bash command line. Note the ``-it`` option to run an interactive process in the foreground. This is useful to test Python packages.
-  
+
 .. code-block:: bash
 
     $ docker run -it --network=project-network -w /root -v ~/.ssh/id_rsa:/root/.ssh/id_rsa -v $SSH_AUTH_SOCK:/run/ssh_agent -e SSH_AUTH_SOCK=/run/ssh_agent -v "$PWD"/django-project:/root/django-project -v "$PWD"/django-apps:/root/django-apps --env PROJECT_NAME=django-project --env SETTINGS_MODULE=local --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 -p 33332:8000 --hostname=app1-test --name=app1-test alexisbellido/django:1.11 /bin/bash
-    
-Because it's running in the foreground, if you exit this container it will stop. Start it and ssh into it again running:
+
+Because it's running in the foreground, if you exit this container it will stop. Remember that each Docker container needs to focus on keeping one service running. Start it and ssh into it again running:
 
 .. code-block:: bash
 
   $ docker start app1-test
   $ docker exec -it app1-test /bin/bash
 
-This container will have the Python virtual environment of the project activated by default and you can create a new virtual environment with:
+You can create a new virtual environment with:
 
 .. code-block:: bash
-  
+
   $ /usr/local/bin/python3.6 -m venv /root/.venv/my-project
 
 and activate it with:
@@ -210,9 +211,9 @@ You can deactivate a Python virtual environment running:
 .. code-block:: bash
 
     $ deactivate
-    
+
 Note that deactivate is created when sourcing the activate script so it may not be available from the shell when you first ssh into the container. Read more about `venv <https://docs.python.org/3/library/venv.html>`_.
-    
+
 To bypass the entrypoint script, use ``--entrypoint``. This also uses ``-it`` and adds ``--rm`` to remove the container automatically after it stops.
 
 .. code-block:: bash
@@ -221,9 +222,9 @@ To bypass the entrypoint script, use ``--entrypoint``. This also uses ``-it`` an
 
 Note the environment variables:
 
-* ``SETTINGS_MODULE``, used for ``DJANGO_SETTINGS_MODULE``
-* ``PROJECT_NAME, the name of your project
-* ``PORT``
+- ``SETTINGS_MODULE``, used for ``DJANGO_SETTINGS_MODULE``
+- ``PROJECT_NAME``, the name of your project
+- ``PORT``
 
 Build the image from the directory that contains the corresponding Dockerfile, login to Docker Hub and push the image with:
 
@@ -266,7 +267,7 @@ There's `a bug <https://github.com/docker/for-mac/issues/307>`_ that causes Dock
           }
       },
   }
-  
+
 And then you can add logging calls in the appropiate parts of your code. I'm adding pretty printing here:
 
 .. code-block:: bash
@@ -275,7 +276,6 @@ And then you can add logging calls in the appropiate parts of your code. I'm add
   import pprint
   logger = logging.getLogger(__name__)
   logger.info(pprint.pformat(vars(object)))
- 
 
 See `Django logging documentation <https://docs.djangoproject.com/en/1.11/topics/logging/>`_ for details.
 
@@ -286,8 +286,6 @@ You can run a few Django commands from the container using /usr/local/bin/docker
   $ docker exec -it CONTAINER docker-entrypoint.sh collectstatic
   $ docker exec -it CONTAINER docker-entrypoint.sh shell
 
-TODO: do I have no-input and ignore-admin set for django-admin collectstatic --pythonpath=$(pwd) --no-input --ignore admin*?
-
 Or you can ssh into the container, set the environment from the bash script and then run Django commands from there.
 
 .. code-block:: bash
@@ -296,12 +294,52 @@ Or you can ssh into the container, set the environment from the bash script and 
   $ source /usr/local/bin/docker-entrypoint.sh setenv
   $ django-admin help --pythonpath=$(pwd)
 
+This is another way of activating the default environment (called *django*) on the container.
+
+.. code-block:: bash
+
+  source /root/.venv/django/bin/activate
+
 You can modify docker-entrypoint.sh script as needed. It already contains the environment variables used by the Django project.
 
 Make sure to check for ALLOWED_HOSTS issues in the Django settings file:
 
   ``ALLOWED_HOSTS = ['*']``
 
+Installing Python packages on containers
+---------------------------------------------------
+
+I can see the packages installed in the ``django`` virtual environment of a container.
+
+.. code-block:: bash
+
+$ docker exec -it CONTAINER /bin/bash -c "source /root/.venv/django/bin/activate && pip freeze"
+
+Install one editable package from a mapped directory.
+
+.. code-block:: bash
+
+  $ docker exec -it CONTAINER /bin/bash -c "source /root/.venv/django/bin/activate && pip install -e /root/django-apps/django-zinibu-comment"
+
+
+Or use a requirements file. This example uses the file included with the image but I could use any other file that I can put in a mapped directory so that the container can access it.
+
+.. code-block:: bash
+
+  $ docker exec -it CONTAINER /bin/bash -c "source /root/.venv/django/bin/activate && pip install --requirement /tmp/editable-requirements.txt"
+
+Install editable Python packages from host.
+
+.. code-block:: bash
+
+  $ docker exec -it CONTAINER /bin/bash -c "source /usr/local/bin/docker-entrypoint.sh pip-install /tmp/editable-requirements.txt"
+
+
+Install editable Python packages from inside container.
+
+.. code-block:: bash
+
+  $ source /usr/local/bin/docker-entrypoint.sh pip-install /tmp/editable-requirements.txt
 
 Nginx
 ------------------------------------------
@@ -420,13 +458,13 @@ Some Ansible examples that assume you are running as root, the control machine h
 
    $ pip install ansible
 
-Running git clone from GitHub. 
+Running git clone from GitHub.
 
 .. code-block:: bash
 
   $ ansible all -m git -a "repo=git@github.com:alexisbellido/django-zinibu-skeleton.git dest=/root/django-apps/django-zinibu-skeleton version=master accept_hostkey=yes"
 
-  
+
 Useful commands
 ------------------------------------------
 

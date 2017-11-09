@@ -5,6 +5,9 @@ __pycache__/
 
 # vim
 *.sw[po]
+.viminfo
+.bash_history
+.python_history
 
 # C extensions
 *.so

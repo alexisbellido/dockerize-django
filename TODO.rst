@@ -1,13 +1,28 @@
 TODO
 ==================================================
 
-update composer (use version 3?) specific to local development and use variations of app server to use local, s3, etc. the new composer should use a shorter name to create easier own network and try to use Django project and replace djapps with django-apps and with relative paths (https://docs.docker.com/compose/compose-file/#volumes). Once done and test Django project is running, merge into master and continue with next steps.
+I need to find a way to tell Docker how to handle different Python packages installed via pip, from PiPy, from Git repository, or from source directory in the file system. See requirements.txt and editable-requirements.txt; I may just need to include packages there, or maybe use just one file and use syntax that pip understands to specify the source of the package.
+
+Automate this to avoid matching in docker command: Note that the environment variable PROJECT_NAME has to match with the name used for the project directory (*django-project* in the examples listed here) to follow the directory structure created by Django's django-admin startproject.
+
+update docker-compose (use version 3?) specific to local development and use variations of app server to use local, s3, etc. the new composer should use a shorter name to create easier own network and try to use Django project and replace djapps with django-apps and with relative paths (https://docs.docker.com/compose/compose-file/#volumes). Once done and test Django project is running, merge into master and continue with next steps.
+
+manage releases, deploy and rollback with Ansible? See https://www.12factor.net/build-release-run and https://github.com/ansistrano/deploy
 
 ansible to create directory structure and other basics
 
+<<<<<<< HEAD
+=======
+use symlinks for nginx to get static files directly from webpack's directory without using collectstatic, maybe include something in Django's settings files to make it  easier.
+static produced by webpack is in /home/alexis/mydocker/djapps/django-zinibu-main/znbmain/static
+inspect nginx container to see what directory should be symlinked, or maybe change zinibu.settings.local right from Django to use a different static dir
+the webpack setup already accepts a parameter to sent built files to a static directory in the Django project, see django-zinibu-main
+docker inspect web2 | less
+
+>>>>>>> 70467e680a946eb306eb4844cb2bbb3c345d15c4
 make sure image alexisbellido/django:1.11 works and push it to Docker Hub before getting to compose
 
-update compose to use app2-local with 
+update compose to use app2-local with
     image: "alexisbellido/django:1.11"
 
 Why this error:
