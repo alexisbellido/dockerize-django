@@ -288,8 +288,11 @@ You can run a few Django commands from the container using /usr/local/bin/docker
   $ docker exec -it CONTAINER docker-entrypoint.sh collectstatic
   $ docker exec -it CONTAINER docker-entrypoint.sh shell
   $ docker exec -it CONTAINER docker-entrypoint.sh pip freeze
+  $ docker exec -it CONTAINER docker-entrypoint.sh dev-test
 
 Note the example passing `pip freeze` as the last parameter uses docker-entrypoint.sh just to activate the Python environment. Also, the full path is optional because it should already be in the default $PATH but I'm still including it in some of the examples for clarity.
+
+The examples with `dev-test` bypasses `pip install` when running the development server.
 
 Or you can ssh into the container, set the environment from the bash script and then run Django commands from there.
 

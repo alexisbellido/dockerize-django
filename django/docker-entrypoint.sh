@@ -48,7 +48,7 @@ if [ "$1" == "building" ]; then
 	# fi
 	echo "Just building..."
 
-elif [ "$1" == "development" ]; then
+elif [ "$1" == "development" ] || [ "$1" == "dev-test" ]; then
 	exec gosu root django-admin runserver --pythonpath=$(pwd) 0.0.0.0:$PORT
 
 elif [ "$1" == "production" ]; then
