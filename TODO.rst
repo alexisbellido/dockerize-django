@@ -7,6 +7,8 @@ Automate this to avoid matching in docker command: Note that the environment var
 
 update docker-compose (use version 3?) specific to local development and use variations of app server to use local, s3, etc. the new composer should use a shorter name to create easier own network and try to use Django project and replace djapps with django-apps and with relative paths (https://docs.docker.com/compose/compose-file/#volumes). Once done and test Django project is running, merge into master and continue with next steps.
 
+manage releases, deploy and rollback with Ansible? See https://www.12factor.net/build-release-run and https://github.com/ansistrano/deploy
+
 ansible to create directory structure and other basics
 
 use symlinks for nginx to get static files directly from webpack's directory without using collectstatic, maybe include something in Django's settings files to make it  easier.
