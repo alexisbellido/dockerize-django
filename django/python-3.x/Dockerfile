@@ -1,4 +1,4 @@
-FROM python:3.6.1-slim
+FROM python:3.6.3
 MAINTAINER Alexis Bellido <a@zinibu.com>
 
 # With some ideas borrowed from https://hub.docker.com/_/postgres/
@@ -53,10 +53,12 @@ ENV REDIS_PORT 6379
 ENV SETTINGS_MODULE local
 
 RUN /usr/local/bin/python3.6 -m venv /root/.venv/django
+RUN . /root/.venv/django/bin/activate
 
-RUN . /root/.venv/django/bin/activate \
-  && curl https://bootstrap.pypa.io/get-pip.py | python \
-  && pip install --upgrade pip
+# Python image already includes latest pip and virtualenv so no need for this
+# RUN . /root/.venv/django/bin/activate \
+#  && curl https://bootstrap.pypa.io/get-pip.py | python \
+#  && pip install --upgrade pip
 
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

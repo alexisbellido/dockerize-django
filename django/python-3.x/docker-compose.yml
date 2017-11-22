@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+
+  django-test1:
+    container_name: django-test1
+    hostname: django-test1
+    image: "alexisbellido/django:1.11"
+    command: ["development"]
+    working_dir: /root
+    environment:
+      - PROJECT_NAME=zinibu
+      - SETTINGS_MODULE=locals3 
+      - POSTGRES_USER=user1 
+      - POSTGRES_PASSWORD=user_secret 
+      - POSTGRES_DB=db1 
+      - POSTGRES_HOST=db1 
+      - SSH_AUTH_SOCK=/run/ssh_agent
+    ports:
+      - "50021:8000"
+    volumes:
+      - ~/Projects/zinibu/django-project:/root/zinibu
+      - ~/Projects/zinibu/django-apps:/root/django-apps
+      - ~/.ssh/id_rsa:/root/.ssh/id_rsa
+      - $SSH_AUTH_SOCK:/run/ssh_agent

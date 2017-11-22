@@ -1,4 +1,4 @@
-FROM python:3.6.1-slim
+FROM python:2.7.14
 MAINTAINER Alexis Bellido <a@zinibu.com>
 
 # With some ideas borrowed from https://hub.docker.com/_/postgres/
@@ -34,9 +34,9 @@ RUN set -x \
   && apt-get install -y liblcms2-dev \
   && apt-get install -y libwebp-dev \
   && apt-get install -y postgresql-client-9.4 \
-  && apt-get install -y python3-dev \
-  && apt-get install -y python3-setuptools \
-  && apt-get install -y python3-tk \
+  && apt-get install -y python-dev \
+  && apt-get install -y python-setuptools \
+  && apt-get install -y python-tk \
   && apt-get install -y tk8.6-dev
 
 RUN mkdir -p /root/.ssh \
@@ -52,11 +52,13 @@ ENV REDIS_HOST none
 ENV REDIS_PORT 6379
 ENV SETTINGS_MODULE local
 
-RUN /usr/local/bin/python3.6 -m venv /root/.venv/django
+# Python image already includes latest pip and virtualenv so no need for this
+# RUN curl https://bootstrap.pypa.io/get-pip.py | python \
+#  && pip install --upgrade pip \
+#  && pip install virtualenv
 
-RUN . /root/.venv/django/bin/activate \
-  && curl https://bootstrap.pypa.io/get-pip.py | python \
-  && pip install --upgrade pip
+RUN virtualenv /root/.venv/django
+RUN . /root/.venv/django/bin/activate
 
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
