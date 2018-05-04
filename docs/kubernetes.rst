@@ -36,8 +36,8 @@ See:
 `<https://github.com/kubernetes/minikube/issues/2622>`_
 
 
-===
 Normal install of minikube as root
+------------------------------------------------------------
 
 root@armitage:~# curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube && mv minikube /usr/local/bin/
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
@@ -97,9 +97,14 @@ rm -rf /etc/kubernetes/ # this seems to be enough to recreate minikube
 systemctl stop '*kubelet*.mount'
 docker system prune -af --volumes
 docker images
-systemctl status kubelet.service 
 systemctl stop kubelet.service 
 systemctl disable kubelet.service 
+
+systemctl status kubelet.service 
+
+Mount directories
+------------------------------------------------------------
+
 
 Dashboard not working with --vm-driver=none
 ------------------------------------------------------------
@@ -109,4 +114,26 @@ W0504 15:19:58.594836   24041 root.go:148] Error reading config file at /root/.m
 I0504 15:19:58.594982   24041 notify.go:109] Checking for updates...
 Could not find finalized endpoint being pointed to by kubernetes-dashboard: Error validating service: Error getting service kubernetes-dashboard: services "kubernetes-dashboard" not found
 
-Keep using VirtualBox for now until I can deploy dashboard on my own.
+Keep using VirtualBox for now until I can deploy dashboard on my own? Don't think so. Only problem with vmdriver=none seems to be dashboard. Learn how to expose it. See difference between service hello-minikube being type NodePort and service kubernetes being type ClusterIP
+
+root@armitage:~# kubectl get services --all-namespaces 
+NAMESPACE     NAME                   TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+default       hello-minikube         NodePort    10.107.126.7     <none>        8080:30263/TCP   20m
+default       kubernetes             ClusterIP   10.96.0.1        <none>        443/TCP          22m
+kube-system   kube-dns               ClusterIP   10.96.0.10       <none>        53/UDP,53/TCP    22m
+kube-system   kubernetes-dashboard   ClusterIP   10.111.107.230   <none>        443/TCP          16m
+root@armitage:~# kubectl get services -n kube-system
+NAME                   TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)         AGE
+kube-dns               ClusterIP   10.96.0.10       <none>        53/UDP,53/TCP   22m
+kubernetes-dashboard   ClusterIP   10.111.107.230   <none>        443/TCP         16m
+root@armitage:~# kubectl get services -n default
+NAME             TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
+hello-minikube   NodePort    10.107.126.7   <none>        8080:30263/TCP   20m
+kubernetes       ClusterIP   10.96.0.1      <none>        443/TCP          22m
+root@armitage:~# kubectl get services 
+NAME             TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
+hello-minikube   NodePort    10.107.126.7   <none>        8080:30263/TCP   20m
+kubernetes       ClusterIP   10.96.0.1      <none>        443/TCP          22m
+
+I think I have to manually deploy dashboard as explained at https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/
+
