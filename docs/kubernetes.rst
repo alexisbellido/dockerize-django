@@ -39,27 +39,31 @@ See:
 Normal install of minikube as root
 ------------------------------------------------------------
 
-root@armitage:~# curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube && mv minikube /usr/local/bin/
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-100 40.7M  100 40.7M    0     0  6608k      0  0:00:06  0:00:06 --:--:-- 6932k
+Follow these steps under `Linux Continuous Integration without VM Support <https://github.com/kubernetes/minikube>`_ to run without virtual machine on Linux.
 
-I also tried the command below without --apiserver-ips and --apiserver-name and I was able to access from other host as 192.168.1.204 (the local IP of this host)
+curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube
+curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl
 
-root@armitage:~# minikube start --vm-driver=none --apiserver-ips 127.0.0.1 --apiserver-name localhost
-Starting local Kubernetes v1.10.0 cluster...
-Starting VM...
-Getting VM IP address...
-Moving files into cluster...
-Downloading kubeadm v1.10.0
-Downloading kubelet v1.10.0
-Finished Downloading kubelet v1.10.0
-Finished Downloading kubeadm v1.10.0
-Setting up certs...
-Connecting to cluster...
-Setting up kubeconfig...
-Starting cluster components...
-Kubectl is now configured to use the cluster.
+export MINIKUBE_WANTUPDATENOTIFICATION=false
+export MINIKUBE_WANTREPORTERRORPROMPT=false
+export MINIKUBE_HOME=$HOME
+export CHANGE_MINIKUBE_NONE_USER=true
+mkdir $HOME/.kube || true
+touch $HOME/.kube/config
+
+export KUBECONFIG=$HOME/.kube/config
+sudo -E ./minikube start --vm-driver=none
+
+# this for loop waits until kubectl can access the api server that Minikube has created
+for i in {1..150}; do # timeout for 5 minutes
+   ./kubectl get po &> /dev/null
+   if [ $? -ne 1 ]; then
+      break
+  fi
+  sleep 2
+done
+
+# kubectl commands are now able to interact with Minikube cluster
 
 ===================
 WARNING: IT IS RECOMMENDED NOT TO RUN THE NONE DRIVER ON PERSONAL WORKSTATIONS
@@ -106,34 +110,9 @@ Mount directories
 ------------------------------------------------------------
 
 
-Dashboard not working with --vm-driver=none
+Dashboard and --vm-driver=none
 ------------------------------------------------------------
 
+Deploy dashboard with proxy as explained at `<https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/>`_ and grant admin access for local `<https://github.com/kubernetes/dashboard/wiki/Access-control>`_.
+
 root@armitage:~# minikube dashboard --logtostderr --v=5
-W0504 15:19:58.594836   24041 root.go:148] Error reading config file at /root/.minikube/config/config.json: open /root/.minikube/config/config.json: no such file or directory
-I0504 15:19:58.594982   24041 notify.go:109] Checking for updates...
-Could not find finalized endpoint being pointed to by kubernetes-dashboard: Error validating service: Error getting service kubernetes-dashboard: services "kubernetes-dashboard" not found
-
-Keep using VirtualBox for now until I can deploy dashboard on my own? Don't think so. Only problem with vmdriver=none seems to be dashboard. Learn how to expose it. See difference between service hello-minikube being type NodePort and service kubernetes being type ClusterIP
-
-root@armitage:~# kubectl get services --all-namespaces 
-NAMESPACE     NAME                   TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
-default       hello-minikube         NodePort    10.107.126.7     <none>        8080:30263/TCP   20m
-default       kubernetes             ClusterIP   10.96.0.1        <none>        443/TCP          22m
-kube-system   kube-dns               ClusterIP   10.96.0.10       <none>        53/UDP,53/TCP    22m
-kube-system   kubernetes-dashboard   ClusterIP   10.111.107.230   <none>        443/TCP          16m
-root@armitage:~# kubectl get services -n kube-system
-NAME                   TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)         AGE
-kube-dns               ClusterIP   10.96.0.10       <none>        53/UDP,53/TCP   22m
-kubernetes-dashboard   ClusterIP   10.111.107.230   <none>        443/TCP         16m
-root@armitage:~# kubectl get services -n default
-NAME             TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
-hello-minikube   NodePort    10.107.126.7   <none>        8080:30263/TCP   20m
-kubernetes       ClusterIP   10.96.0.1      <none>        443/TCP          22m
-root@armitage:~# kubectl get services 
-NAME             TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
-hello-minikube   NodePort    10.107.126.7   <none>        8080:30263/TCP   20m
-kubernetes       ClusterIP   10.96.0.1      <none>        443/TCP          22m
-
-I think I have to manually deploy dashboard as explained at https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/
-
