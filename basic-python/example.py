@@ -18,6 +18,8 @@ def process(environment, dryrun, accession_number=None, input=None):
         click.echo('Nothing to process. Pass an accession number or input file\n')
         exit()
 
+    click.echo(config)
+
     accession_numbers = []
 
     if accession_number:

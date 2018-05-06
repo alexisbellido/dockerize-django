@@ -1,23 +1,12 @@
 production:
-  mssql:
-    host: "160.111.103.117\\v3"
-    database: CHTMS
-    username: chprod
-    password: Wednesday17!
   mysql:
-    host: localhost
-    database: collection
+    host: 1.2.3.4
+    database: livedb
     username: root
-    password: ''
+    password: verysecret
 local:
-  mssql:
-    host: mydbinstance3.cxymainqhrbu.us-east-1.rds.amazonaws.com
-    database: CHTMS
-    username: alexis
-    password: monoloco
   mysql:
-    # host: collectiondb
     host: 127.0.0.1
-    database: collection
+    database: localdb
     username: root
-    password: ''
+    password: secret

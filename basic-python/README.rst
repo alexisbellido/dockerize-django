@@ -8,4 +8,4 @@ Note how the image is built without a Python virtual environment and the --no-ca
 TODO
 --------------------------------------------------
 
-Try simple Python script with venv and Docker
+Try simple Python script with venv and Docker.
