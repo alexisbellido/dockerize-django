@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Activate virtual environment and install packages
-# source /root/.venv/app/bin/activate
-# pip install --upgrade pip
-# pip install -r requirements.txt{}
-
+# Activate virtual environment and expands positional parameters
+source /root/.venv/app/bin/activate
 exec "$@"
