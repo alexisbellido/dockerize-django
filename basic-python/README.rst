@@ -10,6 +10,8 @@ Dockerfile and docker-entrypoint.sh follow standard practices to activate the Py
   $ docker build -t alexisbellido/test:0.1 .
   $ docker run -it --rm -v $PWD:/root alexisbellido/test:0.1 python example.py --input accession-numbers
 
+Also see `<https://github.com/alexisbellido/znbpackage>`_.
+
 Use multi-stage builds
 --------------------------------------------------
 
@@ -19,7 +21,7 @@ and then using that to clone private repositories, either via git clone or pip -
 Note that that ssh and git clients are needed to clone over git+ssh so they are
 both installed in the intermediate build stage.
 
-See `<https://docs.docker.com/develop/develop-images/multistage-build/`_.
+See `Docker multi-stage builds <https://docs.docker.com/develop/develop-images/multistage-build/>`_.
 
 Stop at a specific build stage. Note the use of --no-cache to simplify testing.
 
