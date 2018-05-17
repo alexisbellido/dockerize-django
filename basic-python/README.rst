@@ -37,7 +37,7 @@ Run until final stage, which won't have SSH_PRIVATE_KEY information.
   $ docker build --build-arg SSH_PRIVATE_KEY="$(cat ~/.ssh/id_rsa)" -t alexisbellido/test:0.2 .
   $ docker run -it --rm alexisbellido/test:0.2 /bin/bash
 
-Installing with pip from private VCS's
+Install with pip from private VCS's
 --------------------------------------------------
 
 .. code-block:: bash
@@ -45,6 +45,21 @@ Installing with pip from private VCS's
   $ pip install -e git+ssh://user@example.com:/home/user/git/app-name.git#egg=app-name
   $ pip install -e git://github.com/celery/django-celery.git#egg=django-celery
   $ pip install -e git://github.com/username/app-nam  e.git#egg=app-name
+
+Access a service running on the host from the container
+------------------------------------------------------------------------
+
+Run container using --network host to access a MySQL instance running on host. This instance could be another container exposing port 3306 to the host.
+
+.. code-block:: bash
+
+  $ docker run -it --rm --network host -v $PWD:/root/Projects alexisbellido/color-process:0.1 /bin/bash
+
+and then container can access MySQL from the host using 127.0.0.1. For some reason the name localhost won't work.
+
+.. code-block:: bash
+
+  # mysql -u root -h 127.0.0.1 collection
 
 TODO
 --------------------------------------------------
