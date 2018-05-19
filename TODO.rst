@@ -18,7 +18,13 @@ Docker containers can connect to MySQL container exposing port 3306 and running 
 .. code-block:: bash
 
   $ docker run -it --rm mysql:5.7.17 /bin/bash
-  root@b9516d51b37f:/# mysql -u root -h 192.168.1.5 collectio
+  root@b9516d51b37f:/# mysql -u root -h 192.168.1.5 collection
+  
+Standard Django setup will use PostgreSQL but later for custom application try multidatabase to write to second MySQL legacy database. Use Django's raw queries to write to legacy database.
+
+PostgreSQL JSONb
+
+UWSGI vs. Gunicorn
 
 ===
 
