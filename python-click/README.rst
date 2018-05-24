@@ -35,7 +35,8 @@ Run until final stage, which won't have SSH_PRIVATE_KEY information.
 .. code-block:: bash
 
   $ docker build --build-arg SSH_PRIVATE_KEY="$(cat ~/.ssh/id_rsa)" -t alexisbellido/test:0.2 .
-  $ docker run -it --rm alexisbellido/test:0.2 /bin/bash
+  $ docker run -it --rm -v $PWD:/root/app -w /root/app alexisbellido/test:0.2 /bin/bash
+  $ docker run -it --rm -v $PWD:/root/app -w /root/app alexisbellido/test:0.2 python example.py
 
 Install with pip from private VCS's
 --------------------------------------------------

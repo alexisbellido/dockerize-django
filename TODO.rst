@@ -1,6 +1,33 @@
 TODO
 ==================================================
 
+branch: feature/basic-compose
+
+Setup clean Django with Gunicorn (or UWSGI?) and Nginx for both dev and prod.
+
+Keep everything generic and when needed move to private Git repositories and Docker registry.
+
+Make it easy to pass configuration variables. Should I continue with multiple settings approach in Django or do something via orchestration?
+
+Use multi-stage builds and everything in Docker images.
+
+Start with Docker compose and then make it portable to ECS and K8S.
+
+Docker containers can connect to MySQL container exposing port 3306 and running on another host by using that other host's IP (192.168.1.5 in this example).
+
+.. code-block:: bash
+
+  $ docker run -it --rm mysql:5.7.17 /bin/bash
+  root@b9516d51b37f:/# mysql -u root -h 192.168.1.5 collection
+  
+Standard Django setup will use PostgreSQL but later for custom application try multidatabase to write to second MySQL legacy database. Use Django's raw queries to write to legacy database.
+
+PostgreSQL JSONb
+
+UWSGI vs. Gunicorn
+
+===
+
 I'll continue here once I've explored the basics with the `Ansible and Docker project <https://github.com/alexisbellido/ansible-and-docker/>`_.
 
 Add PostgreSQL container to work with docker-compose and import a database to see the site running.
