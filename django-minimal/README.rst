@@ -14,27 +14,38 @@ These commands run from directory where the Dockerfile for django-minimal is so 
 
 When mounting volume with docker run the mount hides corresponding directory on container. Use for changing code on development.
 
-TODO
-========================================
-
-Run dev server and expose port to see basic Django page. No settings changed yet.
-# django-admin runserver --pythonpath=$(pwd) --settings=project.settings 0.0.0.0:8000
-
-Modify entrypoint to run development server.
-
-Modify entrypoint to run production with Gunicorn and connect with an Nginx container.
-
+Run development server in foreground mode with support for interactive processes (-it) and removal on exit (--rm).
 
 .. code-block:: bash
 
-  root@3bf8ea214201:~/project# pwd
-  /root/project
-  root@3bf8ea214201:~/project# django-admin shell --pythonpath=$(pwd) --settings=project.settings
-  Python 3.6.5 (default, May  5 2018, 03:07:21) 
-  [GCC 6.3.0 20170516] on linux
-  Type "help", "copyright", "credits" or "license" for more information.
-  (InteractiveConsole)
-  >>> import django
-  >>> django.VERSION
-  (2, 0, 5, 'final', 0)
+  $ docker run -it --rm -p 8000:8000 alexisbellido/django-minimal:0.1 development
+
+Run production in detached mode.
+
+.. code-block:: bash
+
+  $ docker run -d -p 8000:8000 alexisbellido/django-minimal:0.1 production 
+  
+Any other commands.
+
+.. code-block:: bash
+
+  $ docker run -it --rm -p 8000:8000 alexisbellido/django-minimal:0.1 django-admin help
+  
+Execute command on running container
+
+.. code-block:: bash
+
+  $ docker exec -it container-name command
+
+TODO
+========================================
+
+Modify entrypoint to run production with Gunicorn with an Nginx container.
+
+Yes, try different settings per Django environment and use environment variables from Docker Compose. Try to make minimal changes to Django project code. Mount volume when running to try changing Django project code.
+
+docker run -d 
+ 
+PostgreSQL basics.
 

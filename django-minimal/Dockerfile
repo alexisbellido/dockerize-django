@@ -14,14 +14,11 @@ RUN mkdir -p /root/.ssh/ \
   && chmod 600 /root/.ssh/id_rsa \
   && echo "StrictHostKeyChecking no " > /root/.ssh/config
 
-
 # Private repositories can be cloned now so the following will work on the
 # intermediate container.
 # git clone git@github.com:user/project.git
 # pip install -e git://git.example.com/MyProject#egg=MyProject
 
-# For Django minimal that Django project is right here and copied to container.
-COPY project /root/project
 
 COPY requirements.txt /root/requirements.txt
 
@@ -35,12 +32,19 @@ LABEL maintainer="Alexis Bellido <a@zinibu.com>"
 
 ENV PROJECT_NAME project
 ENV PORT 8000
+
+# TODO do I still different settings per environment?
 ENV SETTINGS_MODULE local
 
 WORKDIR /root/$PROJECT_NAME
 EXPOSE $PORT
 
+# Copy the Python virtual environment setup. This is the multi-stage build magic.
 COPY --from=builder /env /env
+
+# For the minimal setup Django project is right here so we just copy it to the container.
+COPY $PROJECT_NAME /root/$PROJECT_NAME
+
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
 SHELL ["/bin/bash", "-c"]

@@ -73,7 +73,7 @@ Create compressed database dump from the container (note this is saving to /tmp 
 
 .. code-block:: bash
 
-  $ docker exec -it db2 /bin/bash``
+  $ docker exec -it db2 /bin/bash
   $ pg_dump -Fc -v -h db2 -U user2 db2 > /tmp/db2-$(date +"%m%d%Y-%H%M%S").dump
 
 Create compressed database dump from AWS RDS.
@@ -499,12 +499,23 @@ Find out details about run command used to start a container:
   $ docker inspect -f '{{.Config.Entrypoint}} {{.Config.Cmd}}' CONTAINER
   $ docker inspect -f '{{.Config.Env}}' CONTAINER
 
-And to inspect everything about the container:
+And to inspect everything about the container.
 
 .. code-block:: bash
 
   $ docker inspect CONTAINER | less
 
+Remove stopped containers.
+
+  .. code-block:: bash
+
+    $ docker rm $(docker ps -aq)
+
+Remove images without tags.
+
+.. code-block:: bash
+
+  $ docker rmi $(docker images -f dangling=true -q)
 
 Troubleshooting
 ------------------------------------------
