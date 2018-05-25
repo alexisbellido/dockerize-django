@@ -139,15 +139,6 @@ You can monitor connections with:
 Python and Django
 ------------------------------------------
 
-This image contains openssh-client and the examples below use a data volume to forward the host's ssh agent to the container. This is helpful if the container needs to use ssh to connect to other servers (like private git repositories or GitHub) using the host's ssh key. The key parameters in the ``docker run`` command are ``-v ~/.ssh/id_rsa:/root/.ssh/id_rsa -v $SSH_AUTH_SOCK:/run/ssh_agent -e SSH_AUTH_SOCK=/run/ssh_agent``.
-
-Once a container is running and assuming your host has its private key authorized on example.com or github.com you can test the ssh connection from the container.
-
-.. code-block:: bash
-
-  $ ssh user@example.com
-  $ ssh -T git@github.com
-
 The image's entrypoint (*/usr/local/bin/docker-entrypoint.sh*, copied to the container and defined with ENTRYPOINT in the Dockerfile) always sets the Python virtual environment first and then accepts parameters that can be passed at the end of the docker run command. If no parameter is passed, the value of CMD in the Dockerfile is used (usually "development").
 
 Here are some of the parameters the entrypoint accepts:
