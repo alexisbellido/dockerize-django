@@ -1,5 +1,5 @@
-FROM nginx:1.10.2
-MAINTAINER Alexis Bellido <a@zinibu.com>
+FROM nginx:1.14.0
+LABEL maintainer="Alexis Bellido <a@zinibu.com>"
 
 ENV APP_HOST app_host
 ENV APP_PORT 8000

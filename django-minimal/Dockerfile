@@ -19,7 +19,6 @@ RUN mkdir -p /root/.ssh/ \
 # git clone git@github.com:user/project.git
 # pip install -e git://git.example.com/MyProject#egg=MyProject
 
-
 COPY requirements.txt /root/requirements.txt
 
 RUN python -m venv /env \

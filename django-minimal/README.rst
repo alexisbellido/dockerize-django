@@ -5,26 +5,32 @@ Just the basics to launch a Docker-based Django project with Gunicorn for produc
 
 No need for `gosu <https://github.com/tianon/gosu>`_ because there's no need to step down from the root user during container startup, specifically in the *ENTRYPOINT*.
 
-These commands run from directory where the Dockerfile for django-minimal is so that $PWD/project is the Django project directory mapped to /root/project in the container.
+These build command runs from the directory where the Dockerfile for django-minimal is so that $PWD/project is the Django outer project directory mapped to /root/project in the container.
 
 .. code-block:: bash
 
   $ docker build --build-arg SSH_PRIVATE_KEY="$(cat ~/.ssh/id_rsa)" -t alexisbellido/django-minimal:0.1 .
-  $ docker run -it --rm -v $PWD/project:/root/project -w /root/project -p 8000:8000 alexisbellido/django-minimal:0.1 /bin/bash
+  $ docker run -it --rm -v /path/to/outer/project:/root/project -w /root/project -p 8000:8000 alexisbellido/django-minimal:0.1 /bin/bash
 
-When mounting volume with docker run the mount hides corresponding directory on container. Use for changing code on development.
+When mounting volume (-v) the /root/project copied from the image is hidden in the container. Use this for changing code during development.
 
 Run development server in foreground mode with support for interactive processes (-it) and removal on exit (--rm).
 
 .. code-block:: bash
 
   $ docker run -it --rm -p 8000:8000 alexisbellido/django-minimal:0.1 development
+  
+Run development server in detached mode on a bridge network.
+
+.. code-block:: bash
+  
+  $ docker run -d --network=project_network --name=app1 -p 8000:8000 alexisbellido/django-minimal:0.1 development
 
 Run production in detached mode.
 
 .. code-block:: bash
 
-  $ docker run -d -p 8000:8000 alexisbellido/django-minimal:0.1 production 
+  $ docker run -d --network=project_network --name=app1 -p 8000:8000 alexisbellido/django-minimal:0.1 production 
   
 Any other commands.
 
@@ -41,7 +47,13 @@ Execute command on running container
 TODO
 ========================================
 
+Use updated Nginx conf from Gunicorn docs.
+
+At some point push basics to Docker Hub and create docker-compose.yml to set up everything.
+
 Modify entrypoint to run production with Gunicorn with an Nginx container.
+
+Rebuild images for django-minimal and nginx.
 
 Yes, try different settings per Django environment and use environment variables from Docker Compose. Try to make minimal changes to Django project code. Mount volume when running to try changing Django project code.
 
@@ -49,3 +61,4 @@ docker run -d
  
 PostgreSQL basics.
 
+Move docs specific to the full stack to main README and leave specifics for this image here.
