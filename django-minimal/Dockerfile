@@ -14,8 +14,6 @@ RUN mkdir -p /root/.ssh/ \
   && chmod 600 /root/.ssh/id_rsa \
   && echo "StrictHostKeyChecking no " > /root/.ssh/config
 
-ENV PORT 8000
-EXPOSE $PORT
 
 # Private repositories can be cloned now so the following will work on the
 # intermediate container.
@@ -34,7 +32,13 @@ RUN python -m venv /env \
 
 FROM python:3.6.5-slim-stretch
 LABEL maintainer="Alexis Bellido <a@zinibu.com>"
-WORKDIR /root
+
+ENV PROJECT_NAME project
+ENV PORT 8000
+ENV SETTINGS_MODULE local
+
+WORKDIR /root/$PROJECT_NAME
+EXPOSE $PORT
 
 COPY --from=builder /env /env
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
