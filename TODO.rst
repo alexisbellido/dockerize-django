@@ -1,7 +1,7 @@
 TODO
 ==================================================
 
-Should I put media and static somewhere else on host, outside Django project dir, and map when running Nginx containers? 
+Should I put media and static somewhere else on host, outside Django project dir, and map when running Nginx containers?
 
 include a basic Django app next to manage.py in image
 include a basic Django app from private git repo in image
@@ -9,6 +9,7 @@ include a basic Django app from private repo as editable
 all of that can be done by mounting volume so try that too
 
 create docker-compose.yml to set up everything.
+Do I use hostname for compose? what's different hostname and name?
 
 Use updated Nginx conf from Gunicorn docs.
 
@@ -32,7 +33,7 @@ Docker containers can connect to MySQL container exposing port 3306 and running 
 
   $ docker run -it --rm mysql:5.7.17 /bin/bash
   root@b9516d51b37f:/# mysql -u root -h 192.168.1.5 collection
-  
+
 Standard Django setup will use PostgreSQL but later for custom application try multidatabase to write to second MySQL legacy database. Use Django's raw queries to write to legacy database.
 
 PostgreSQL JSONb

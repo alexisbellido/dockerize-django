@@ -53,30 +53,36 @@ The examples below assume a basic architecture like this:
 PostgreSQL
 ------------------------------------------
 
-Run the container passing parameters.
+Run the `official PostgreSQL image <https://hub.docker.com/_/postgres/>`_ passing parameters.
 
 .. code-block:: bash
 
-  $ docker run -d --network=project_network --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --hostname=db1 --name=db1 postgres:9.4
+  $ docker run -d --network=project_network --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --name=dbserver1 postgres:10.4
 
-Access psql.
+Connect via psql.
+
+From other container on the same network
 
 .. code-block:: bash
 
-  $ docker exec -it db1 psql -h db1 -U user1 -d db1
+  $ docker run -it --rm --network=project_network postgres:10.4 psql -h dbserver1 -U user1 -d db1
+
+.. code-block:: bash
+
+  $ docker exec -it db1 psql -h dbserver1 -U user1 -d db1
 
 To restore from a dump created with just psql.
 
 .. code-block:: bash
 
-  $ docker exec -it db1 psql -h db1 -U user1 -d db1 -f /tmp/db1.sql
+  $ docker exec -it dbserver1 psql -h dbserver1 -U user1 -d db1 -f /tmp/db1.sql
 
 Create compressed database dump from the container (note this is saving to /tmp just as an example, you should use a non-public location).
 
 .. code-block:: bash
 
-  $ docker exec -it db2 /bin/bash
-  $ pg_dump -Fc -v -h db2 -U user2 db2 > /tmp/db2-$(date +"%m%d%Y-%H%M%S").dump
+  $ docker exec -it dbserver1 /bin/bash
+  $ pg_dump -Fc -v -h dbserver1 -U user1 db1 > /tmp/db1-$(date +"%m%d%Y-%H%M%S").dump
 
 Create compressed database dump from AWS RDS.
 
@@ -88,20 +94,20 @@ Copy a database dump from a container (db2) to the current directory on the host
 
 .. code-block:: bash
 
-  $ docker cp db2:/tmp/dbname.dump .
+  $ docker cp dbserver1:/tmp/dbname.dump .
 
 Use docker cp to copy a database dump, created with pg_dump, and restore it to a container.
 
 .. code-block:: bash
 
-  $ docker cp /home/user/backup/dbname.dump db1:/tmp/dbname.dump
+  $ docker cp /home/user/backup/dbname.dump dbserver1:/tmp/dbname.dump
 
 Restore using -c to drop database objects before recreating them.  You may need to ssh into the container before you can restore with pg_restore.
 
 .. code-block:: bash
 
-  $ docker exec -it db2 /bin/bash
-  $ pg_restore -v -c -h db2 -U user2 -d db2 /tmp/dbname.dump
+  $ docker exec -it dbserver1 /bin/bash
+  $ pg_restore -v -c -h dbserver1 -U user1 -d db1 /tmp/dbname.dump
 
 You can also use Docker Compose to launch all the containers for your stack at once.
 
@@ -114,13 +120,13 @@ This connects to a container creater with Docker Compose and doesn't need to ssh
 
 .. code-block:: bash
 
-  $ docker-compose exec db1 pg_restore -v -c -h db1 -U user1 -d db1 /tmp/dbname.dump
+  $ docker-compose exec db1 pg_restore -v -c -h dbserver1 -U user1 -d db1 /tmp/dbname.dump
 
 Don't forget to delete the temporary database by logging in to the container and deleting it from bash.
 
 .. code-block:: bash
 
-  $ docker exec -it db1 /bin/bash
+  $ docker exec -it dbserver1 /bin/bash
 
 Redis
 ------------------------------------------
@@ -335,7 +341,7 @@ The Django project, as created by django-admin startproject, is in a directory w
 
 Note django-app-1 and django-app-2 could be siblings of manage.py or be installed via pip so that they are in Python's module search path. The directories media and static should be used by Nginx to serve assets.
 
-# TODO Python code should be included in Django (app) image, should media and static be part of Nginx (web) image? Probably need a way to have a shared filesystem for those. Mapped host volumes for development and NFS, EFS or similar on production. What about Kubernetes volumes? 
+# TODO Python code should be included in Django (app) image, should media and static be part of Nginx (web) image? Probably need a way to have a shared filesystem for those. Mapped host volumes for development and NFS, EFS or similar on production. What about Kubernetes volumes?
 
 .. code-block:: bash
 
@@ -473,9 +479,9 @@ Connect to a container.
   $ docker exec -it CONTAINER /bin/bash
 
 Connect to a running container using the entrypoint. In a Django container this will take care of activating the virtual environment.
-    
+
   .. code-block:: bash
-    
+
     $ docker exec -it CONTAINER docker-entrypoint.sh /bin/bash
 
 Find out details about run command used to start a container:
@@ -502,7 +508,7 @@ Remove images without tags.
 .. code-block:: bash
 
   $ docker rmi $(docker images -f dangling=true -q)
-    
+
 You can detach from a running container, the container will continue running, with CTRL+p CTRL+q and then attach back.
 
 .. code-block:: bash
