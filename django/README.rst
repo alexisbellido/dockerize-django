@@ -1,16 +1,16 @@
-Minimal Django Project
+Django Project
 ========================================
 
 Just the basics to launch a Docker-based Django project with Gunicorn for production and Django runserver for development.
 
 No need for `gosu <https://github.com/tianon/gosu>`_ because there's no need to step down from the root user during container startup, specifically in the *ENTRYPOINT*.
 
-These build command runs from the directory where the Dockerfile for django-minimal is so that $PWD/project is the Django outer project directory mapped to /root/project in the container.
+These build command runs from the directory where the Dockerfile for Django is so that $PWD/project is the outer project directory mapped to /root/project in the container.
 
 .. code-block:: bash
 
-  $ docker build --build-arg SSH_PRIVATE_KEY="$(cat ~/.ssh/id_rsa)" -t alexisbellido/django-minimal:0.1 .
-  $ docker run -it --rm -v /path/to/outer/project:/root/project -w /root/project -p 8000:8000 alexisbellido/django-minimal:0.1 /bin/bash
+  $ docker build --build-arg SSH_PRIVATE_KEY="$(cat ~/.ssh/id_rsa)" -t alexisbellido/django:2.0.5 .
+  $ docker run -it --rm -v /path/to/outer/project:/root/project -w /root/project -p 8000:8000 alexisbellido/django:2.0.5 /bin/bash
 
 When mounting volume (-v) the /root/project copied from the image is hidden in the container. Use this for changing code during development.
 
@@ -18,25 +18,25 @@ Run development server in foreground mode with support for interactive processes
 
 .. code-block:: bash
 
-  $ docker run -it --rm -p 8000:8000 alexisbellido/django-minimal:0.1 development
+  $ docker run -it --rm -p 8000:8000 alexisbellido/django:2.0.5 development
   
 Run development server in detached mode on a bridge network.
 
 .. code-block:: bash
   
-  $ docker run -d --network=project_network --name=app1 -p 8000:8000 alexisbellido/django-minimal:0.1 development
+  $ docker run -d --network=project_network --name=app1 -p 8000:8000 alexisbellido/django:2.0.5 development
 
 Run production in detached mode.
 
 .. code-block:: bash
 
-  $ docker run -d --network=project_network --name=app1 -p 8000:8000 alexisbellido/django-minimal:0.1 production 
+  $ docker run -d --network=project_network --name=app1 -p 8000:8000 alexisbellido/django:2.0.5 production 
   
 Any other commands.
 
 .. code-block:: bash
 
-  $ docker run -it --rm -p 8000:8000 alexisbellido/django-minimal:0.1 django-admin help
+  $ docker run -it --rm -p 8000:8000 alexisbellido/django:2.0.5 django-admin help
   
 Execute command on running container
 
@@ -53,7 +53,7 @@ At some point push basics to Docker Hub and create docker-compose.yml to set up 
 
 Modify entrypoint to run production with Gunicorn with an Nginx container.
 
-Rebuild images for django-minimal and nginx.
+Rebuild images for django and nginx.
 
 Yes, try different settings per Django environment and use environment variables from Docker Compose. Try to make minimal changes to Django project code. Mount volume when running to try changing Django project code.
 
