@@ -20,11 +20,11 @@ Run development server in foreground mode with support for interactive processes
 
   $ docker run -it --rm -p 8000:8000 alexisbellido/django:2.0.5 development
   
-Run development server in detached mode on a bridge network.
+Run development server in detached mode on a bridge network and mapping project directory for development.
 
 .. code-block:: bash
   
-  $ docker run -d --network=project_network --name=app1 -p 8000:8000 alexisbellido/django:2.0.5 development
+  $ docker run -d --network=project_network -v /path/to/outer/project:/root/project --name=app1 -p 8000:8000 alexisbellido/django:2.0.5 development
 
 Run production in detached mode.
 

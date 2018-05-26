@@ -316,45 +316,6 @@ Make sure to check for ALLOWED_HOSTS issues in the Django settings file:
 
   ``ALLOWED_HOSTS = ['*']``
 
-Installing Python packages on containers
----------------------------------------------------
-
-I can see the packages installed in the ``django`` virtual environment of a container.
-
-.. code-block:: bash
-
-$ docker exec -it CONTAINER /bin/bash -c "source /root/.venv/django/bin/activate && pip freeze"
-
-Install one editable package from a mapped directory.
-
-.. code-block:: bash
-
-  $ docker exec -it CONTAINER /bin/bash -c "source /root/.venv/django/bin/activate && pip install -e /root/django-apps/django-zinibu-comment"
-
-Or use a requirements file. This example uses the file included with the image but I could use any other file that I can put in a mapped directory so that the container can access it.
-
-.. code-block:: bash
-
-  $ docker exec -it CONTAINER /bin/bash -c "source /root/.venv/django/bin/activate && pip install -r /tmp/editable-requirements.txt"
-
-Install editable Python packages from host using an option in django/docker-entrypoint.sh.
-
-.. code-block:: bash
-
-  $ docker exec -it CONTAINER /bin/bash -c "source /usr/local/bin/docker-entrypoint.sh pip-install -r /tmp/editable-requirements.txt"
-
-Install editable Python packages from inside container.
-
-.. code-block:: bash
-
-  $ source /usr/local/bin/docker-entrypoint.sh pip-install /tmp/editable-requirements.txt
-  
-But using the pip-install option in the bash script is not necessary as the script will run whatever is passed and this will have the same effect.
-
-.. code-block:: bash
-
-  $ docker exec -it pytest-1 /bin/bash -c "source /usr/local/bin/docker-entrypoint.sh pip install -r /tmp/editable-requirements.txt"
-
 Nginx
 ------------------------------------------
 
@@ -497,17 +458,25 @@ Running git clone from GitHub.
 Useful commands
 ------------------------------------------
 
+Replace CONTAINER with a container name or ID.
+
 You can inspect the logs of any running container (-f works like in tail) to confirm it's working as expected:
 
 .. code-block:: bash
 
   $ docker logs -f CONTAINER
 
-SSH into a container to take a closer look:
+Connect to a container.
 
 .. code-block:: bash
 
   $ docker exec -it CONTAINER /bin/bash
+
+Connect to a running container using the entrypoint. In a Django container this will take care of activating the virtual environment.
+    
+  .. code-block:: bash
+    
+    $ docker exec -it CONTAINER docker-entrypoint.sh /bin/bash
 
 Find out details about run command used to start a container:
 
@@ -534,17 +503,11 @@ Remove images without tags.
 
   $ docker rmi $(docker images -f dangling=true -q)
     
-Connect to a running container using the entrypoint. In a Django container this will take care of activating the virtual environment.
-  
-.. code-block:: bash
-  
-  $ docker exec -it container-name docker-entrypoint.sh /bin/bash
-
 You can detach from a running container, the container will continue running, with CTRL+p CTRL+q and then attach back.
 
 .. code-block:: bash
 
-  $ docker attach container-id
+  $ docker attach CONTAINER
 
 The container had to be started (docker run) with -it for the key sequence to work. Use CTRL+c or exit to stop the container. See `docker attach <https://docs.docker.com/engine/reference/commandline/attach/>`_.
 
