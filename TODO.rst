@@ -1,6 +1,9 @@
 TODO
 ==================================================
 
+Use --mount instead of -v
+Use Docker volumes instead of bind mounts for static and media.
+Use Docker bind mounts to edit source code on host.
 Should I put media and static somewhere else on host, outside Django project dir, and map when running Nginx containers?
 
 include a basic Django app next to manage.py in image
