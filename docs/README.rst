@@ -43,22 +43,3 @@ Execute command on running container
 .. code-block:: bash
 
   $ docker exec -it container-name command
-
-TODO
-========================================
-
-Use updated Nginx conf from Gunicorn docs.
-
-At some point push basics to Docker Hub and create docker-compose.yml to set up everything.
-
-Modify entrypoint to run production with Gunicorn with an Nginx container.
-
-Rebuild images for django and nginx.
-
-Yes, try different settings per Django environment and use environment variables from Docker Compose. Try to make minimal changes to Django project code. Mount volume when running to try changing Django project code.
-
-docker run -d 
- 
-PostgreSQL basics.
-
-Move docs specific to the full stack to main README and leave specifics for this image here.
