@@ -3,6 +3,11 @@ TODO
 
 Should I put media and static somewhere else on host, outside Django project dir, and map when running Nginx containers? 
 
+include a basic Django app next to manage.py in image
+include a basic Django app from private git repo in image
+include a basic Django app from private repo as editable
+all of that can be done by mounting volume so try that too
+
 create docker-compose.yml to set up everything.
 
 Use updated Nginx conf from Gunicorn docs.
