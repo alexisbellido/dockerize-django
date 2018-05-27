@@ -1,10 +1,11 @@
 TODO
 ==================================================
 
-Use --mount instead of -v
-Use Docker volumes instead of bind mounts for static and media.
-Use Docker bind mounts to edit source code on host.
-Should I put media and static somewhere else on host, outside Django project dir, and map when running Nginx containers?
+Figure out the problem using volumes with test.conf mapping to /etc/nginx/conf.d/default.conf in container in Nginx mounting test.conf first.
+
+Then new Gunicorn configuration for Nginx bind mounting gunicorn.conf to /etc/nginx/conf.d/default.conf in container.
+
+Remove test.conf and gunicorn.conf when done.
 
 include a basic Django app next to manage.py in image
 include a basic Django app from private git repo in image

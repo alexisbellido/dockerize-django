@@ -343,9 +343,44 @@ Note django-app-1 and django-app-2 could be siblings of manage.py or be installe
 
 # TODO Python code should be included in Django (app) image, should media and static be part of Nginx (web) image? Probably need a way to have a shared filesystem for those. Mapped host volumes for development and NFS, EFS or similar on production. What about Kubernetes volumes?
 
+# TODO use Docker volume (replace mount type below) to serve static and media. Node container to run webpack should use the same volume.
+
+Create volumes for media and static.
+
 .. code-block:: bash
 
-  $ docker run -d --network=project_network -v /path/to/outer/project:/usr/share/nginx/project --env APP_HOST=app1 -p 33334:80 --name=web1 alexisbellido/nginx:1.14.0
+  $ docker volume create media
+  $ docker volume create static
+
+If needed use a helper, temporary, container to copy files from host to volumes. This doesn't need to keep on running. Using busybox because is small.
+
+.. code-block:: bash
+
+  $ docker run --mount source=media,target=/media --mount source=static,target=/static --name helper busybox true
+
+Copy some files from host to volumes using the helper container.
+
+.. code-block:: bash
+
+  $ docker cp /host/static/file1.png helper:static/file1.png
+  $ docker cp /host/media/file2.png helper:media/file2.png
+
+And now that you copied the files into your volumes you can remove the helper container.
+
+.. code-block:: bash
+
+  $ docker rm helper
+
+# TODO How to start Nginx container using these volumes. How to create just for media and static? Do I still need /usr/share/nginx/PROJECT_NAME? I ran like these without mapping outer project dir and got error 500.
+docker run -d --network=project_network --mount source=media,target=/usr/share/nginx/project/media --mount source=static,target=/usr/share/nginx/project/static --env APP_HOST=app1 -p 33334:80 --name=web1 alexisbellido/nginx:1.14.0
+
+This works but I don't want to bind mount all the project directory, just need to use media and static volumes.
+
+.. code-block:: bash
+
+  $ docker run -d --network=project_network --mount source=/path/to/outer/project,target=/root/project --env APP_HOST=app1 -p 33334:80 --name=web1 alexisbellido/nginx:1.14.0
+
+
 
 Build the image from the directory that contains the corresponding Dockerfile, with:
 
