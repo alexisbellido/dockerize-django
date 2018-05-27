@@ -380,6 +380,8 @@ Now make changes in test.conf in host and reload Nginx in container.
 
   $ docker exec -it web1 /etc/init.d/nginx reload
 
+The same approach can be used to map and test with a version of /etc/nginx/nginx.conf on the host.
+
 Tail project's error log.
 
 .. code-block:: bash
