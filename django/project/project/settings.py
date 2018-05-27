@@ -27,6 +27,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# << test production
+DEBUG = False
+ALLOWED_HOSTS = ['*']
+# test production >>
+
 
 # Application definition
 

@@ -5,11 +5,16 @@ Just the basics to launch a Docker-based Django project with Gunicorn for produc
 
 No need for `gosu <https://github.com/tianon/gosu>`_ because there's no need to step down from the root user during container startup, specifically in the *ENTRYPOINT*.
 
-These commands run from the directory where the Dockerfile for Django is so that $PWD/project, which can also be expressed as "$(pwd)"/project, is the outer project directory mapped to /root/project in the container.
+
+Use multi-stage build passing an ssh private key to access any private repositories, either via git or pip. See Dockerfile.
 
 .. code-block:: bash
 
   $ docker build --build-arg SSH_PRIVATE_KEY="$(cat ~/.ssh/id_rsa)" -t alexisbellido/django:2.0.5 .
+
+These commands run bind mount the Django project from the same directory where the Dockerfile for Django is so that $PWD/project, which can also be expressed as "$(pwd)"/project, is the outer project directory mapped to /root/project in the container. This is useful for changing code during development but at the end the project code should be part of the image.
+
+.. code-block:: bash
   $ docker run -it --rm --mount type=bind,source="$(pwd)"/project,target=/root/project -p 8000:8000 alexisbellido/django:2.0.5 /bin/bash
 
 This uses the absolute path to the project.
@@ -19,8 +24,6 @@ This uses the absolute path to the project.
   $ docker run -it --rm --mount type=bind,source=/path/to/outer/project,target=/root/project -p 8000:8000 alexisbellido/django:2.0.5 /bin/bash
 
 If you mount a bind mount or non-empty volume into a directory in the container in which some files or directories exist, these files or directories are obscured by the mount. Read more about `volumes and bind mounts <https://docs.docker.com/storage/#good-use-cases-for-volumes>`_.
-
-Use this for changing code during development.
 
 Run development server in foreground mode with support for interactive processes (-it) and removal on exit (--rm).
 

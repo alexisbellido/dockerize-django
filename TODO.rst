@@ -1,8 +1,6 @@
 TODO
 ==================================================
 
-Figure out the problem using volumes with test.conf mapping to /etc/nginx/conf.d/default.conf in container in Nginx mounting test.conf first.
-
 Then new Gunicorn configuration for Nginx bind mounting gunicorn.conf to /etc/nginx/conf.d/default.conf in container.
 
 Remove test.conf and gunicorn.conf when done.
