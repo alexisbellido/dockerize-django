@@ -25,7 +25,7 @@ django logging
 50x and 40x pages for Django, see Nginx config
 check nginx access log for health check of static and dynamic, or just dynamic from some app and forget static?
 
-Yes, try different settings per Django environment and use environment variables from Docker Compose. Try to make minimal changes to Django project code. Mount volume when running to try changing Django project code.
+Use different setting files or environment variables with Docker Compose or K8s to use different environments.
 
 varnish
 

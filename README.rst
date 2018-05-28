@@ -42,9 +42,13 @@ Run the `official PostgreSQL image <https://hub.docker.com/_/postgres/>`_ passin
 
   $ docker run -d --network=project_network --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --name=dbserver1 postgres:10.4
 
-Connect via psql.
+Connect via psql from the same container; there's no need for password.
 
-From other container on the same network
+.. code-block:: bash
+
+  $ docker exec -it dbserver1 psql -U user1 -d db1
+
+Or from other container on the same network.
 
 .. code-block:: bash
 
@@ -313,9 +317,11 @@ The Django project, as created by django-admin startproject, is in a directory w
     -- django-app-1
     -- django-app-2
     -- manage.py
-    -- media
+    -- media (placeholder with sample file, just for creating image)
     -- project (inner directory, actual Python package to import anything inside project)
-    -- static
+    -- static (placeholder with sample file, just for creating image)
+
+Nginx container creates an empty root /usr/share/nginx/public as the parent of the mounted media and static volumes so no Python code can be accessed.
 
 Note django-app-1 and django-app-2 could be siblings of manage.py or be installed via pip so that they are in Python's module search path. The directories media and static should be used by Nginx to serve assets.
 
@@ -355,9 +361,9 @@ And now that you copied the files into your volumes you can remove the helper co
 
 Start Nginx container using the media and static volumes.
 
-  $ docker run -d --network=project_network --mount source=media,target=/usr/share/nginx/project/media --mount source=static,target=/usr/share/nginx/project/static --env APP_HOST=app1 -p 33334:80 --name=web1 alexisbellido/nginx:1.14.0
+  $ docker run -d --network=project_network --mount source=media,target=/usr/share/nginx/public/media --mount source=static,target=/usr/share/nginx/public/static --env APP_HOST=app1 -p 33334:80 --name=web1 alexisbellido/nginx:1.14.0
 
-If you have media and static inside the project directory you could bind mount the project directory but you lose the benefits of using Docker volumes.
+If you want to use original media and static inside the project directory you could bind mount the project directory but you'll lose the benefits of using Docker volumes. Not recommended for production.
 
 .. code-block:: bash
 
@@ -367,7 +373,7 @@ Try test configuration with test.conf ($PWD assumes the file is in the current d
 
 .. code-block:: bash
 
-  $ docker run -d --network=project_network --mount type=bind,source=$PWD/test.conf,target=/etc/nginx/test.conf --mount source=media,target=/usr/share/nginx/project/media --mount source=static,target=/usr/share/nginx/project/static --env APP_HOST=app1 -p 33334:80 --name=web1 alexisbellido/nginx:1.14.0
+  $ docker run -d --network=project_network --mount type=bind,source=$PWD/test.conf,target=/etc/nginx/nginx.conf --mount source=media,target=/usr/share/nginx/public/media --mount source=static,target=/usr/share/nginx/public/static --env APP_HOST=app1 -p 33334:80 --name=web1 alexisbellido/nginx:1.14.0
 
 Now make changes in test.conf in host and reload Nginx in container.
 
