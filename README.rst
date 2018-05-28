@@ -313,9 +313,8 @@ The Django project, as created by django-admin startproject, is in a directory w
 
 .. code-block:: bash
 
-  - project (this is /path/to/outer/project, just a container for the project)
+  - project (this is /path/to/outer/project, just a container for the project and its doesn't matter to Django)
     -- django-app-1
-    -- django-app-2
     -- manage.py
     -- media (placeholder with sample file, just for creating image)
     -- project (inner directory, actual Python package to import anything inside project)
@@ -323,9 +322,7 @@ The Django project, as created by django-admin startproject, is in a directory w
 
 Nginx container creates an empty root /usr/share/nginx/public as the parent of the mounted media and static volumes so no Python code can be accessed.
 
-Note django-app-1 and django-app-2 could be siblings of manage.py or be installed via pip so that they are in Python's module search path. The directories media and static should be used by Nginx to serve assets.
-
-# TODO Python code should be included in Django (app) image, should media and static be part of Nginx (web) image? Probably need a way to have a shared filesystem for those. Mapped host volumes for development and NFS, EFS or similar on production. What about Kubernetes volumes?
+Note that a Django app, such as django-app-1, could be a sibling of manage.py or be installed via pip so that it's in Python's module search path.
 
 Build the image from the directory that contains the Nginx Dockerfile.
 

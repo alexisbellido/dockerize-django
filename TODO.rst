@@ -3,6 +3,9 @@ TODO
 
 branch in progress: feature/db-and-apps
 
+start with docker compose to simplify env vars and then set up everything.
+get_env_variable('PROJECT_DATABASES_ENGINE') in settings.py, maybe not use base.py approach (see repo ventanazul.com:git/zinibu-project.git) and just work with env vars in one settings.py
+
 PostgreSQL basics.
 
 try web container in front of development and production app container to see if /static served with /admin
@@ -15,7 +18,6 @@ Use bind mounting for development too
 
 learn about docker volumes for AWS and K8s
 
-create docker-compose.yml to set up everything.
 Do I use hostname for compose? what's different hostname and name?
 
 At some point push basics to Docker Hub

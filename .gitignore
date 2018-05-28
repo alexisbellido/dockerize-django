@@ -59,6 +59,10 @@ coverage.xml
 *.log
 local_settings.py
 db.sqlite3
+**/settings/*
+!**/settings/__init__.py
+!**/settings/base.py
+!**/settings/sample-config.py
 
 # Flask stuff:
 instance/

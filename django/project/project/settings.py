@@ -12,6 +12,17 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 
 import os
 
+# Normally you should not import ANYTHING from Django directly
+# into your settings, but ImproperlyConfigured is an exception.
+from django.core.exceptions import ImproperlyConfigured
+def get_env_variable(var_name):
+    """Get the environment variable or return exception."""
+    try:
+        return os.environ[var_name]
+    except KeyError:
+        error_msg = "Set the {} environment variable".format(var_name)
+        raise ImproperlyConfigured(error_msg)
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -84,7 +95,24 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
+# if get_env_variable('PROJECT_DATABASES_ENGINE') == 'sqlite3':
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.sqlite3',
+#             'NAME': os.path.join(BASE_DIR, get_env_variable('PROJECT_DATABASES_DEFAULT_NAME')),
+#         }
+#     }
+# elif get_env_variable('PROJECT_DATABASES_ENGINE') == 'postgresql':
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#             'NAME': get_env_variable('PROJECT_DATABASES_DEFAULT_NAME'),
+#             'USER': get_env_variable('PROJECT_DATABASES_DEFAULT_USER'),
+#             'PASSWORD': get_env_variable('PROJECT_DATABASES_DEFAULT_PASSWORD'),
+#             'HOST': get_env_variable('PROJECT_DATABASES_DEFAULT_HOST'),
+#             'PORT': get_env_variable('PROJECT_DATABASES_DEFAULT_PORT'),
+#         }
+#     }
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators

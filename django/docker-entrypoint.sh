@@ -6,7 +6,7 @@ source /env/bin/activate
 export HOSTNAME=`cat /etc/hostname`
 export PROJECT_DIR=/root/$PROJECT_NAME
 
-# To run django-admin without passing --pythonpath and --settings
+# Run django-admin without passing --pythonpath and --settings
 export PYTHONPATH=$PROJECT_DIR
 export DJANGO_SETTINGS_MODULE=$PROJECT_NAME.settings
 # TODO do I still need different settings per environment?
@@ -28,7 +28,6 @@ if [ "$1" == "production" ]; then
 	else
 		export LOGLEVEL=info
 	fi
-	# exec gosu root gunicorn --workers=$NUM_WORKERS --user=$USER --group=$GROUP --bind $BIND_HOST:$BIND_PORT --log-level=$LOGLEVEL --log-file=$LOGFILE 2>>$LOGFILE $PROJECT_NAME.wsgi:application
 	exec gunicorn --workers=$NUM_WORKERS --user=$USER --group=$GROUP --bind $BIND_HOST:$BIND_PORT --log-level=$LOGLEVEL --log-file=$LOGFILE 2>>$LOGFILE $PROJECT_NAME.wsgi:application
 elif [ "$1" == "development" ]; then
 	exec django-admin runserver 0.0.0.0:$PORT
