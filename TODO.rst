@@ -19,6 +19,7 @@ Do I use hostname for compose? what's different hostname and name?
 
 At some point push basics to Docker Hub
 
+django logging
 
 50x and 40x pages for Django, see Nginx config
 check nginx access log for health check of static and dynamic, or just dynamic from some app and forget static?
