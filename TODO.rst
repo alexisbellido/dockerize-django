@@ -1,7 +1,8 @@
 TODO
 ==================================================
 
-Then new Gunicorn configuration for Nginx bind mounting gunicorn.conf to /etc/nginx/conf.d/default.conf in container.
+Read http://nginx.org/en/docs/beginners_guide.html before trying new Gunicorn configuration for Nginx bind mounting gunicorn.conf to /etc/nginx/conf.d/default.conf in container.
+http://docs.gunicorn.org/en/latest/deploy.html
 
 Remove test.conf and gunicorn.conf when done.
 
