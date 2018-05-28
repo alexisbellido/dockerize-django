@@ -3,8 +3,6 @@ TODO
 
 PostgreSQL basics.
 
-merge into master and continue with new branch
-
 learn about docker volumes for AWS and K8s
 
 try web container in front of development and production app container to see if /static served with /admin
