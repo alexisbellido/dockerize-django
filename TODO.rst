@@ -1,7 +1,13 @@
 TODO
 ==================================================
 
-try webc container in front of development and production app container to see if /static served with /admin
+PostgreSQL basics.
+
+merge into master and continue with new branch
+
+learn about docker volumes for AWS and K8s
+
+try web container in front of development and production app container to see if /static served with /admin
 
 include a basic Django app next to manage.py in image
 include a basic Django app from private git repo in image
@@ -13,12 +19,17 @@ Do I use hostname for compose? what's different hostname and name?
 
 At some point push basics to Docker Hub
 
+
 50x and 40x pages for Django, see Nginx config
 check nginx access log for health check of static and dynamic, or just dynamic from some app and forget static?
 
 Yes, try different settings per Django environment and use environment variables from Docker Compose. Try to make minimal changes to Django project code. Mount volume when running to try changing Django project code.
 
-PostgreSQL basics.
+varnish
+
+local ssl and self-signed certificate
+
+haproxy
 
 Keep everything generic and when needed move to private Git repositories and Docker registry.
 
