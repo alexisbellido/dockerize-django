@@ -1,15 +1,40 @@
 TODO
 ==================================================
 
-branch: feature/basic-compose
+PostgreSQL basics.
 
-Setup clean Django with Gunicorn (or UWSGI?) and Nginx for both dev and prod.
+learn about docker volumes for AWS and K8s
+
+try web container in front of development and production app container to see if /static served with /admin
+
+include a basic Django app next to manage.py in image
+include a basic Django app from private git repo in image
+include a basic Django app from private repo as editable
+all of that can be done by mounting volume so try that too
+
+create docker-compose.yml to set up everything.
+Do I use hostname for compose? what's different hostname and name?
+
+At some point push basics to Docker Hub
+
+django logging
+
+50x and 40x pages for Django, see Nginx config
+check nginx access log for health check of static and dynamic, or just dynamic from some app and forget static?
+
+Yes, try different settings per Django environment and use environment variables from Docker Compose. Try to make minimal changes to Django project code. Mount volume when running to try changing Django project code.
+
+varnish
+
+local ssl and self-signed certificate
+
+haproxy
 
 Keep everything generic and when needed move to private Git repositories and Docker registry.
 
 Make it easy to pass configuration variables. Should I continue with multiple settings approach in Django or do something via orchestration?
 
-Use multi-stage builds and everything in Docker images.
+Use multi-stage builds and everything, including project code, should be in Docker images. Think about assest. Maybe different file system or volume.
 
 Start with Docker compose and then make it portable to ECS and K8S.
 
@@ -19,33 +44,25 @@ Docker containers can connect to MySQL container exposing port 3306 and running 
 
   $ docker run -it --rm mysql:5.7.17 /bin/bash
   root@b9516d51b37f:/# mysql -u root -h 192.168.1.5 collection
-  
+
 Standard Django setup will use PostgreSQL but later for custom application try multidatabase to write to second MySQL legacy database. Use Django's raw queries to write to legacy database.
 
 PostgreSQL JSONb
-
-UWSGI vs. Gunicorn
 
 ===
 
 I'll continue here once I've explored the basics with the `Ansible and Docker project <https://github.com/alexisbellido/ansible-and-docker/>`_.
 
-Add PostgreSQL container to work with docker-compose and import a database to see the site running.
-
 I'm going to finish the basic docker-compose flow without Ansible and leave it as an option of this project and then I'm going to decide if I make it all work with Ansible Container or if I just use a little Ansible to run hosts and start containers inside.
 
 I may not need to do anything from the container with bash scripts, or maybe don't need Dockerfile when using Ansible container with Docker. See https://thenewstack.io/ansible-container-playbooks-sole-build-management-tool/ ("Dockerfiles are basically shell script. And one of the reasons we wrote Ansible in the first place is that shell script gets pretty ugly pretty fast. Ansible is the main definition language that goes into the containers themselves.").
 
-Ansible to create directory structure and other basics on host.
-
-
-Automate this to avoid matching in docker command: Note that the environment variable PROJECT_NAME has to match with the name used for the project directory (*django-project* in the examples listed here) to follow the directory structure created by Django's django-admin startproject.
+Ansible to create directory structure and other basics on host. May no longer bee needed with ECS or Kubernetes.
 
 update docker-compose (use version 3?) specific to local development and use variations of app server to use local, s3, etc. the new composer should use a shorter name to create easier own network and try to use Django project and replace djapps with django-apps and with relative paths (https://docs.docker.com/compose/compose-file/#volumes). Once done and test Django project is running, merge into master and continue with next steps.
 
-manage releases, deploy and rollback with Ansible? See https://www.12factor.net/build-release-run and https://github.com/ansistrano/deploy
-
 use symlinks for nginx to get static files directly from webpack's directory without using collectstatic, maybe include something in Django's settings files to make it  easier.
+check django-zinibu-main.git to see how webpack.config.js can build files in Django directories.
 static produced by webpack is in /home/alexis/mydocker/djapps/django-zinibu-main/znbmain/static
 inspect nginx container to see what directory should be symlinked, or maybe change zinibu.settings.local right from Django to use a different static dir
 the webpack setup already accepts a parameter to sent built files to a static directory in the Django project, see django-zinibu-main
@@ -56,24 +73,11 @@ make sure image alexisbellido/django:1.11 works and push it to Docker Hub before
 update compose to use app2-local with
     image: "alexisbellido/django:1.11"
 
-Why this error:
-root@app2-local $ source /usr/local/bin/docker-entrypoint.sh setenv
-root@app2-local $ django-admin.py help --pythonpath=$(pwd)
-Note that only Django core commands are listed as settings are not properly configured (error: Set the PROJECT_RUNNING_DEV environment variable).
-
-server is removed from the load balancer before it’s upgraded
-
-test setuptools stuff to put apps inside django project or separate dirs from other repos, with ansible?
-
-Find a way to install project-specific Python packages on the virtual environment inside the container. Ansible?
-
-merge feature/django1.11 into master when I have a basic django 1.11 project running
+server should be removed from the load balancer before it’s upgraded
 
 document instructions for launching the stack with docker composer (it's just docker-compose up -d from directory compose-complete)
 
 continue with other containers from docker compose
-
-should I automate the docker run commands with just bash or some salt? maybe they are not that many commands and manual and some composer will be enough
 
 make haproxy work without ssl first and with ssl later. I have an haproxy directory, map to either or haproxy.cfg or haproxy-ssl.cfg with the rest of the stack, If using haproxy-ssl.cfg map the ssl cert
 do not use a second frontend from varnish servers, instead pass from each varnish to its own nginx

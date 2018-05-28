@@ -1,11 +1,11 @@
-FROM nginx:1.10.2
-MAINTAINER Alexis Bellido <a@zinibu.com>
+FROM nginx:1.14.0
+LABEL maintainer="Alexis Bellido <a@zinibu.com>"
 
 ENV APP_HOST app_host
 ENV APP_PORT 8000
 ENV PROJECT_NAME project
 
-COPY default.conf /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/nginx.conf
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
 EXPOSE 80
