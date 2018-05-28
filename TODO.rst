@@ -1,16 +1,19 @@
 TODO
 ==================================================
 
-PostgreSQL basics.
+branch in progress: feature/db-and-apps
 
-learn about docker volumes for AWS and K8s
+PostgreSQL basics.
 
 try web container in front of development and production app container to see if /static served with /admin
 
 include a basic Django app next to manage.py in image
 include a basic Django app from private git repo in image
 include a basic Django app from private repo as editable
-all of that can be done by mounting volume so try that too
+
+Use bind mounting for development too
+
+learn about docker volumes for AWS and K8s
 
 create docker-compose.yml to set up everything.
 Do I use hostname for compose? what's different hostname and name?
