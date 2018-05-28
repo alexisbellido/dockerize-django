@@ -95,6 +95,77 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+import logging
+import sys
+# TODO logging to sysout syserr docker logs
+
+# LOGGING = {
+#   'version': 1,
+#   'disable_existing_loggers': False,
+#   'formatters': {
+#       'verbose': {
+#           'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+#       },
+#   },
+#   'handlers': {
+#       'console': {
+#           'level': 'INFO',
+#           'class': 'logging.FileHandler',
+#           'filename': '/var/log/debug.log',
+#           'formatter': 'verbose'
+#       },
+#   },
+#   'loggers': {
+#       '': {
+#           'handlers': ['console'],
+#           'level': 'INFO',
+#       }
+#   },
+# }
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'basic': {
+            'format': '%(name)s %(levelname)s %(asctime)s %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'basic'
+        },
+        'stream': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+            'stream': sys.stdout
+        },
+    },
+    'loggers': {
+        'project': {
+            'handlers': ['stream', 'console'],
+            'level': 'DEBUG',
+        },
+    }
+}
+# END LOGGING CONFIGURATION
+
+# logger = logging.getLogger(__name__)
+# import pprint
+# logger.info(pprint.pformat(vars(object)))
+
+logger = logging.getLogger('project')
+logger.info('miau 222...')
+logger.debug('miau 123...')
+print('xyz')
+
 # if get_env_variable('PROJECT_DATABASES_ENGINE') == 'sqlite3':
 #     DATABASES = {
 #         'default': {

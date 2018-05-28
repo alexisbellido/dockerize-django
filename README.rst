@@ -236,6 +236,8 @@ There's `a bug <https://github.com/docker/for-mac/issues/307>`_ that causes Dock
 
 .. code-block:: bash
 
+  import logging
+
   LOGGING = {
       'version': 1,
       'disable_existing_loggers': False,
@@ -264,12 +266,13 @@ And then you can add logging calls in the appropiate parts of your code. I'm add
 
 .. code-block:: bash
 
-  import logging
   import pprint
   logger = logging.getLogger(__name__)
   logger.info(pprint.pformat(vars(object)))
 
-See `Django logging documentation <https://docs.djangoproject.com/en/1.11/topics/logging/>`_ for details.
+See `Django logging documentation <https://docs.djangoproject.com/en/2.0/topics/logging/`_.
+
+https://docs.python.org/3/using/cmdline.html#envvar-PYTHONUNBUFFERED and environment variable PYTHONUNBUFFERED set to 1 may be solution to use docker logs with print in some cases but more control with logging.
 
 You can run a few Django commands from the container using /usr/local/bin/docker-entrypoint.sh, for example:
 

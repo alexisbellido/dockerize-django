@@ -3,8 +3,36 @@ TODO
 
 branch in progress: feature/db-and-apps
 
+logging from development and production to STDOUT and STDERR or to file in container?
+https://docs.djangoproject.com/en/2.0/topics/logging/
+
+and use I can log I can try get_env_variable
+
+do I need to use docker logging drivers?
+
 start with docker compose to simplify env vars and then set up everything.
 get_env_variable('PROJECT_DATABASES_ENGINE') in settings.py, maybe not use base.py approach (see repo ventanazul.com:git/zinibu-project.git) and just work with env vars in one settings.py
+
+The twelve-factor app article recommends config in environment variables but Docker, ECS and K8s use secrets.
+
+==
+Docket secrets
+
+$ docker swarm init
+Swarm initialized: current node (rf4ca83cwjohnbwvkd8qyhkqk) is now a manager.
+
+To add a worker to this swarm, run the following command:
+
+    docker swarm join --token SWMTKN-1-0nqr5pgghlfm8y8zmnt340pkk1ydkxwsnrdb7jncpslp81s4pg-6zkkg1qri8q0jmhrmp61krpnp 192.168.1.183:2377
+
+To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+
+$ docker swarm join-token manager
+To add a manager to this swarm, run the following command:
+
+    docker swarm join --token SWMTKN-1-0nqr5pgghlfm8y8zmnt340pkk1ydkxwsnrdb7jncpslp81s4pg-dajk360m447hklyaskaksy5x9 192.168.1.183:2377
+
+==
 
 PostgreSQL basics.
 
@@ -21,8 +49,6 @@ learn about docker volumes for AWS and K8s
 Do I use hostname for compose? what's different hostname and name?
 
 At some point push basics to Docker Hub
-
-django logging
 
 50x and 40x pages for Django, see Nginx config
 check nginx access log for health check of static and dynamic, or just dynamic from some app and forget static?
