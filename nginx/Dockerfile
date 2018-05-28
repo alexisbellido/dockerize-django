@@ -5,7 +5,7 @@ ENV APP_HOST app_host
 ENV APP_PORT 8000
 ENV PROJECT_NAME project
 
-COPY default.conf /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/nginx.conf
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
 EXPOSE 80

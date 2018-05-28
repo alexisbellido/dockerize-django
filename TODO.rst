@@ -1,10 +1,7 @@
 TODO
 ==================================================
 
-Read http://nginx.org/en/docs/beginners_guide.html before trying new Gunicorn configuration for Nginx bind mounting gunicorn.conf to /etc/nginx/conf.d/default.conf in container.
-http://docs.gunicorn.org/en/latest/deploy.html
-
-Remove test.conf and gunicorn.conf when done.
+try webc container in front of development and production app container to see if /static served with /admin
 
 include a basic Django app next to manage.py in image
 include a basic Django app from private git repo in image
@@ -14,9 +11,10 @@ all of that can be done by mounting volume so try that too
 create docker-compose.yml to set up everything.
 Do I use hostname for compose? what's different hostname and name?
 
-Use updated Nginx conf from Gunicorn docs.
-
 At some point push basics to Docker Hub
+
+50x and 40x pages for Django, see Nginx config
+check nginx access log for health check of static and dynamic, or just dynamic from some app and forget static?
 
 Yes, try different settings per Django environment and use environment variables from Docker Compose. Try to make minimal changes to Django project code. Mount volume when running to try changing Django project code.
 

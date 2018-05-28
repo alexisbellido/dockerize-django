@@ -31,26 +31,26 @@ Run development server in foreground mode with support for interactive processes
 
   $ docker run -it --rm -p 8000:8000 alexisbellido/django:2.0.5 development
 
+Note development and production are using media and static volumes, the same that Nginx uses on the host. This is important for Django collectstatic.
+
 Run development server in detached mode on a bridge network and mapping project directory for development. Once development is done it will be enough with source code included in the image.
 
 .. code-block:: bash
 
-  $ docker run -d --network=project_network --mount type=bind,source=/path/to/outer/project,target=/root/project --name=app1 -p 8000:8000 alexisbellido/django:2.0.5 development
+  $ docker run -d --network=project_network --mount type=bind,source=/path/to/outer/project,target=/root/project --mount source=media,target=/root/project/media --mount source=static,target=/root/project/static --name=app1 -p 8000:8000 alexisbellido/django:2.0.5 development
 
 Run production in detached mode.
 
 .. code-block:: bash
 
-  $ docker run -d --network=project_network --name=app1 -p 8000:8000 alexisbellido/django:2.0.5 production
+  $ docker run -d --network=project_network --mount source=media,target=/root/project/media --mount source=static,target=/root/project/static --name=app1 -p 8000:8000 alexisbellido/django:2.0.5 production
 
-Any other commands.
-
-.. code-block:: bash
-
-  $ docker run -it --rm -p 8000:8000 alexisbellido/django:2.0.5 django-admin help
-
-Execute command on running container
+Execute commands on running container. Use docker-entrypoint.sh to activate Python environment and set environment for Django. 
 
 .. code-block:: bash
 
-  $ docker exec -it container-name command
+  $ docker exec -it app1 /usr/local/bin/docker-entrypoint.sh pip freeze
+  $ docker exec -it app1 /usr/local/bin/docker-entrypoint.sh django-admin help
+  $ docker exec -it app1 /usr/local/bin/docker-entrypoint.sh django-admin collectstatic
+  
+  

@@ -139,20 +139,15 @@ Once a container is running and assuming your host has its private key authorize
   $ ssh user@example.com
   $ ssh -T git@github.com
 
-The image's entrypoint (*/usr/local/bin/docker-entrypoint.sh*, copied to the container and defined with ENTRYPOINT in the Dockerfile) always sets the Python virtual environment first and then accepts parameters that can be passed at the end of the docker run command. If no parameter is passed, the value of CMD in the Dockerfile is used (usually "development").
-
-Here are some of the parameters the entrypoint accepts:
-
-- *development* runs Django development server.
-- *production* runs Django with Gunicorn and accepts an optional second paramater --log-level=debug or --log-level=critical. If the second parameter is not passed --log-level=info is assumed.
-- *update_index* runs Haystack's update_index and accepts an optional second parameter used as --age. See Haystack's help for more details.
-- *shell* runs Django shell.
-- *setenv* does nothing after activating the virtual the Python environment, useful when run from inside the container, see notes about running Django commands below.
-- *collectstatic* runs Django's collectstatic without including admin files.
-- *collectstatic-all* runs Django's collectstatic including admin files.
-- *building* does nothing; it's only used when building the Docker image.
+The image's entrypoint (*/usr/local/bin/docker-entrypoint.sh*, copied to the container and defined with ENTRYPOINT in the Dockerfile) always sets the Python virtual environment first and then accepts parameters that can be passed at the end of the docker run command.
 
 If you pass any parameter not considered by the entrypoint script, it will be just executed with exec "$@".
+
+This is how to run collectstatic when static volume is mounted for both app and web container.
+
+.. code-block:: bash
+
+  $ docker exec -it app1 /usr/local/bin/docker-entrypoint.sh django-admin collectstatic
 
 Note that the environment variable PROJECT_NAME has to match with the name used inside the main project directory (*django-project* in the examples listed here) to follow the directory structure created by Django's django-admin startproject.
 
@@ -223,9 +218,9 @@ Build the image from the directory that contains the corresponding Dockerfile, l
 
 .. code-block:: bash
 
-  $ docker build -t alexisbellido/django:1.11 .
+  $ docker build -t alexisbellido/django:2.0.5 .
   $ docker login
-  $ docker push alexisbellido/django:1.11
+  $ docker push alexisbellido/django:2.0.5
 
 Check logs of running container (-f works like in tail) to confirm it's working as expected:
 
@@ -368,25 +363,17 @@ If you have media and static inside the project directory you could bind mount t
 
   $ docker run -d --network=project_network --mount source=/path/to/outer/project,target=/root/project --env APP_HOST=app1 -p 33334:80 --name=web1 alexisbellido/nginx:1.14.0
 
-Experiment with configuration using test.conf. The following assumes test.conf is in the current directory ($PWD) but it could be anywhere on the host.
+Try test configuration with test.conf ($PWD assumes the file is in the current directory).
 
 .. code-block:: bash
 
-  $ docker run -d --network=project_network --mount type=bind,source=$PWD/test.conf,target=/etc/nginx/conf.d/default.conf --mount source=media,target=/usr/share/nginx/project/media --mount source=static,target=/usr/share/nginx/project/static --env APP_HOST=app1 -p 33334:80 --name=web1 alexisbellido/nginx:1.14.0
+  $ docker run -d --network=project_network --mount type=bind,source=$PWD/test.conf,target=/etc/nginx/test.conf --mount source=media,target=/usr/share/nginx/project/media --mount source=static,target=/usr/share/nginx/project/static --env APP_HOST=app1 -p 33334:80 --name=web1 alexisbellido/nginx:1.14.0
 
 Now make changes in test.conf in host and reload Nginx in container.
 
 .. code-block:: bash
 
   $ docker exec -it web1 /etc/init.d/nginx reload
-
-The same approach can be used to map and test with a version of /etc/nginx/nginx.conf on the host.
-
-Tail project's error log.
-
-.. code-block:: bash
-
-  $ docker exec -it web1 tail -f /var/log/nginx/project-error.log
 
 To create a self-signed SSL certificate
 ------------------------------------------
