@@ -17,6 +17,10 @@ get_env_variable('PROJECT_DATABASES_ENGINE') in settings.py, maybe not use base.
 
 The twelve-factor app article recommends config in environment variables but Docker, ECS and K8s use secrets.
 
+https://docs.djangoproject.com/en/dev/internals/contributing/writing-code/coding-style/
+https://pypi.org/project/flake8/
+.editorconfig
+
 ==
 Docket secrets
 

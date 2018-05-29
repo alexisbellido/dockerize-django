@@ -47,6 +47,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'sampleapp1.apps.Sampleapp1Config',
+    'sampleapp2.apps.Sampleapp2Config',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -161,10 +163,10 @@ LOGGING = {
 # import pprint
 # logger.info(pprint.pformat(vars(object)))
 
-logger = logging.getLogger('project')
-logger.info('miau 222...')
-logger.debug('miau 123...')
-print('xyz')
+# logger = logging.getLogger('project')
+# logger.info('miau 222...')
+# logger.debug('miau 123...')
+# print('xyz')
 
 # if get_env_variable('PROJECT_DATABASES_ENGINE') == 'sqlite3':
 #     DATABASES = {

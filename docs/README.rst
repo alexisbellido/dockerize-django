@@ -49,8 +49,13 @@ Execute commands on running container. Use docker-entrypoint.sh to activate Pyth
 
 .. code-block:: bash
 
+  $ docker exec -it app1 docker-entrypoint.sh /bin/bash
   $ docker exec -it app1 /usr/local/bin/docker-entrypoint.sh pip freeze
   $ docker exec -it app1 /usr/local/bin/docker-entrypoint.sh django-admin help
   $ docker exec -it app1 /usr/local/bin/docker-entrypoint.sh django-admin collectstatic
+
+.. code-block:: bash
+
+  $ python -m django --version  
   
-  
+The -m <module-name> option searches sys.path for the named module and execute its contents as the __main__ module.

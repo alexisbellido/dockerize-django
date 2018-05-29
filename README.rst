@@ -316,8 +316,9 @@ The Django project, as created by django-admin startproject, is in a directory w
 
 .. code-block:: bash
 
-  - project (this is /path/to/outer/project, just a container for the project and its doesn't matter to Django)
-    -- django-app-1
+  - project (this is /path/to/outer/project, just a container for the project and its name doesn't matter to Django)
+    -- sampleapp1
+    -- sampleapp2
     -- manage.py
     -- media (placeholder with sample file, just for creating image)
     -- project (inner directory, actual Python package to import anything inside project)
@@ -325,7 +326,7 @@ The Django project, as created by django-admin startproject, is in a directory w
 
 Nginx container creates an empty root /usr/share/nginx/public as the parent of the mounted media and static volumes so no Python code can be accessed.
 
-Note that a Django app, such as django-app-1, could be a sibling of manage.py or be installed via pip so that it's in Python's module search path.
+Note that a Django app, such as sampleapp1, can be a sibling of manage.py or be installed via pip so that it's in Python's module search path.
 
 Build the image from the directory that contains the Nginx Dockerfile.
 
