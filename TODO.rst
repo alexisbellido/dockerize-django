@@ -3,23 +3,28 @@ TODO
 
 branch in progress: feature/db-and-apps
 
-include a basic Django app next to manage.py in image with just one view and try that with print and logging and PYTHONUNBUFFERED instead of using settings.py
-
-logging from development and production to STDOUT and STDERR or to file in container?
+logging from development and production to STDOUT and STDERR or to file in container
 https://docs.djangoproject.com/en/2.0/topics/logging/
-
-and use I can log I can try get_env_variable
 
 do I need to use docker logging drivers?
 
 start with docker compose to simplify env vars and then set up everything.
-get_env_variable('PROJECT_DATABASES_ENGINE') in settings.py, maybe not use base.py approach (see repo ventanazul.com:git/zinibu-project.git) and just work with env vars in one settings.py
+
+maybe don't use base.py approach (see repo ventanazul.com:git/zinibu-project.git) and just work with env vars in one settings.py
 
 The twelve-factor app article recommends config in environment variables but Docker, ECS and K8s use secrets.
 
 https://docs.djangoproject.com/en/dev/internals/contributing/writing-code/coding-style/
 https://pypi.org/project/flake8/
 .editorconfig
+
+Test redis and add to README for Django
+To use Redis pass REDIS_HOST and, for the sake of being implicit, REDIS_PORT, with the same development server:
+
+.. code-block:: bash
+
+  $ docker run -d --network=project_network -w /root -v ~/.ssh/id_rsa:/root/.ssh/id_rsa -v $SSH_AUTH_SOCK:/run/ssh_agent -e SSH_AUTH_SOCK=/run/ssh_agent -v "$PWD"/django-project:/root/django-project -v "$PWD"/django-apps:/root/django-apps --env PROJECT_NAME=django-project --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=dbserver1 --env REDIS_HOST=redis1 --env REDIS_PORT=6379 -p 33332:8000 --name=app1-dev alexisbellido/django:1.11 development
+
 
 ==
 Docket secrets

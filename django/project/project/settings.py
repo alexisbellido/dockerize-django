@@ -167,17 +167,17 @@ LOGGING = {
 # logger.info('miau 222...')
 # logger.debug('miau 123...')
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': get_env_variable('PROJECT_DATABASES_DEFAULT_NAME'),
-#         'USER': get_env_variable('PROJECT_DATABASES_DEFAULT_USER'),
-#         'PASSWORD': get_env_variable('PROJECT_DATABASES_DEFAULT_PASSWORD'),
-#         'HOST': get_env_variable('PROJECT_DATABASES_DEFAULT_HOST'),
-#         'PORT': get_env_variable('PROJECT_DATABASES_DEFAULT_PORT'),
-#     }
-# }
-# 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': get_env_variable('PROJECT_DATABASES_DEFAULT_NAME'),
+        'USER': get_env_variable('PROJECT_DATABASES_DEFAULT_USER'),
+        'PASSWORD': get_env_variable('PROJECT_DATABASES_DEFAULT_PASSWORD'),
+        'HOST': get_env_variable('PROJECT_DATABASES_DEFAULT_HOST'),
+        'PORT': get_env_variable('PROJECT_DATABASES_DEFAULT_PORT'),
+    }
+}
+
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
 
@@ -202,7 +202,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/New_York'
 
 USE_I18N = True
 
