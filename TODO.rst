@@ -3,6 +3,8 @@ TODO
 
 branch in progress: feature/db-and-apps
 
+include a basic Django app next to manage.py in image with just one view and try that with print and logging and PYTHONUNBUFFERED instead of using settings.py
+
 logging from development and production to STDOUT and STDERR or to file in container?
 https://docs.djangoproject.com/en/2.0/topics/logging/
 
@@ -38,7 +40,6 @@ PostgreSQL basics.
 
 try web container in front of development and production app container to see if /static served with /admin
 
-include a basic Django app next to manage.py in image
 include a basic Django app from private git repo in image
 include a basic Django app from private repo as editable
 
