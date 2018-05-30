@@ -10,7 +10,7 @@ Use multi-stage build passing an ssh private key to access any private repositor
 .. code-block:: bash
 
   $ docker build --build-arg SSH_PRIVATE_KEY="$(cat ~/.ssh/id_rsa)" -t username/django:2.0.5 .
-  
+
 Once you've built the image you can push it to Docker hub.
 
 .. code-block:: bash
@@ -44,13 +44,13 @@ Run development server in detached mode on a bridge network and mapping project 
 .. code-block:: bash
 
   $ docker run -d --network=project_network --mount type=bind,source=/path/to/outer/project,target=/root/project --mount source=media,target=/root/project/media --mount source=static,target=/root/project/static --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=dbserver1 --name=app1 -p 8000:8000 username/django:2.0.5 development
-  
+
 If you are in the same directory as the Django Dockerfile you can use $PWD/project instead for /path/to/outer/project.
 
 .. code-block:: bash
 
   $ docker run -d --network=project_network --mount type=bind,source=$PWD/project,target=/root/project --mount source=media,target=/root/project/media --mount source=static,target=/root/project/static --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=dbserver1 --name=app1 -p 8000:8000 username/django:2.0.5 development
-  
+
 Run production in detached mode.
 
 .. code-block:: bash
@@ -59,21 +59,28 @@ Run production in detached mode.
 
 If you pass any parameter not considered by the entrypoint script (docker-entrypoint.sh), it will be just executed with exec "$@".
 
-Execute commands on running container. Use docker-entrypoint.sh to activate Python environment and set environment for Django. 
+Execute commands on running container. Use docker-entrypoint.sh to activate Python environment and set environment for Django.
 
 .. code-block:: bash
 
   $ docker exec -it app1 /usr/local/bin/docker-entrypoint.sh pip freeze
-  $ docker exec -it app1 docker-entrypoint.sh /bin/bash
   $ docker exec -it app1 docker-entrypoint.sh django-admin help
   $ docker exec -it app1 docker-entrypoint.sh django-admin collectstatic
+
+You can get into the container, verify the Python packages installed, because the virtual environment is activated by the entrypoint script, and confirm where that environment lives (/env/bin/pip with the provided image).
+
+.. code-block:: bash
+
+  $ docker exec -it app1 docker-entrypoint.sh /bin/bash
+  $ pip freeze
+  $ which pip
 
 Use of the full path is optional because it should already be in the $PATH.
 
 .. code-block:: bash
 
-  $ python -m django --version  
-  
+  $ python -m django --version
+
 The -m <module-name> option searches sys.path for the named module and execute its contents as the __main__ module.
 There's `a bug <https://github.com/docker/for-mac/issues/307>`_ that causes Docker not to follow the logs making it difficult to see console output and debug using Django's development server or Gunicorn from the Django application. To work around this use Django's logging system. Start by adding this to your settings file:
 
