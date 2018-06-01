@@ -3,16 +3,27 @@ TODO
 
 branch in progress: feature/db-and-apps
 
+read about k8s secrets
+
+1. create a docker compose to simplify env vars and basic web, app, db
+
+2. As the twelve-factor app article recommends config in environment variables create docker compose with secrets for app, web, db.
+
+Explore how to move to ECS and K8s to use secrets similar to Docker's secrets. I may bypass ECS and go directly to k8s with kops on AWS
+
 logging from development and production to STDOUT and STDERR or to file in container
 https://docs.djangoproject.com/en/2.0/topics/logging/
 
 do I need to use docker logging drivers?
 
-start with docker compose to simplify env vars and then set up everything.
+set up private GitHub to test token
+
+the goal with secrets is not to put the private information in a pod definition or docker image
+should I use secrets for SSH keys with docker compose or keep multi-stage build approach?
+k8s: allow a pod to access a git repository using SSH keys
 
 maybe don't use base.py approach (see repo ventanazul.com:git/zinibu-project.git) and just work with env vars in one settings.py
 
-The twelve-factor app article recommends config in environment variables but Docker, ECS and K8s use secrets.
 
 https://docs.djangoproject.com/en/dev/internals/contributing/writing-code/coding-style/
 https://pypi.org/project/flake8/
