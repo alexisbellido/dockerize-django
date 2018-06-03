@@ -3,20 +3,66 @@ TODO
 
 branch in progress: feature/db-and-apps
 
+==
+use secrets with docker swarm and django settings from yaml config file passed as docker secrets
+
+==
+
 compose stack swarm
+
+docker swarm init needed before everything
+
+study docker stack and docker service
 
 2379  docker stack deploy -c compose/basic-django.yml basicdjango
 2380  docker service ls
 
-read about k8s secrets
+2509  docker service logs basicdjango_app -f
+2510  docker service logs basicdjango_database 
 
-1. create a docker compose to simplify env vars and basic web, app, db
+2529  docker ps
+2526  docker exec -it basicdjango_app.1.lkcqcb3eosm5bx00lxapi61l7 docker-entrypoint.sh pip freeze
+2527  docker exec -it basicdjango_app.1.lkcqcb3eosm5bx00lxapi61l7 docker-entrypoint.sh django-admin migrate
+2528  docker exec -it basicdjango_app.1.lkcqcb3eosm5bx00lxapi61l7 docker-entrypoint.sh django-admin createsuperuser
+
+2532  docker service ps basicdjango_web
+2533  docker service ps basicdjango_app 
+2534  docker service ps basicdjango_database 
+
+use IP when accessing as service http://127.0.0.1:8000/
+
+find db container
+docker ps
+
+and then psql to it
+$ docker exec -it basicdjango_database.1.i54qy0wzlcs534y02jwpgt214 psql -U user1 -d db1
+
+do I still need APP_HOST and POSTGRES_HOST when using services if the host name is the service name now?
+
+replica and deploy details
+restart_policy
+
+===
+
+when running as service the volumes are created using the service name
+$ docker volume ls
+DRIVER              VOLUME NAME
+local               basicdjango_database
+local               basicdjango_media
+local               basicdjango_static
+
+==
+
+read about k8s secrets
 
 2. As the twelve-factor app article recommends config in environment variables create docker compose with secrets for app, web, db.
 
 Explore how to move to ECS and K8s to use secrets similar to Docker's secrets. I may bypass ECS and go directly to k8s with kops on AWS
 
 Never embed configuration or secrets into a Docker image. Instead, when building a Docker image, expect that any required runtime configuration and secrets will be supplied to the container using the orchestration runtime (Kubernetes Secrets, Docker Secrets), or, for for non-sensitive data, environment variables (docker compose) or configmaps (k8s). Sane configuration defaults are okay. Be careful to not include secrets in hidden layers of an image. Running a Docker container in production should be the assembly of an image with various configuration and secrets. It doesn’t matter if you are running this container in Docker, Kubernetes, Swarm or another orchestration layer, the orchestration platform should be responsible for creating containers by assembling these parts into a running container.
+
+recreate image to verify this is fixed
+/env/lib/python3.6/site-packages/psycopg2/__init__.py:144: UserWarning: The psycopg2 wheel package will be renamed from release 2.8; in order to keep installing from binary please use "pip install psycopg2-binary" instead. For details see: <http://initd.org/psycopg/docs/install.html#binary-install-from-pypi>.
 
 
 bash until when using Docker Compose to wait for PostgreSQL? See Django cookiecutter

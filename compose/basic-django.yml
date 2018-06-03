@@ -1,14 +1,67 @@
 version: "3.6"
 services:
   web:
-    image: 'alexisbellido/django:2.0.5'
+    image: alexisbellido/nginx:1.14.0
+    deploy:
+      replicas: 1
+    ports:
+      - "33334:80"
+    depends_on:
+      - app
+    volumes:
+      - type: volume
+        source: media
+        target: /root/project/media
+      - type: volume
+        source: static
+        target: /root/project/static
+    environment:
+      - APP_HOST=app
+  app:
+    image: alexisbellido/django:2.0.5
+    command: development
     deploy:
       replicas: 3
-      resources:
-        limits:
-          cpus: "0.1"
-          memory: 50M
       restart_policy:
         condition: on-failure
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 250M
     ports:
-      - "8001:8000"
+      - "8000:8000"
+    depends_on:
+      - database
+    volumes:
+      - type: volume
+        source: media
+        target: /root/project/media
+      - type: volume
+        source: static
+        target: /root/project/static
+      - type: bind
+        source: /home/alexis/Projects/dockerize-django/django/project
+        target: /root/project 
+    environment:
+      - POSTGRES_USER=user1
+      - POSTGRES_PASSWORD=user_secret
+      - POSTGRES_DB=db1
+      - POSTGRES_HOST=database # use name of service
+  database:
+    image: postgres:10.4
+    deploy:
+      replicas: 1
+    volumes:
+      - type: volume
+        source: database
+        target: /var/lib/postgresql/data
+        volume:
+          nocopy: true
+    environment:
+      - POSTGRES_USER=user1
+      - POSTGRES_PASSWORD=user_secret
+      - POSTGRES_DB=db1
+volumes:
+  media:
+  static:
+  database:
