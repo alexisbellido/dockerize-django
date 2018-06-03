@@ -93,8 +93,12 @@ WSGI_APPLICATION = 'project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': get_env_variable('PROJECT_DATABASES_DEFAULT_NAME'),
+        'USER': get_env_variable('PROJECT_DATABASES_DEFAULT_USER'),
+        'PASSWORD': get_env_variable('PROJECT_DATABASES_DEFAULT_PASSWORD'),
+        'HOST': get_env_variable('PROJECT_DATABASES_DEFAULT_HOST'),
+        'PORT': get_env_variable('PROJECT_DATABASES_DEFAULT_PORT'),
     }
 }
 
@@ -166,17 +170,6 @@ LOGGING = {
 # logger = logging.getLogger('project')
 # logger.info('miau 222...')
 # logger.debug('miau 123...')
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': get_env_variable('PROJECT_DATABASES_DEFAULT_NAME'),
-        'USER': get_env_variable('PROJECT_DATABASES_DEFAULT_USER'),
-        'PASSWORD': get_env_variable('PROJECT_DATABASES_DEFAULT_PASSWORD'),
-        'HOST': get_env_variable('PROJECT_DATABASES_DEFAULT_HOST'),
-        'PORT': get_env_variable('PROJECT_DATABASES_DEFAULT_PORT'),
-    }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators

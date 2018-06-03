@@ -66,6 +66,14 @@ Execute commands on running container. Use docker-entrypoint.sh to activate Pyth
   $ docker exec -it app1 /usr/local/bin/docker-entrypoint.sh pip freeze
   $ docker exec -it app1 docker-entrypoint.sh django-admin help
   $ docker exec -it app1 docker-entrypoint.sh django-admin collectstatic
+  
+Create initial database and super user.
+  
+.. code-block:: bash
+
+  $ docker exec -it app1 docker-entrypoint.sh django-admin migrate
+  $ docker exec -it app1 docker-entrypoint.sh django-admin createsuperuser
+
 
 You can get into the container, verify the Python packages installed, because the virtual environment is activated by the entrypoint script, and confirm where that environment lives (/env/bin/pip with the provided image).
 

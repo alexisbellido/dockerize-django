@@ -38,9 +38,17 @@ PostgreSQL
 
 Run the `official PostgreSQL image <https://hub.docker.com/_/postgres/>`_ passing parameters.
 
+Create volume for database files.
+
 .. code-block:: bash
 
-  $ docker run -d --network=project_network --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --name=dbserver1 postgres:10.4
+  $ docker volume create database
+
+.. code-block:: bash
+
+  $ docker run -d --network=project_network --mount source=database,target=/var/lib/postgresql/data --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --name=dbserver1 postgres:10.4
+
+Using a volume this way the container can be recreated while the database persists in the volume. See `Stack Overflow <https://stackoverflow.com/questions/41637505/how-to-persist-data-in-a-dockerized-postgres-database-using-volumes>`_ and `PostgreSQL image <https://hub.docker.com/_/postgres/>`_.
 
 Connect via psql from the same container; there's no need for password.
 
@@ -48,7 +56,7 @@ Connect via psql from the same container; there's no need for password.
 
   $ docker exec -it dbserver1 psql -U user1 -d db1
 
-Or from other container on the same network.
+Connect via psql from other container on the same network.
 
 .. code-block:: bash
 

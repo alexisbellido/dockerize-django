@@ -13,7 +13,6 @@ Explore how to move to ECS and K8s to use secrets similar to Docker's secrets. I
 
 Never embed configuration or secrets into a Docker image. Instead, when building a Docker image, expect that any required runtime configuration and secrets will be supplied to the container using the orchestration runtime (Kubernetes Secrets, Docker Secrets), or, for for non-sensitive data, environment variables (docker compose) or configmaps (k8s). Sane configuration defaults are okay. Be careful to not include secrets in hidden layers of an image. Running a Docker container in production should be the assembly of an image with various configuration and secrets. It doesn’t matter if you are running this container in Docker, Kubernetes, Swarm or another orchestration layer, the orchestration platform should be responsible for creating containers by assembling these parts into a running container.
 
-use volume to persist Postgresql databases https://stackoverflow.com/questions/41637505/how-to-persist-data-in-a-dockerized-postgres-database-using-volumes
 
 bash until when using Docker Compose to wait for PostgreSQL? See Django cookiecutter
 
