@@ -3,6 +3,11 @@ TODO
 
 branch in progress: feature/db-and-apps
 
+compose stack swarm
+
+2379  docker stack deploy -c compose/basic-django.yml basicdjango
+2380  docker service ls
+
 read about k8s secrets
 
 1. create a docker compose to simplify env vars and basic web, app, db
