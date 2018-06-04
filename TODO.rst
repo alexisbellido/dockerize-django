@@ -4,6 +4,8 @@ TODO
 branch in progress: feature/db-and-apps
 
 ==
+Docker images need to be in public registry or built locally for this to work so far. See how to use images from private registry.
+
 use secrets with docker swarm and django settings from yaml config file passed as docker secrets
 config.yaml
 
