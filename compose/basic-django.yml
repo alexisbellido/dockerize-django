@@ -21,7 +21,7 @@ services:
     image: alexisbellido/django:2.0.5
     command: development
     deploy:
-      replicas: 3
+      replicas: 5
       restart_policy:
         condition: on-failure
       resources:
@@ -40,8 +40,8 @@ services:
         source: static
         target: /root/project/static
       - type: bind
-        source: /home/alexis/Projects/dockerize-django/django/project
-        target: /root/project 
+        source: ../django/project
+        target: /root/project
     environment:
       - POSTGRES_USER=user1
       - POSTGRES_PASSWORD=user_secret
