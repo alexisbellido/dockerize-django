@@ -21,7 +21,7 @@ services:
     image: alexisbellido/django:2.0.5
     command: development
     deploy:
-      replicas: 5
+      replicas: 2
       restart_policy:
         condition: on-failure
       resources:
