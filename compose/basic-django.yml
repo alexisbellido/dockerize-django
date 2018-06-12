@@ -44,6 +44,8 @@ services:
       - type: bind
         source: ../django/project
         target: /root/project
+    configs:
+      - animals
     environment:
       - POSTGRES_USER=user1
       - POSTGRES_PASSWORD=user_secret
@@ -69,3 +71,6 @@ volumes:
   media:
   static:
   database:
+configs:
+  animals:
+    file: "./animals.txt"

@@ -6,7 +6,14 @@ branch in progress: feature/db-and-apps
 ==
 Docker images need to be in public registry or built locally for this to work so far. See how to use images from private registry.
 
-use config and secrets with docker swarm and django settings from yaml config file passed as docker secrets
+create config from a file in current directoy
+  $ docker config create file-config config.txt
+  
+create config from standard input  
+  $ echo -n 'config from standard input' | docker config create stdin-config -
+  $ docker config ls
+
+and secrets with docker swarm and django settings from yaml config file passed as docker secrets
 config.yaml
 
 do I still need APP_HOST and POSTGRES_HOST when using services if the host name is the service name now?
