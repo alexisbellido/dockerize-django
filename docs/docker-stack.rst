@@ -34,3 +34,5 @@ DRIVER              VOLUME NAME
 local               basicdjango_database
 local               basicdjango_media
 local               basicdjango_static
+
+Note that a container in a stack can be accessed using the name of the service in the compose file.

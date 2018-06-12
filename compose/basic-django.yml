@@ -4,6 +4,8 @@ services:
     image: alexisbellido/nginx:1.14.0
     deploy:
       replicas: 1
+      restart_policy:
+        condition: on-failure
     ports:
       - "33334:80"
     depends_on:
@@ -51,6 +53,8 @@ services:
     image: postgres:10.4
     deploy:
       replicas: 1
+      restart_policy:
+        condition: on-failure
     volumes:
       - type: volume
         source: database
