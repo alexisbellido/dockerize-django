@@ -135,3 +135,17 @@ https://docs.python.org/3/using/cmdline.html#envvar-PYTHONUNBUFFERED and environ
 You may need to change ALLOWED_HOSTS in the Django settings file.
 
   ``ALLOWED_HOSTS = ['*']``
+
+Configs
+======================
+
+Use compose/animals.txt in compose/basic-django.yml as Docker config.
+
+See `Docker configs <https://docs.docker.com/compose/compose-file/#configs-configuration-reference>`_.
+
+Secrets
+======================
+
+Copy compose/config.yaml.orig to compose/config.yaml (note this is in .gitignore so it won't be pushed to the repository) to use with compose/basic-django.yml as Docker secret.
+
+See `Docker secrets <https://docs.docker.com/compose/compose-file/#secrets-configuration-reference>`_.

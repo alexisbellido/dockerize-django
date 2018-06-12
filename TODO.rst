@@ -4,28 +4,16 @@ TODO
 branch in progress: feature/db-and-apps
 
 ==
-Docker images need to be in public registry or built locally for this to work so far. See how to use images from private registry.
 
-create config from a file in current directoy
-  $ docker config create file-config config.txt
-  
-create config from standard input  
-  $ echo -n 'config from standard input' | docker config create stdin-config -
-  $ docker config ls
-
-and secrets with docker swarm and django settings from yaml config file passed as docker secrets
-config.yaml
+modify Django project to use /run/secrets/config.yaml and copy generic result to config.yaml.orig, which is the version kept in repo
 
 do I still need APP_HOST and POSTGRES_HOST when using services if the host name is the service name now?
 
-replica and deploy details
-restart_policy
-
 redis
 
-use docker and k8s secrets
+Docker images need to be in public registry or built locally for this to work so far. See how to use images from private registry.
 
-Explore how to move to ECS and K8s to use secrets similar to Docker's secrets. I may bypass ECS and go directly to k8s with kops on AWS
+Explore how K8s to use secrets similar to Docker's.
 
 Never embed configuration or secrets into a Docker image. Instead, when building a Docker image, expect that any required runtime configuration and secrets will be supplied to the container using the orchestration runtime (Kubernetes Secrets, Docker Secrets), or, for for non-sensitive data, environment variables (docker compose) or configmaps (k8s). Sane configuration defaults are okay. Be careful to not include secrets in hidden layers of an image. Running a Docker container in production should be the assembly of an image with various configuration and secrets. It doesn’t matter if you are running this container in Docker, Kubernetes, Swarm or another orchestration layer, the orchestration platform should be responsible for creating containers by assembling these parts into a running container.
 

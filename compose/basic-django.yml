@@ -46,6 +46,8 @@ services:
         target: /root/project
     configs:
       - animals
+    secrets:
+      - config.yaml
     environment:
       - POSTGRES_USER=user1
       - POSTGRES_PASSWORD=user_secret
@@ -74,3 +76,6 @@ volumes:
 configs:
   animals:
     file: "./animals.txt"
+secrets:
+  config.yaml:
+    file: ./config.yaml
