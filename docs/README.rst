@@ -9,25 +9,25 @@ Use multi-stage build passing an ssh private key to access any private repositor
 
 .. code-block:: bash
 
-  $ docker build --build-arg SSH_PRIVATE_KEY="$(cat ~/.ssh/id_rsa)" -t username/django:2.0.5 .
+  $ docker build --build-arg SSH_PRIVATE_KEY="$(cat ~/.ssh/id_rsa)" -t username/django:2.0.6 .
 
 Once you've built the image you can push it to Docker hub.
 
 .. code-block:: bash
 
   $ docker login
-  $ docker push username/django:2.0.5
+  $ docker push username/django:2.0.6
 
 These commands run bind mount the Django project from the same directory where the Dockerfile for Django is so that $PWD/project, which can also be expressed as "$(pwd)"/project, is the outer project directory mapped to /root/project in the container. This is useful for changing code during development but at the end the project code should be part of the image.
 
 .. code-block:: bash
-  $ docker run -it --rm --mount type=bind,source="$(pwd)"/project,target=/root/project -p 8000:8000 username/django:2.0.5 /bin/bash
+  $ docker run -it --rm --mount type=bind,source="$(pwd)"/project,target=/root/project -p 8000:8000 username/django:2.0.6 /bin/bash
 
 This uses the absolute path to the project.
 
 .. code-block:: bash
 
-  $ docker run -it --rm --mount type=bind,source=/path/to/outer/project,target=/root/project -p 8000:8000 username/django:2.0.5 /bin/bash
+  $ docker run -it --rm --mount type=bind,source=/path/to/outer/project,target=/root/project -p 8000:8000 username/django:2.0.6 /bin/bash
 
 If you mount a bind mount or non-empty volume into a directory in the container in which some files or directories exist, these files or directories are obscured by the mount. Read more about `volumes and bind mounts <https://docs.docker.com/storage/#good-use-cases-for-volumes>`_.
 
@@ -35,7 +35,7 @@ Run development server in foreground mode with support for interactive processes
 
 .. code-block:: bash
 
-  $ docker run -it --rm -p 8000:8000 username/django:2.0.5 development
+  $ docker run -it --rm -p 8000:8000 username/django:2.0.6 development
 
 Note development and production are using media and static volumes, the same that Nginx uses on the host. This is important for Django collectstatic.
 
@@ -43,19 +43,19 @@ Run development server in detached mode on a bridge network and mapping project 
 
 .. code-block:: bash
 
-  $ docker run -d --network=project_network --mount type=bind,source=/path/to/outer/project,target=/root/project --mount source=media,target=/root/project/media --mount source=static,target=/root/project/static --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=dbserver1 --name=app1 -p 8000:8000 username/django:2.0.5 development
+  $ docker run -d --network=project_network --mount type=bind,source=/path/to/outer/project,target=/root/project --mount source=media,target=/root/project/media --mount source=static,target=/root/project/static --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=dbserver1 --name=app1 -p 8000:8000 username/django:2.0.6 development
 
 If you are in the same directory as the Django Dockerfile you can use $PWD/project instead for /path/to/outer/project.
 
 .. code-block:: bash
 
-  $ docker run -d --network=project_network --mount type=bind,source=$PWD/project,target=/root/project --mount source=media,target=/root/project/media --mount source=static,target=/root/project/static --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=dbserver1 --name=app1 -p 8000:8000 username/django:2.0.5 development
+  $ docker run -d --network=project_network --mount type=bind,source=$PWD/project,target=/root/project --mount source=media,target=/root/project/media --mount source=static,target=/root/project/static --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=dbserver1 --name=app1 -p 8000:8000 username/django:2.0.6 development
 
 Run production in detached mode.
 
 .. code-block:: bash
 
-  $ docker run -d --network=project_network --mount source=media,target=/root/project/media --mount source=static,target=/root/project/static --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=dbserver1 --name=app1 -p 8000:8000 username/django:2.0.5 production
+  $ docker run -d --network=project_network --mount source=media,target=/root/project/media --mount source=static,target=/root/project/static --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=dbserver1 --name=app1 -p 8000:8000 username/django:2.0.6 production
 
 If you pass any parameter not considered by the entrypoint script (docker-entrypoint.sh), it will be just executed with exec "$@".
 

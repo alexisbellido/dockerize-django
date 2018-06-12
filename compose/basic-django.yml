@@ -18,7 +18,7 @@ services:
     environment:
       - APP_HOST=app
   app:
-    image: alexisbellido/django:2.0.5
+    image: alexisbellido/django:2.0.6
     command: development
     deploy:
       replicas: 2

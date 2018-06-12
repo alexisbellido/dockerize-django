@@ -16,9 +16,6 @@ restart_policy
 
 redis
 
-recreate image to upgrade to Django 2.0.6 and verify this is fixed
-/env/lib/python3.6/site-packages/psycopg2/__init__.py:144: UserWarning: The psycopg2 wheel package will be renamed from release 2.8; in order to keep installing from binary please use "pip install psycopg2-binary" instead. For details see: <http://initd.org/psycopg/docs/install.html#binary-install-from-pypi>.
-
 use docker and k8s secrets
 
 Explore how to move to ECS and K8s to use secrets similar to Docker's secrets. I may bypass ECS and go directly to k8s with kops on AWS
