@@ -1,0 +1,81 @@
+version: "3.6"
+services:
+  web:
+    image: alexisbellido/nginx:1.14.0
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "33334:80"
+    depends_on:
+      - app
+    volumes:
+      - type: volume
+        source: media
+        target: /root/project/media
+      - type: volume
+        source: static
+        target: /root/project/static
+    environment:
+      - APP_HOST=app
+  app:
+    image: alexisbellido/django:2.0.6
+    command: development
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 250M
+    ports:
+      - "8000:8000"
+    depends_on:
+      - database
+    volumes:
+      - type: volume
+        source: media
+        target: /root/project/media
+      - type: volume
+        source: static
+        target: /root/project/static
+      - type: bind
+        source: ../django/project
+        target: /root/project
+    configs:
+      - animals
+    secrets:
+      - config.yaml
+    environment:
+      - POSTGRES_USER=user1
+      - POSTGRES_PASSWORD=user_secret
+      - POSTGRES_DB=db1
+      - POSTGRES_HOST=database # use name of service
+  database:
+    image: postgres:10.4
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    volumes:
+      - type: volume
+        source: database
+        target: /var/lib/postgresql/data
+        volume:
+          nocopy: true
+    environment:
+      - POSTGRES_USER=user1
+      - POSTGRES_PASSWORD=user_secret
+      - POSTGRES_DB=db1
+volumes:
+  media:
+  static:
+  database:
+configs:
+  animals:
+    file: "./animals.txt"
+secrets:
+  config.yaml:
+    file: ./config.yaml

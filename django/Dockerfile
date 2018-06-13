@@ -29,8 +29,14 @@ RUN python -m venv /env \
 FROM python:3.6.5-slim-stretch
 LABEL maintainer="Alexis Bellido <a@zinibu.com>"
 
+ENV PYTHONUNBUFFERED 1
 ENV PROJECT_NAME project
 ENV PORT 8000
+
+ENV POSTGRES_PORT 5432
+
+ENV REDIS_HOST none
+ENV REDIS_PORT 6379
 
 # TODO do I still different settings per environment?
 ENV SETTINGS_MODULE local

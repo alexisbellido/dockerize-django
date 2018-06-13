@@ -3,7 +3,7 @@ Dockerize a Django Project
 
 A Django stack running with Docker.
 
-See also the `Ansible and Django <https://github.com/alexisbellido/ansible-and-docker/>`_ project.
+See also the `Ansible and Django <https://github.com/username/ansible-and-docker/>`_ project.
 
 Overview
 ------------------------------------------
@@ -14,7 +14,7 @@ If running locally for development, it uses one HAProxy container to load balanc
 
 If running on AWS, it uses ELB to load balance containers running Varnish that cache Nginx in front Gunicorn. The default setup assumes three containers running on each Docker host: Varnish, Nginx and Gunicorn.
 
-My Docker Hub user is *alexisbellido* and I'm calling my network *project_network*:
+My Docker Hub user is *username* and I'm calling my network *project_network*:
 
 Create a bridge network for your containers on your host. This step is unnecessary if using the provided Docker Compose compose-complete/docker-compose.yml, which creates its own network.
 
@@ -38,13 +38,25 @@ PostgreSQL
 
 Run the `official PostgreSQL image <https://hub.docker.com/_/postgres/>`_ passing parameters.
 
+Create volume for database files.
+
 .. code-block:: bash
 
-  $ docker run -d --network=project_network --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --name=dbserver1 postgres:10.4
+  $ docker volume create database
 
-Connect via psql.
+.. code-block:: bash
 
-From other container on the same network
+  $ docker run -d --network=project_network --mount source=database,target=/var/lib/postgresql/data --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --name=dbserver1 postgres:10.4
+
+Using a volume this way the container can be recreated while the database persists in the volume. See `Stack Overflow <https://stackoverflow.com/questions/41637505/how-to-persist-data-in-a-dockerized-postgres-database-using-volumes>`_ and `PostgreSQL image <https://hub.docker.com/_/postgres/>`_.
+
+Connect via psql from the same container; there's no need for password.
+
+.. code-block:: bash
+
+  $ docker exec -it dbserver1 psql -U user1 -d db1
+
+Connect via psql from other container on the same network.
 
 .. code-block:: bash
 
@@ -126,180 +138,6 @@ You can monitor connections with:
 
   $ docker exec -it redis1 redis-cli monitor
 
-
-Python and Django
-------------------------------------------
-
-This image contains openssh-client and the examples below use a data volume to forward the host's ssh agent to the container. This is helpful if the container needs to use ssh to connect to other servers (like private git repositories or GitHub) using the host's ssh key. The key parameters in the ``docker run`` command are ``-v ~/.ssh/id_rsa:/root/.ssh/id_rsa -v $SSH_AUTH_SOCK:/run/ssh_agent -e SSH_AUTH_SOCK=/run/ssh_agent``.
-
-Once a container is running and assuming your host has its private key authorized on example.com or github.com you can test the ssh connection from the container.
-
-.. code-block:: bash
-
-  $ ssh user@example.com
-  $ ssh -T git@github.com
-
-The image's entrypoint (*/usr/local/bin/docker-entrypoint.sh*, copied to the container and defined with ENTRYPOINT in the Dockerfile) always sets the Python virtual environment first and then accepts parameters that can be passed at the end of the docker run command.
-
-If you pass any parameter not considered by the entrypoint script, it will be just executed with exec "$@".
-
-This is how to run collectstatic when static volume is mounted for both app and web container.
-
-.. code-block:: bash
-
-  $ docker exec -it app1 /usr/local/bin/docker-entrypoint.sh django-admin collectstatic
-
-Note that the environment variable PROJECT_NAME has to match with the name used inside the main project directory (*django-project* in the examples listed here) to follow the directory structure created by Django's django-admin startproject.
-
-Run a Django development server passing the parameter *development*:
-
-.. code-block:: bash
-
-  $ docker run -d --network=project_network -w /root -v ~/.ssh/id_rsa:/root/.ssh/id_rsa -v $SSH_AUTH_SOCK:/run/ssh_agent -e SSH_AUTH_SOCK=/run/ssh_agent -v "$PWD"/django-project:/root/django-project -v "$PWD"/django-apps:/root/django-apps --env PROJECT_NAME=django-project --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 -p 33332:8000 --name=app1-dev alexisbellido/django:1.11 development
-
-To use Redis pass REDIS_HOST and, for the sake of being implicit, REDIS_PORT, with the same development server:
-
-.. code-block:: bash
-
-  $ docker run -d --network=project_network -w /root -v ~/.ssh/id_rsa:/root/.ssh/id_rsa -v $SSH_AUTH_SOCK:/run/ssh_agent -e SSH_AUTH_SOCK=/run/ssh_agent -v "$PWD"/django-project:/root/django-project -v "$PWD"/django-apps:/root/django-apps --env PROJECT_NAME=django-project --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 --env REDIS_HOST=redis1 --env REDIS_PORT=6379 -p 33332:8000 --name=app1-dev alexisbellido/django:1.11 development
-
-For Django via gunicorn (specifying how to map the port on the host) and using Redis, use the *production* parameter:
-
-.. code-block:: bash
-
-  $ docker run -d --network=project_network -w /root -v ~/.ssh/id_rsa:/root/.ssh/id_rsa -v $SSH_AUTH_SOCK:/run/ssh_agent -e SSH_AUTH_SOCK=/run/ssh_agent -v "$PWD"/django-project:/root/django-project -v "$PWD"/django-apps:/root/django-apps --env PROJECT_NAME=django-project --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 --env REDIS_HOST=redis1 --env REDIS_PORT=6379 -p 33333:8000 --name=app1 alexisbellido/django:1.11 production
-
-If you want to run some tests in the container, you can pass a parameter not considered by the entrypoint script, like /bin/bash and you will get to a Bash command line. Note the ``-it`` option to run an interactive process in the foreground. This is useful to test Python packages.
-
-.. code-block:: bash
-
-    $ docker run -it --network=project_network -w /root -v ~/.ssh/id_rsa:/root/.ssh/id_rsa -v $SSH_AUTH_SOCK:/run/ssh_agent -e SSH_AUTH_SOCK=/run/ssh_agent -v "$PWD"/django-project:/root/django-project -v "$PWD"/django-apps:/root/django-apps --env PROJECT_NAME=django-project --env SETTINGS_MODULE=local --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 -p 33332:8000 --name=app1-test alexisbellido/django:1.11 /bin/bash
-
-Because it's running in the foreground, if you exit this container it will stop. Remember that each Docker container needs to focus on keeping one service running. Start it and ssh into it again running:
-
-.. code-block:: bash
-
-  $ docker start app1-test
-  $ docker exec -it app1-test /bin/bash
-
-You can create a new virtual environment with:
-
-.. code-block:: bash
-
-  $ /usr/local/bin/python3.6 -m venv /root/.venv/my-project
-
-and activate it with:
-
-.. code-block:: bash
-
-    $ source /root/.venv/my-project/bin/activate
-
-You can deactivate a Python virtual environment running:
-
-.. code-block:: bash
-
-    $ deactivate
-
-Note that deactivate is created when sourcing the activate script so it may not be available from the shell when you first ssh into the container. Read more about `venv <https://docs.python.org/3/library/venv.html>`_.
-
-To bypass the entrypoint script, use ``--entrypoint``. This also uses ``-it`` and adds ``--rm`` to remove the container automatically after it stops.
-
-.. code-block:: bash
-
-  $ docker run -it --rm --network=project_network -w /root -v ~/.ssh/id_rsa:/root/.ssh/id_rsa -v $SSH_AUTH_SOCK:/run/ssh_agent -e SSH_AUTH_SOCK=/run/ssh_agent -v "$PWD"/django-project:/root/django-project -v "$PWD"/django-apps:/root/django-apps --env PROJECT_NAME=django-project --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=db1 -p 33332:8000 --name=app1-dev --entrypoint /bin/bash alexisbellido/django:1.11
-
-Note the environment variables:
-
-- ``SETTINGS_MODULE``, used for ``DJANGO_SETTINGS_MODULE``
-- ``PROJECT_NAME``, the name of your project
-- ``PORT``
-
-Build the image from the directory that contains the corresponding Dockerfile, login to Docker Hub and push the image with:
-
-.. code-block:: bash
-
-  $ docker build -t alexisbellido/django:2.0.5 .
-  $ docker login
-  $ docker push alexisbellido/django:2.0.5
-
-Check logs of running container (-f works like in tail) to confirm it's working as expected:
-
-.. code-block:: bash
-
-  $ docker logs -f CONTAINER
-
-There's `a bug <https://github.com/docker/for-mac/issues/307>`_ that causes Docker not to follow the logs making it difficult to see console output and debug using Django's development server or Gunicorn from the Django application. To work around this use Django's logging system. Start by adding this to your settings file:
-
-.. code-block:: bash
-
-  LOGGING = {
-      'version': 1,
-      'disable_existing_loggers': False,
-      'formatters': {
-          'verbose': {
-              'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
-          },
-      },
-      'handlers': {
-          'console': {
-              'level': 'INFO',
-              'class': 'logging.FileHandler',
-              'filename': '/var/log/debug.log',
-              'formatter': 'verbose'
-          },
-      },
-      'loggers': {
-          '': {
-              'handlers': ['console'],
-              'level': 'INFO',
-          }
-      },
-  }
-
-And then you can add logging calls in the appropiate parts of your code. I'm adding pretty printing here:
-
-.. code-block:: bash
-
-  import logging
-  import pprint
-  logger = logging.getLogger(__name__)
-  logger.info(pprint.pformat(vars(object)))
-
-See `Django logging documentation <https://docs.djangoproject.com/en/1.11/topics/logging/>`_ for details.
-
-You can run a few Django commands from the container using /usr/local/bin/docker-entrypoint.sh, for example:
-
-.. code-block:: bash
-
-  $ docker exec -it CONTAINER docker-entrypoint.sh collectstatic
-  $ docker exec -it CONTAINER docker-entrypoint.sh shell
-  $ docker exec -it CONTAINER docker-entrypoint.sh pip freeze
-  $ docker exec -it CONTAINER docker-entrypoint.sh dev-test
-
-Note the example passing `pip freeze` as the last parameter uses docker-entrypoint.sh just to activate the Python environment. Also, the full path is optional because it should already be in the default $PATH but I'm still including it in some of the examples for clarity.
-
-The examples with `dev-test` bypasses `pip install` when running the development server.
-
-Or you can ssh into the container, set the environment from the bash script and then run Django commands from there.
-
-.. code-block:: bash
-
-  $ docker exec -it CONTAINER /bin/bash
-  $ source /usr/local/bin/docker-entrypoint.sh setenv
-  $ django-admin help --pythonpath=$(pwd)
-
-This is another way of activating the default environment (called *django*) on the container.
-
-.. code-block:: bash
-
-  source /root/.venv/django/bin/activate
-
-You can modify docker-entrypoint.sh script as needed. It already contains the environment variables used by the Django project.
-
-Make sure to check for ALLOWED_HOSTS issues in the Django settings file:
-
-  ``ALLOWED_HOSTS = ['*']``
-
 Nginx
 ------------------------------------------
 
@@ -309,23 +147,23 @@ The Django project, as created by django-admin startproject, is in a directory w
 
 .. code-block:: bash
 
-  - project (this is /path/to/outer/project, just a container for the project)
-    -- django-app-1
-    -- django-app-2
+  - project (this is /path/to/outer/project, just a container for the project and its name doesn't matter to Django)
+    -- sampleapp1
+    -- sampleapp2
     -- manage.py
-    -- media
+    -- media (placeholder with sample file, just for creating image)
     -- project (inner directory, actual Python package to import anything inside project)
-    -- static
+    -- static (placeholder with sample file, just for creating image)
 
-Note django-app-1 and django-app-2 could be siblings of manage.py or be installed via pip so that they are in Python's module search path. The directories media and static should be used by Nginx to serve assets.
+Nginx container creates an empty root /usr/share/nginx/public as the parent of the mounted media and static volumes so no Python code can be accessed.
 
-# TODO Python code should be included in Django (app) image, should media and static be part of Nginx (web) image? Probably need a way to have a shared filesystem for those. Mapped host volumes for development and NFS, EFS or similar on production. What about Kubernetes volumes?
+Note that a Django app, such as sampleapp1, can be a sibling of manage.py or be installed via pip so that it's in Python's module search path.
 
 Build the image from the directory that contains the Nginx Dockerfile.
 
 .. code-block:: bash
 
-  $ docker build -t alexisbellido/nginx:1.14.0 .
+  $ docker build -t username/nginx:1.14.0 .
 
 Create volumes for media and static.
 
@@ -355,19 +193,19 @@ And now that you copied the files into your volumes you can remove the helper co
 
 Start Nginx container using the media and static volumes.
 
-  $ docker run -d --network=project_network --mount source=media,target=/usr/share/nginx/project/media --mount source=static,target=/usr/share/nginx/project/static --env APP_HOST=app1 -p 33334:80 --name=web1 alexisbellido/nginx:1.14.0
+  $ docker run -d --network=project_network --mount source=media,target=/usr/share/nginx/public/media --mount source=static,target=/usr/share/nginx/public/static --env APP_HOST=app1 -p 33334:80 --name=web1 username/nginx:1.14.0
 
-If you have media and static inside the project directory you could bind mount the project directory but you lose the benefits of using Docker volumes.
+If you want to use original media and static inside the project directory you could bind mount the project directory but you'll lose the benefits of using Docker volumes. Not recommended for production.
 
 .. code-block:: bash
 
-  $ docker run -d --network=project_network --mount source=/path/to/outer/project,target=/root/project --env APP_HOST=app1 -p 33334:80 --name=web1 alexisbellido/nginx:1.14.0
+  $ docker run -d --network=project_network --mount source=/path/to/outer/project,target=/root/project --env APP_HOST=app1 -p 33334:80 --name=web1 username/nginx:1.14.0
 
 Try test configuration with test.conf ($PWD assumes the file is in the current directory).
 
 .. code-block:: bash
 
-  $ docker run -d --network=project_network --mount type=bind,source=$PWD/test.conf,target=/etc/nginx/test.conf --mount source=media,target=/usr/share/nginx/project/media --mount source=static,target=/usr/share/nginx/project/static --env APP_HOST=app1 -p 33334:80 --name=web1 alexisbellido/nginx:1.14.0
+  $ docker run -d --network=project_network --mount type=bind,source=$PWD/test.conf,target=/etc/nginx/nginx.conf --mount source=media,target=/usr/share/nginx/public/media --mount source=static,target=/usr/share/nginx/public/static --env APP_HOST=app1 -p 33334:80 --name=web1 username/nginx:1.14.0
 
 Now make changes in test.conf in host and reload Nginx in container.
 
@@ -411,19 +249,19 @@ To pass parameters to modify the included VCL:
 
 .. code-block:: bash
 
-  $ docker run -d --network=project_network -p 33345:83 --env WEB_HOST=web1 --env WEB_PORT=80 --env DOMAIN_NAME=example.com --name=cache1 alexisbellido/varnish:4.1
+  $ docker run -d --network=project_network -p 33345:83 --env WEB_HOST=web1 --env WEB_PORT=80 --env DOMAIN_NAME=example.com --name=cache1 username/varnish:4.1
 
 To pass parameters to modify the included VCL and redirect to SSL and www version:
 
 .. code-block:: bash
 
-  $ docker run -d --network=project_network -p 33355:83 --env WEB_HOST=web1 --env WEB_PORT=80 --env DOMAIN_NAME=example.com --env SSL_WWW_REDIRECT=1 --name=cache1-ssl alexisbellido/varnish:4.1
+  $ docker run -d --network=project_network -p 33355:83 --env WEB_HOST=web1 --env WEB_PORT=80 --env DOMAIN_NAME=example.com --env SSL_WWW_REDIRECT=1 --name=cache1-ssl username/varnish:4.1
 
 To map an existing VCL file:
 
 .. code-block:: bash
 
-  $ docker run -d --network=project_network -v /home/alexis/mydocker/dockerize-django/varnish/default-test.vcl:/etc/varnish/default.vcl -p 33335:83 --env WEB_HOST=web1 --env WEB_PORT=80 --env DOMAIN_NAME=example.com --name=cache-map-1 alexisbellido/varnish:4.1
+  $ docker run -d --network=project_network -v /home/alexis/mydocker/dockerize-django/varnish/default-test.vcl:/etc/varnish/default.vcl -p 33335:83 --env WEB_HOST=web1 --env WEB_PORT=80 --env DOMAIN_NAME=example.com --name=cache-map-1 username/varnish:4.1
 
 Django needs to allow Nginx or Varnish's probe won't work. Include this in your Django settings:
 
@@ -436,7 +274,7 @@ Build the image from the directory contains the corresponding Dockerfile, with:
 
 .. code-block:: bash
 
-  $ docker build -t alexisbellido/varnish:4.1 .
+  $ docker build -t username/varnish:4.1 .
 
 
 HAProxy
@@ -446,7 +284,7 @@ haproxy non-ssl:
 
 .. code-block:: bash
 
-  $ docker run -d --network zinibu -v /home/alexis/mydocker/dockerize-django/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg -p 35004:8998 -p 35005:80 -p 35006:443 --name=lb alexisbellido/haproxy:1.6.10
+  $ docker run -d --network zinibu -v /home/alexis/mydocker/dockerize-django/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg -p 35004:8998 -p 35005:80 -p 35006:443 --name=lb username/haproxy:1.6.10
 
 Default HAProxy stats at http://example.com:35004/admin?stats (user: admin, password: admin)
 
@@ -454,7 +292,7 @@ haproxy ssl:
 
 .. code-block:: bash
 
-  $ docker run -d --network zinibu -v /home/alexis/mydocker/ssl/example_com.pem:/usr/local/etc/haproxy/ssl/example_com.pem -v /home/alexis/mydocker/dockerize-django/haproxy/haproxy-ssl.cfg:/usr/local/etc/haproxy/haproxy.cfg -p 35104:8998 -p 35105:80 -p 35106:443 --name=lb-ssl alexisbellido/haproxy:1.6.10
+  $ docker run -d --network zinibu -v /home/alexis/mydocker/ssl/example_com.pem:/usr/local/etc/haproxy/ssl/example_com.pem -v /home/alexis/mydocker/dockerize-django/haproxy/haproxy-ssl.cfg:/usr/local/etc/haproxy/haproxy.cfg -p 35104:8998 -p 35105:80 -p 35106:443 --name=lb-ssl username/haproxy:1.6.10
 
 Default HAProxy stats at http://example.com:35104/admin?stats  (user: admin, password: admin)
 
@@ -464,7 +302,7 @@ Build the image from the haproxy directory, which contains the corresponding Doc
 
 .. code-block:: bash
 
-  $ docker build -t alexisbellido/haproxy:1.6.10 .
+  $ docker build -t username/haproxy:1.6.10 .
 
 
 Ansible
@@ -480,7 +318,7 @@ Running git clone from GitHub.
 
 .. code-block:: bash
 
-  $ ansible all -m git -a "repo=git@github.com:alexisbellido/django-zinibu-skeleton.git dest=/root/django-apps/django-zinibu-skeleton version=master accept_hostkey=yes"
+  $ ansible all -m git -a "repo=git@github.com:username/django-zinibu-skeleton.git dest=/root/django-apps/django-zinibu-skeleton version=master accept_hostkey=yes"
 
 
 Useful commands

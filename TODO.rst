@@ -1,28 +1,91 @@
 TODO
 ==================================================
 
-PostgreSQL basics.
+branch in progress: feature/db-and-apps
 
-learn about docker volumes for AWS and K8s
+==
+
+modify Django project to use /run/secrets/config.yaml and copy generic result to config.yaml.orig, which is the version kept in repo
+
+do I still need APP_HOST and POSTGRES_HOST when using services if the host name is the service name now?
+
+redis
+
+Docker images need to be in public registry or built locally for this to work so far. See how to use images from private registry.
+
+Explore how K8s to use secrets similar to Docker's.
+
+Never embed configuration or secrets into a Docker image. Instead, when building a Docker image, expect that any required runtime configuration and secrets will be supplied to the container using the orchestration runtime (Kubernetes Secrets, Docker Secrets), or, for for non-sensitive data, environment variables (docker compose) or configmaps (k8s). Sane configuration defaults are okay. Be careful to not include secrets in hidden layers of an image. Running a Docker container in production should be the assembly of an image with various configuration and secrets. It doesn’t matter if you are running this container in Docker, Kubernetes, Swarm or another orchestration layer, the orchestration platform should be responsible for creating containers by assembling these parts into a running container.
+
+
+bash until when using Docker Compose to wait for PostgreSQL? See Django cookiecutter
+
+logging from development and production to STDOUT and STDERR or to file in container
+https://docs.djangoproject.com/en/2.0/topics/logging/
+do I need to use docker logging drivers?
+
+
+set up private GitHub to test token
+
+the goal with secrets is not to put the private information in a pod definition or docker image
+should I use secrets for SSH keys with docker compose or keep multi-stage build approach?
+k8s: allow a pod to access a git repository using SSH keys
+
+maybe don't use base.py approach (see repo ventanazul.com:git/zinibu-project.git) and just work with env vars in one settings.py
+
+
+https://docs.djangoproject.com/en/dev/internals/contributing/writing-code/coding-style/
+https://pypi.org/project/flake8/
+.editorconfig
+
+k8s uses configmaps for configuration files, port numbers, environment variables and other non-sensitive data. What's equivalent for Docker compose?
+
+Test redis and add to README for Django
+To use Redis pass REDIS_HOST and, for the sake of being implicit, REDIS_PORT, with the same development server:
+
+.. code-block:: bash
+
+  $ docker run -d --network=project_network -w /root -v ~/.ssh/id_rsa:/root/.ssh/id_rsa -v $SSH_AUTH_SOCK:/run/ssh_agent -e SSH_AUTH_SOCK=/run/ssh_agent -v "$PWD"/django-project:/root/django-project -v "$PWD"/django-apps:/root/django-apps --env PROJECT_NAME=django-project --env SETTINGS_MODULE=locals3 --env POSTGRES_USER=user1 --env POSTGRES_PASSWORD=user_secret --env POSTGRES_DB=db1 --env POSTGRES_HOST=dbserver1 --env REDIS_HOST=redis1 --env REDIS_PORT=6379 -p 33332:8000 --name=app1-dev alexisbellido/django:1.11 development
+
+
+==
+Docket secrets
+
+$ docker swarm init
+Swarm initialized: current node (rf4ca83cwjohnbwvkd8qyhkqk) is now a manager.
+
+To add a worker to this swarm, run the following command:
+
+    docker swarm join --token SWMTKN-1-0nqr5pgghlfm8y8zmnt340pkk1ydkxwsnrdb7jncpslp81s4pg-6zkkg1qri8q0jmhrmp61krpnp 192.168.1.183:2377
+
+To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+
+$ docker swarm join-token manager
+To add a manager to this swarm, run the following command:
+
+    docker swarm join --token SWMTKN-1-0nqr5pgghlfm8y8zmnt340pkk1ydkxwsnrdb7jncpslp81s4pg-dajk360m447hklyaskaksy5x9 192.168.1.183:2377
+
+==
+
+PostgreSQL basics.
 
 try web container in front of development and production app container to see if /static served with /admin
 
-include a basic Django app next to manage.py in image
 include a basic Django app from private git repo in image
 include a basic Django app from private repo as editable
-all of that can be done by mounting volume so try that too
 
-create docker-compose.yml to set up everything.
+Use bind mounting for development too
+
+learn about docker volumes for AWS and K8s
+
 Do I use hostname for compose? what's different hostname and name?
 
 At some point push basics to Docker Hub
 
-django logging
-
 50x and 40x pages for Django, see Nginx config
 check nginx access log for health check of static and dynamic, or just dynamic from some app and forget static?
 
-Yes, try different settings per Django environment and use environment variables from Docker Compose. Try to make minimal changes to Django project code. Mount volume when running to try changing Django project code.
+Use different setting files or environment variables with Docker Compose or K8s to use different environments.
 
 varnish
 
