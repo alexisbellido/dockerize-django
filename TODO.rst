@@ -7,7 +7,7 @@ branch in progress: feature/db-and-apps
 
 modify Django project to use /run/secrets/config.yaml and copy generic result to config.yaml.orig, which is the version kept in repo
 
-do I still need APP_HOST and POSTGRES_HOST when using services if the host name is the service name now?
+set up compose file to use production command for django docker-entrypoint.sh
 
 redis
 
@@ -24,6 +24,7 @@ logging from development and production to STDOUT and STDERR or to file in conta
 https://docs.djangoproject.com/en/2.0/topics/logging/
 do I need to use docker logging drivers?
 
+Django Dockerfile # TODO do I still different settings per environment? ENV SETTINGS_MODULE local
 
 set up private GitHub to test token
 

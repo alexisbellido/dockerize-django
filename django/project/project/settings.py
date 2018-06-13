@@ -11,7 +11,13 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+import yaml
 
+# This comes from secret set in compose/basic-django.yml
+with open('/run/secrets/config.yaml', 'r') as f:
+    CONFIG = yaml.load(f)
+
+# Keeping for historical purposes. Env variables shouldn't be used for secrets
 # Normally you should not import ANYTHING from Django directly
 # into your settings, but ImproperlyConfigured is an exception.
 from django.core.exceptions import ImproperlyConfigured
@@ -22,7 +28,7 @@ def get_env_variable(var_name):
     except KeyError:
         error_msg = "Set the {} environment variable".format(var_name)
         raise ImproperlyConfigured(error_msg)
-
+        
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -42,7 +48,6 @@ ALLOWED_HOSTS = []
 # DEBUG = False
 # ALLOWED_HOSTS = ['*']
 # test production >>
-
 
 # Application definition
 
@@ -94,82 +99,13 @@ WSGI_APPLICATION = 'project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': get_env_variable('PROJECT_DATABASES_DEFAULT_NAME'),
-        'USER': get_env_variable('PROJECT_DATABASES_DEFAULT_USER'),
-        'PASSWORD': get_env_variable('PROJECT_DATABASES_DEFAULT_PASSWORD'),
-        'HOST': get_env_variable('PROJECT_DATABASES_DEFAULT_HOST'),
-        'PORT': get_env_variable('PROJECT_DATABASES_DEFAULT_PORT'),
+        'NAME': CONFIG['databases']['default']['database'],
+        'USER': CONFIG['databases']['default']['user'],
+        'PASSWORD': CONFIG['databases']['default']['password'],
+        'HOST': CONFIG['databases']['default']['host'],
+        'PORT': CONFIG['databases']['default']['port'],
     }
 }
-
-# TODO logging to docker logs
-import logging
-import sys
-
-# LOGGING = {
-#   'version': 1,
-#   'disable_existing_loggers': False,
-#   'formatters': {
-#       'verbose': {
-#           'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
-#       },
-#   },
-#   'handlers': {
-#       'console': {
-#           'level': 'INFO',
-#           'class': 'logging.FileHandler',
-#           'filename': '/var/log/debug.log',
-#           'formatter': 'verbose'
-#       },
-#   },
-#   'loggers': {
-#       '': {
-#           'handlers': ['console'],
-#           'level': 'INFO',
-#       }
-#   },
-# }
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
-        },
-        'basic': {
-            'format': '%(name)s %(levelname)s %(asctime)s %(message)s'
-        },
-    },
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'basic'
-        },
-        'stream': {
-            'level': 'INFO',
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
-            'stream': sys.stdout
-        },
-    },
-    'loggers': {
-        'project': {
-            'handlers': ['stream', 'console'],
-            'level': 'DEBUG',
-        },
-    }
-}
-# END LOGGING CONFIGURATION
-
-# logger = logging.getLogger(__name__)
-# import pprint
-# logger.info(pprint.pformat(vars(object)))
-
-# logger = logging.getLogger('project')
-# logger.info('miau 222...')
-# logger.debug('miau 123...')
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators

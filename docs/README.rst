@@ -130,7 +130,7 @@ And then you can add logging calls in the appropiate parts of your code. I'm add
 
 See `Django logging documentation <https://docs.djangoproject.com/en/2.0/topics/logging/`_.
 
-https://docs.python.org/3/using/cmdline.html#envvar-PYTHONUNBUFFERED and environment variable PYTHONUNBUFFERED set to 1 may be solution to use docker logs with print in some cases but more control with logging.
+https://docs.python.org/3/using/cmdline.html#envvar-PYTHONUNBUFFERED and environment variable PYTHONUNBUFFERED set to 1 is the solution to using docker logs with print. Note that this works from views and other parts but not from settings.py. Use logging for better control.
 
 You may need to change ALLOWED_HOSTS in the Django settings file.
 

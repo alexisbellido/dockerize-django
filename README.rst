@@ -213,6 +213,12 @@ Now make changes in test.conf in host and reload Nginx in container.
 
   $ docker exec -it web1 /etc/init.d/nginx reload
 
+Using sed to replace environment variables in a configuration file.
+
+.. code-block:: bash
+
+  $ sed -i -e "s|APP_HOST|$APP_HOST|g" -e "s|APP_PORT|$APP_PORT|g" -e "s|PROJECT_NAME|$PROJECT_NAME|g" /etc/nginx/nginx.conf
+
 To create a self-signed SSL certificate
 ------------------------------------------
 
