@@ -1,8 +1,10 @@
 TODO
 ==================================================
 
-branch in progress: feature/db-and-apps
+branch in progress: master
 
+==
+verify nginx 1.15.0 working, see note in basic-django.yml
 ==
 
 modify Django project to use /run/secrets/config.yaml and copy generic result to config.yaml.orig, which is the version kept in repo

@@ -1,7 +1,7 @@
 version: "3.6"
 services:
   web:
-    image: alexisbellido/nginx:1.14.0
+    image: alexisbellido/nginx:1.15.0
     deploy:
       replicas: 1
       restart_policy:
@@ -11,6 +11,16 @@ services:
     depends_on:
       - app
     volumes:
+      # bind to test nginx.conf from host
+      # - type: bind
+      #   source: ../nginx/nginx.conf
+      #   target: /etc/nginx/nginx.conf
+      - type: volume
+        source: media
+        target: /usr/share/nginx/public/media
+      - type: volume
+        source: static
+        target: /usr/share/nginx/public/static
       - type: volume
         source: media
         target: /root/project/media
@@ -23,7 +33,7 @@ services:
     image: alexisbellido/django:2.0.6
     command: development
     deploy:
-      replicas: 1
+      replicas: 0
       restart_policy:
         condition: on-failure
       resources:
