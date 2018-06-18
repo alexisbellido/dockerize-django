@@ -23,7 +23,7 @@ services:
     image: alexisbellido/django:2.0.6
     command: development
     deploy:
-      replicas: 2
+      replicas: 1
       restart_policy:
         condition: on-failure
       resources:
@@ -48,11 +48,6 @@ services:
       - animals
     secrets:
       - config.yaml
-    environment:
-      - POSTGRES_USER=user1
-      - POSTGRES_PASSWORD=user_secret
-      - POSTGRES_DB=db1
-      - POSTGRES_HOST=database # use name of service
   database:
     image: postgres:10.4
     deploy:
@@ -65,6 +60,8 @@ services:
         target: /var/lib/postgresql/data
         volume:
           nocopy: true
+    # using env variables just for development
+    # will use RDS for production
     environment:
       - POSTGRES_USER=user1
       - POSTGRES_PASSWORD=user_secret

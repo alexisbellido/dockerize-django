@@ -1,12 +1,12 @@
-production:
-  mysql:
-    host: 1.2.3.4
-    database: livedb
-    username: root
-    password: verysecret
-local:
+databases:
+  default:
+    host: database
+    port: 5432
+    database: db1
+    user: user1
+    password: user_secret
   mysql:
     host: 127.0.0.1
     database: localdb
-    username: root
+    user: root
     password: secret

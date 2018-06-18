@@ -1,7 +1,7 @@
 FROM nginx:1.14.0
 LABEL maintainer="Alexis Bellido <a@zinibu.com>"
 
-ENV APP_HOST app_host
+ENV APP_HOST app
 ENV APP_PORT 8000
 ENV PROJECT_NAME project
 
