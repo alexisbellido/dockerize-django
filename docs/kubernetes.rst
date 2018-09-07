@@ -1,6 +1,10 @@
 Run Kubernetes locally with Minikube
 ==========================================
 
+`Official Minikube documentation <https://kubernetes.io/docs/setup/minikube/>`_.
+
+`Install kubectl binary using curl <https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl-binary-using-curl>`_.
+
 This works on Linux, runs as root and uses `--vm-driver=none` to run the Kubernetes components on the host and bypass the virtual machine.
 
 .. code-block:: bash
@@ -72,6 +76,8 @@ WARNING: IT IS RECOMMENDED NOT TO RUN THE NONE DRIVER ON PERSONAL WORKSTATIONS
 When using the none driver, the kubectl config and credentials generated will be root owned and will appear in the root home directory.
 You will need to move the files to the appropriate location and then set the correct permissions.  An example of this is below:
 
+.. code-block:: bash
+
 	sudo mv /root/.kube $HOME/.kube # this will write over any previous configuration
 	sudo chown -R $USER $HOME/.kube
 	sudo chgrp -R $USER $HOME/.kube
@@ -81,30 +87,30 @@ You will need to move the files to the appropriate location and then set the cor
 	sudo chgrp -R $USER $HOME/.minikube 
 
 This can also be done automatically by setting the env var CHANGE_MINIKUBE_NONE_USER=true
-Loading cached images from config file.
-root@armitage:~# 
 
+Loading cached images from config file.
 
 Uninstall minikube as root user
 ------------------------------------------------------------
 
 Careful because it deletes all containers and their volumes. See `<https://github.com/kubernetes/minikube/issues/1043>`_ and `<https://github.com/kubernetes/minikube/issues/2146>`_.
 
-minikube stop
-minikube delete
-docker stop $(docker ps -aq)
-docker rm $(docker ps -aq)
-rm -rf ~/.kube
-rm -rf ~/.minikube
-rm /usr/local/bin/minikube
-rm -rf /etc/kubernetes/ # this seems to be enough to recreate minikube
-systemctl stop '*kubelet*.mount'
-docker system prune -af --volumes
-docker images
-systemctl stop kubelet.service 
-systemctl disable kubelet.service 
+.. code-block:: bash
 
-systemctl status kubelet.service 
+  minikube stop
+  minikube delete
+  docker stop $(docker ps -aq)
+  docker rm $(docker ps -aq)
+  rm -rf ~/.kube
+  rm -rf ~/.minikube
+  rm /usr/local/bin/minikube
+  rm -rf /etc/kubernetes/ # this seems to be enough to recreate minikube
+  systemctl stop '*kubelet*.mount'
+  docker system prune -af --volumes
+  docker images
+  systemctl stop kubelet.service 
+  systemctl disable kubelet.service 
+  systemctl status kubelet.service 
 
 Mount directories
 ------------------------------------------------------------
@@ -115,4 +121,8 @@ Dashboard and --vm-driver=none
 
 Deploy dashboard with proxy as explained at `<https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/>`_ and grant admin access for local `<https://github.com/kubernetes/dashboard/wiki/Access-control>`_.
 
-root@armitage:~# minikube dashboard --logtostderr --v=5
+.. code-block:: bash
+
+  root@armitage:~# minikube dashboard --logtostderr --v=5
+
+Check `Docker Machine env <https://docs.docker.com/machine/reference/env/>`_ command to understand more about the docker daemon being used. This is per shell so you can reset by opening another terminal or delete DOCKER_* variables. When using minikube with --vm-driver=none the existing Docker on localhost is used.
