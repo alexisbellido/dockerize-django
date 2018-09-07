@@ -45,33 +45,36 @@ Normal install of minikube as root
 
 Follow these steps under `Linux Continuous Integration without VM Support <https://github.com/kubernetes/minikube>`_ to run without virtual machine on Linux.
 
-curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube
-curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl
+.. code-block:: bash
 
-export MINIKUBE_WANTUPDATENOTIFICATION=false
-export MINIKUBE_WANTREPORTERRORPROMPT=false
-export MINIKUBE_HOME=$HOME
-export CHANGE_MINIKUBE_NONE_USER=true
-mkdir $HOME/.kube || true
-touch $HOME/.kube/config
+  curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube
+  curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl
 
-export KUBECONFIG=$HOME/.kube/config
-sudo -E ./minikube start --vm-driver=none
+  export MINIKUBE_WANTUPDATENOTIFICATION=false
+  export MINIKUBE_WANTREPORTERRORPROMPT=false
+  export MINIKUBE_HOME=$HOME
+  export CHANGE_MINIKUBE_NONE_USER=true
+  mkdir $HOME/.kube || true
+  touch $HOME/.kube/config
 
-# this for loop waits until kubectl can access the api server that Minikube has created
-for i in {1..150}; do # timeout for 5 minutes
-   ./kubectl get po &> /dev/null
-   if [ $? -ne 1 ]; then
-      break
-  fi
-  sleep 2
-done
+  export KUBECONFIG=$HOME/.kube/config
+  sudo -E ./minikube start --vm-driver=none
+
+  # this for loop waits until kubectl can access the api server that Minikube has created
+  for i in {1..150}; do # timeout for 5 minutes
+     ./kubectl get po &> /dev/null
+     if [ $? -ne 1 ]; then
+        break
+    fi
+    sleep 2
+  done
 
 # kubectl commands are now able to interact with Minikube cluster
 
-===================
+
 WARNING: IT IS RECOMMENDED NOT TO RUN THE NONE DRIVER ON PERSONAL WORKSTATIONS
-	The 'none' driver will run an insecure kubernetes apiserver as root that may leave the host vulnerable to CSRF attacks
+
+The 'none' driver will run an insecure kubernetes apiserver as root that may leave the host vulnerable to CSRF attacks
 
 When using the none driver, the kubectl config and credentials generated will be root owned and will appear in the root home directory.
 You will need to move the files to the appropriate location and then set the correct permissions.  An example of this is below:
@@ -99,22 +102,35 @@ Careful because it deletes all containers and their volumes. See `<https://githu
 
   minikube stop
   minikube delete
-  docker stop $(docker ps -aq)
-  docker rm $(docker ps -aq)
   rm -rf ~/.kube
   rm -rf ~/.minikube
-  rm /usr/local/bin/minikube
   rm -rf /etc/kubernetes/ # this seems to be enough to recreate minikube
   systemctl stop '*kubelet*.mount'
-  docker system prune -af --volumes
-  docker images
   systemctl stop kubelet.service 
   systemctl disable kubelet.service 
+
+Optionally.
+
+.. code-block:: bash
+
   systemctl status kubelet.service 
+  rm /usr/local/bin/minikube
+  docker system prune -af --volumes
+  docker stop $(docker ps -aq)
+  docker rm $(docker ps -aq)
+  docker images
 
 Mount directories
 ------------------------------------------------------------
 
+Troubleshoot
+-----------------------------------------------------------
+
+If minikube 0.28.2 hangs on "Starting cluster components..."
+
+.. code-block:: bash
+
+  minikube start --vm-driver=none --apiserver-ips 127.0.0.1 --bootstrapper=localkube --apiserver-name localhost
 
 Dashboard and --vm-driver=none
 ------------------------------------------------------------
