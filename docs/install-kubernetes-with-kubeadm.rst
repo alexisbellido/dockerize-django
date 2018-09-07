@@ -72,3 +72,19 @@ Use Kubernetes dashboard with bearer token as described on `<https://github.com/
 .. code-block:: bash
 
   kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}')
+
+.. code-block:: bash
+
+  Name:         admin-user-token-8md5q
+  Namespace:    kube-system
+  Labels:       <none>
+  Annotations:  kubernetes.io/service-account.name=admin-user
+                kubernetes.io/service-account.uid=c3a3ee04-b2ec-11e8-8dcc-f01faf2a4d5f
+
+  Type:  kubernetes.io/service-account-token
+
+  Data
+  ====
+  ca.crt:     1025 bytes
+  namespace:  11 bytes
+  token:      eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJhZG1pbi11c2VyLXRva2VuLThtZDVxIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImFkbWluLXVzZXIiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiJjM2EzZWUwNC1iMmVjLTExZTgtOGRjYy1mMDFmYWYyYTRkNWYiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6a3ViZS1zeXN0ZW06YWRtaW4tdXNlciJ9.ssFJl6HGWYtZKAIdjaWcQ5oRIh_h9jeJkP3vEwIyzk41_rAuYUcClWClmMajxSTAlLY2mf3QYOPHqU84QosLVJevqxam4aR090ZYXtJOfQ4WJzSutKH9TLiQVQgCeUP3Rcv8GaTq4AmEwcBUCSb3EKjibtGp2gEVtw9-H_VnK7s7-6-S0an8C8jer8BF9XRMuUEKPPj9-WjeBCILK0yU2Ubb_UczMSprbUO8ub6nPAuEmipEgFaZW0UfSLKVeLO68eDEkMH3cnt-eswgXvRCzX5v-OtGTQGDdtPwwJB1l8iyYadswFeXFjeS-gj_jpsQm-MzmTHzz6u8684TQ06HQA
