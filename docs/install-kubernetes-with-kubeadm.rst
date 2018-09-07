@@ -68,3 +68,7 @@ Weave Net is the pod network that I got working.
   kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
   
 Use Kubernetes dashboard with bearer token as described on `<https://github.com/kubernetes/dashboard>`_ and `<https://github.com/kubernetes/dashboard/wiki/Creating-sample-user>`_.
+
+.. code-block:: bash
+
+  kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}')
