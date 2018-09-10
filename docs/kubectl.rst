@@ -22,6 +22,8 @@ Once you can go back to original context.
 
   kubectl config use-context kubernetes-admin@kubernetes
 
+The configuration for contexts is stored in /etc/kubernetes/admin.conf for the root user or, if you are using kubectl as non-root, in ~/.kube/config.
+
 Some examples of `JSONPath <https://kubernetes.io/docs/reference/kubectl/jsonpath/>`_.
 
 .. code-block:: bash
