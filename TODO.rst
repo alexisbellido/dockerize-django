@@ -3,6 +3,8 @@ TODO
 
 branch in progress: master
 
+add node to local kubernetes
+
 ==
 verify nginx 1.15.0 works with command: production from app service, see note in basic-django.yml
 ==
