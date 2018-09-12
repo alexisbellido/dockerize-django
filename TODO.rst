@@ -3,6 +3,19 @@ TODO
 
 Kubernetes
 
+Passing arguments to container using imperative commands, see `<https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#run>`_.
+
+kubectl run museum --image=alexisbellido/museum:2.1 development
+kubectl get deployments
+kubectl get pod
+kubectl describe pod museum-58cc44bb69-t2j52 
+kubectl logs -f museum-58cc44bb69-t2j52 
+
+File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+File "/root/project/project/settings.py", line 19, in <module>
+  with open('/run/secrets/config.yaml', 'r') as f:
+FileNotFoundError: [Errno 2] No such file or directory: '/run/secrets/config.yaml'
+
 should I use a pod for nginx+gunicorn?
 
 ===========
