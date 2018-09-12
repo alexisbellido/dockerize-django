@@ -14,7 +14,9 @@ Disable swap now.
 
 Disable swap in /etc/fstab permanently.
 
-root~# kubeadm init pod-network-cidr=10.244.0.0/16
+.. code-block:: bash
+
+  root~# kubeadm init pod-network-cidr=10.244.0.0/16
 
 .. code-block:: bash
 
@@ -43,8 +45,6 @@ root~# kubeadm init pod-network-cidr=10.244.0.0/16
   as root:
 
     kubeadm join 192.168.1.183:6443 --token 4fz4o2.ystkm89oo9whd3s4 --discovery-token-ca-cert-hash sha256:9de18c4e625581344bc17cd79c25b063cc498cb1cb565659705c999d57d9e345
-
-===
 
 Restarting the kubelet.
 
