@@ -1,6 +1,12 @@
 TODO
 ==================================================
 
+Kubernetes
+
+should I use a pod for nginx+gunicorn?
+
+===========
+
 branch in progress: master
 
 add node to local kubernetes

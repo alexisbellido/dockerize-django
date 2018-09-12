@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: museum-dev
+spec:
+  volumes:
+    - name: "tms-images"
+      hostPath:
+        path: "/usr/local/museum/tms-images"
+  containers:
+    - image: alexisbellido/museum:2.1
+      # TODO add secret/configMap
+      # $ kubectl logs -f museum-dev
+      # FileNotFoundError: [Errno 2] No such file or directory: '/run/secrets/config.yaml'
+      args: ["development"]
+      name: museum-dev
+      volumeMounts:
+        - mountPath: "/usr/local/museum/tms-images"
+          name: "tms-images"
+      ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
