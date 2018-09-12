@@ -5,6 +5,8 @@ Run Kubernetes locally with Minikube
 
 `Install kubectl binary using curl <https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl-binary-using-curl>`_.
 
+Also see notes to install with `kubeadm <install-kubernetes-with-kubeadm.rst>`_.
+
 This works on Linux, runs as root and uses `--vm-driver=none` to run the Kubernetes components on the host and bypass the virtual machine.
 
 .. code-block:: bash
