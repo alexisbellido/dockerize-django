@@ -1,0 +1,95 @@
+version: "3.6"
+services:
+  web:
+    image: alexisbellido/nginx:1.15.0
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "33334:80"
+    depends_on:
+      - app
+    volumes:
+      # use bind to replace /etc/nginx/nginx.conf with test.conf on host for debugging
+      # - type: bind
+      #   source: ../nginx/test.conf
+      #   target: /etc/nginx/nginx.conf
+      - type: volume
+        source: media
+        target: /usr/share/nginx/public/media
+      - type: volume
+        source: static
+        target: /usr/share/nginx/public/static
+    environment:
+      - NGINX_SERVER_NAME=twsweb-local.example.com
+  app:
+    image: alexisbellido/museum:2.1
+    command: development
+    extra_hosts:
+      - "bill:172.21.34.207"
+      - "tmsdb:160.111.103.117"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 250M
+    ports:
+      - "8000:8000"
+    depends_on:
+      - database
+    volumes:
+      - type: volume
+        source: media
+        target: /root/project/media
+      - type: volume
+        source: static
+        target: /root/project/static
+      - type: bind
+        source: ../django/project
+        target: /root/project
+      - type: bind
+        source: /tmp
+        target: /tmp
+      - type: bind
+        source: /usr/local/museum/tms-images
+        target: /usr/local/museum/tms-images
+    environment:
+      - DEBUG=1
+      - REDIS_HOST=redis
+    secrets:
+      - config.yaml
+  database:
+    image: postgres:10.4
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    volumes:
+      - type: volume
+        source: database
+        target: /var/lib/postgresql/data
+        volume:
+          nocopy: true
+    # using env variables just for development
+    # will use RDS for production
+    environment:
+      - POSTGRES_USER=user1
+      - POSTGRES_PASSWORD=user_secret
+      - POSTGRES_DB=db1
+  redis:
+    image: redis:4.0.10
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+volumes:
+  media:
+  static:
+  database:
+secrets:
+  config.yaml:
+    file: ./config.yaml
