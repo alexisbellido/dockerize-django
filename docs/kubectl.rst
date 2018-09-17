@@ -33,6 +33,7 @@ Some examples of `JSONPath <https://kubernetes.io/docs/reference/kubectl/jsonpat
 .. code-block:: bash
   
   kubectl get pod kubernetes-dashboard-767dc7d4d-tcbp7 -o=jsonpath='{range .status.containerStatuses[*]}{"image: "}{.image}{"\ncontainerID: "}{.containerID}{"\n"}{end}
+  kubectl get pods --namespace=kube-system -o jsonpath --template='{.items[*].metadata.name}'
   
 Tests with labels.
 
