@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-other-config
+data:
+  color: red
+  name: michael
+  my-other-config.txt: |
+    # this is my-other-config.txt file from ConfigMap
+    country: bolivia
+    planet: mars
