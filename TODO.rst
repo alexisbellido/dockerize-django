@@ -1,6 +1,8 @@
 TODO
 ==================================================
 
+try recreating museum yaml with k8s and config.yaml and django project mounted
+
 Kubernetes
 
 Passing arguments to container using imperative commands, see `<https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#run>`_.
