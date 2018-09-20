@@ -1,7 +1,13 @@
 TODO
 ==================================================
 
+===
+
+
 try recreating museum yaml with k8s and config.yaml and django project mounted
+
+use kubernetes/test-project/museum-dev-pod-vol.yaml
+delete kubernetes/test-project/museum-development.yml once ported to k8s
 
 Kubernetes
 
@@ -18,7 +24,9 @@ File "/root/project/project/settings.py", line 19, in <module>
   with open('/run/secrets/config.yaml', 'r') as f:
 FileNotFoundError: [Errno 2] No such file or directory: '/run/secrets/config.yaml'
 
-should I use a pod for nginx+gunicorn?
+Yes, I think I should use a pod for nginx+gunicorn
+
+Move final k8s config to museum project when done
 
 ===========
 
