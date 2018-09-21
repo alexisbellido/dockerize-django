@@ -1,8 +1,14 @@
 TODO
 ==================================================
 
-===
+create pod just for django gnuicorn image, volume mapping to make sure it starts and when ready add nginx in front to same Pod
 
+===
+create pod with two containers and use kubectl exec to access each of the containers using -c (container) option
+
+verify nginx and gunicorn in same pod are started correctly because there's no depends_on for k8s or just use readiness probe for each container in pod? there is no built-in dependency management equivalent to depends_on available. In general, we assume loosely coupled services and as a good practice there should be no hard dependency in terms of start-up order, but retries and timeouts should be used.
+
+see `<https://kubernetes.io/docs/tasks/run-application/run-single-instance-stateful-application/>`_ to install single-instance deployment with MySQL. For Django replace with PostgreSQL.
 
 try recreating museum yaml with k8s and config.yaml and django project mounted
 

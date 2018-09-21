@@ -12,7 +12,7 @@ metadata:
 spec:
   progressDeadlineSeconds: 600
   replicas: 2
-  revisionHistoryLimit: 2
+  revisionHistoryLimit: 4
   selector:
     matchLabels:
       run: nginx
@@ -20,15 +20,18 @@ spec:
     rollingUpdate:
       maxSurge: 25%
       maxUnavailable: 25%
+    # type: Recreate
     type: RollingUpdate
   template:
     metadata:
+      annotations:
+        kubernetes.io/change-cause: "Update nginx to 1.9.15"
       creationTimestamp: null
       labels:
         run: nginx
     spec:
       containers:
-      - image: nginx:1.7.12
+      - image: nginx:1.9.15
         imagePullPolicy: IfNotPresent
         name: nginx
         resources: {}

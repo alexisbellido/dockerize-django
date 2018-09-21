@@ -37,8 +37,13 @@ Some examples of `JSONPath <https://kubernetes.io/docs/reference/kubectl/jsonpat
   kubectl get deployments nginx -o jsonpath --template={.spec.selector.matchLabels} && echo
 
 Note the extra echo in the last example is used to add a line break.
-  
-Tests with labels.
+
+To create a deployment in imperative way use kubectl run. If you don't want to create a deployment and just a pod pass --restart=Never. See `this StackOverflow question <https://stackoverflow.com/questions/45279572/how-to-start-a-pod-in-command-line-without-deployment-in-kubernetes?rq=1>`_.
+
+.. code-block:: bash
+
+  kubectl run nginx --image=nginx:1.7.12
+  kubectl run httpd --image=httpd:2.4 --port=80 --restart=Never  
 
 .. code-block:: bash
 
