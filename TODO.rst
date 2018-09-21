@@ -31,6 +31,12 @@ Yes, I think I should use a pod for nginx+gunicorn
 
 Move final k8s config to museum project when done
 
+namespace or labels for test, staging and production?
+
+Use k8s Service type ExternalName for database with Django so that for local development I run PostgreSQL from a container (or should I run one independent pod behind the service?) but production runs something like AWS RDS. A similar approach may work for Elasticsearch and Redis.
+
+k8s persistent volume to run database for local development. A singleton instance as a pod.
+
 ===========
 
 branch in progress: master
