@@ -56,8 +56,15 @@ To create a deployment in imperative way use kubectl run. If you don't want to c
   kubectl	run	bandicoot-prod --image=gcr.io/kuar-demo/kuard-amd64:2 --replicas=2 --labels="ver=2,app=bandicoot,env=prod"
   kubectl	run	bandicoot-staging	--image=gcr.io/kuar-demo/kuard-amd64:2 --replicas=1 --labels="ver=2,app=bandicoot,env=staging"
   kubectl get deployments --show-labels -L env,ver
-  
+
+
+Deployment
+--------------------------------------------------------------------------------
+
+`Each application should run from one deployment <https://stackoverflow.com/questions/43217006/kubernetes-multi-pod-deployment>`_.
+
 Execute in container
+--------------------------------------------------------------------------------
 
 .. code-block:: bash
 
