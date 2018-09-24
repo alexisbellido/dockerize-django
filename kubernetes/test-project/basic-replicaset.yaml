@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: basic
+  labels:
+    app: basic
+    version: "1"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: basic
+      version: "1"
+  template:
+    metadata:
+      labels:
+        app: basic
+        version: "1"
+    spec:
+      containers:
+        - name: basic
+          image: "mysql:5.7.17"
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "secret"
