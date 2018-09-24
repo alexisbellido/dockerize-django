@@ -1,3 +1,4 @@
+# Run MySQL as stateful application. PersistentVolume version.
 # Note the PersistentVolume's default retain policy is Retain so the volume has
 # to be manually deleted if the PersistentVolumeClaim is deleted or it won't be
 # available for another claim.

@@ -1,3 +1,4 @@
+# Run MySQL as stateful application. Simple version with hostPath volume.
 apiVersion: apps/v1
 kind: ReplicaSet
 metadata:
