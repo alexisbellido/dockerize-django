@@ -1,24 +1,66 @@
+# Note the PersistentVolume's default retain policy is Retain so the volume has
+# to be manually deleted if the PersistentVolumeClaim is deleted or it won't be
+# available for another claim.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql-pv
+  labels:
+    volume: mysql-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    # created this directory on host beforehand
+    path: /var/lib/k8s-mysql-pv
+# Using --- as separator to include multiple objects in the same file; keep the
+# creation order
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+# Using PersistentVolumeClaim abstracts the storage definition from the pod
+# definition. The volume provider could later change and the pod specification
+# would remain the same.
+metadata:
+  name: mysql-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode:
+    Filesystem
+  resources:
+    requests:
+      storage: 1Gi
+  # selector field matches PersistentVolume defined previously
+  selector:
+    matchLabels:
+      volume: mysql-pv
+---
 apiVersion: apps/v1
+# Using a higher-level controller, a ReplicaSet in this case, even for one pod
+# is necessary to ensure the pod is rescheduled if there's a failure.
 kind: ReplicaSet
 metadata:
-  name: database-replicaset
+  name: database-rs-pv
   labels:
-    app: mysql-database
+    app: mysql-database-pv
     version: "1"
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mysql-database
+      app: mysql-database-pv
       version: "1"
   template:
     metadata:
       labels:
-        app: mysql-database
+        app: mysql-database-pv
         version: "1"
     spec:
       containers:
-        - name: mysql-database
+        - name: mysql-database-pv
           # should use Deployment to manage versions
           image: "mysql:5.7.17"
           volumeMounts:
@@ -33,8 +75,5 @@ spec:
               port: 3306
       volumes:
         - name: data-volume
-          hostPath:
-            # created this directory on host beforehand but
-            # type: DirectoryOrCreate should create if it doesn't exist
-            path: /var/lib/k8s-mysql
-            type: DirectoryOrCreate
+          persistentVolumeClaim:
+            claimName: mysql-pvc

@@ -1,11 +1,11 @@
 TODO
 ==================================================
 
-try replicaset for mysql with volume and then with persistent volume claim to keep database after pod restart. Try PostgreSQL when MySQL done.
 
-create pod just for django gnuicorn image, volume mapping to make sure it starts and when ready add nginx in front to same Pod
+create deployment for pod just for django gnuicorn image, volume mapping and secrets to make sure it starts and when ready add nginx in front to same Pod
+use kubectl exec to access each of the containers using -c (container) option
 
-create pod with two containers and use kubectl exec to access each of the containers using -c (container) option
+Try PostgreSQL with PersistentVolume.
 
 verify nginx and gunicorn in same pod are started correctly because there's no depends_on for k8s or just use readiness probe for each container in pod? there is no built-in dependency management equivalent to depends_on available. In general, we assume loosely coupled services and as a good practice there should be no hard dependency in terms of start-up order, but retries and timeouts should be used.
 
@@ -35,6 +35,7 @@ Move final k8s config to museum project when done
 
 namespace or labels for test, staging and production?
 
+connect from k8s to external services such as MySQL, which can be used from another host or RDS, or Elasticsearch 
 Use k8s Service type ExternalName for database with Django so that for local development I run PostgreSQL from a container (or should I run one independent pod behind the service?) but production runs something like AWS RDS. A similar approach may work for Elasticsearch and Redis.
 
 k8s persistent volume to run database for local development. A singleton instance as a pod.
