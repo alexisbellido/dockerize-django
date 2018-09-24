@@ -1,6 +1,8 @@
 TODO
 ==================================================
 
+try replicaset for mysql with volume and then with persistent volume claim to keep database after pod restart. Try PostgreSQL when MySQL done.
+
 create pod just for django gnuicorn image, volume mapping to make sure it starts and when ready add nginx in front to same Pod
 
 create pod with two containers and use kubectl exec to access each of the containers using -c (container) option
