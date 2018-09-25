@@ -1,15 +1,10 @@
 TODO
 ==================================================
 
-try connecting to MySQL service. Note ClusterIP None. See https://kubernetes.io/docs/tasks/run-application/run-single-instance-stateful-application/
-kubectl run -it --image=mysql:5.7.17 --restart=Never --env="MYSQL_ROOT_PASSWORD=secret" mysql-client -- mysql -u root -psecret -h NAME-OF-EXISTING-MYSQL-SERVICE-IN-CLUSTER
-
-I can use /mnt/data for volumes
-
 create deployment for pod just for django gnuicorn image, volume mapping and secrets to make sure it starts and when ready add nginx in front to same Pod
 use kubectl exec to access each of the containers using -c (container) option
 
-Try PostgreSQL with PersistentVolume.
+Try PostgreSQL with PersistentVolume, see mysql-repliaceset-pv.yaml as inspiration. Better use /mnt/data for volume.
 
 verify nginx and gunicorn in same pod are started correctly because there's no depends_on for k8s or just use readiness probe for each container in pod? there is no built-in dependency management equivalent to depends_on available. In general, we assume loosely coupled services and as a good practice there should be no hard dependency in terms of start-up order, but retries and timeouts should be used.
 

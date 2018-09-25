@@ -59,10 +59,17 @@ spec:
   template:
     metadata:
       labels:
+        # list these pods
+        # kubectl get pod --show-labels -l app=mysql-database-pv -o wide
         # labels used by ReplicaSet to match the pods defined in this template
         app: mysql-database-pv
         version: "1"
     spec:
+      # adds to container's /etc/hosts
+      hostAliases:
+        - ip: 192.168.1.5
+          hostnames:
+            - db.yahaira
       containers:
         - name: mysql-database-pv
           # should use Deployment to manage versions
