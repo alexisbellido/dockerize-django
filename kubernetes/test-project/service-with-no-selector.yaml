@@ -1,0 +1,21 @@
+# This service has no selectors and the endpoint has to be created with the same
+# name to point to external IP.
+# See service-external-name.yaml to use DNS names instead.
+kind: Service
+apiVersion: v1
+metadata:
+  name: external-mysql-ip
+spec:
+  ports:
+    - port: 3306
+      protocol: TCP
+---
+kind: Endpoints
+apiVersion: v1
+metadata:
+  name: external-mysql-ip
+subsets:
+  - addresses:
+      - ip: 192.168.1.5
+    ports:
+      - port: 3306

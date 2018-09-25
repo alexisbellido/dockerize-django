@@ -93,8 +93,18 @@ kind: Service
 metadata:
   name: mysql
 spec:
+  # ClusterIP is the default service type
+  # type: ClusterIP
+  # type: NodePort
   ports:
     - port: 3306
       protocol: TCP
+      # by default targetPort is set to the same value as port
+      # targetPort: 3306
+      # nodePort applies if using the NodePort service type
+      # nodePort: 30000  # nodePort is allocated by K8s but you can specify one from an allowed range 
+  # External IP allows accessing service using spec.ports.port so, for this example, another host can access MySQL connecting to 192.168.1.183:3306
+  externalIPs:
+    - 192.168.1.183
   selector:
     app: mysql-database-pv
