@@ -57,6 +57,11 @@ To create a deployment in imperative way use kubectl run. If you don't want to c
   kubectl	run	bandicoot-staging	--image=gcr.io/kuar-demo/kuard-amd64:2 --replicas=1 --labels="ver=2,app=bandicoot,env=staging"
   kubectl get deployments --show-labels -L env,ver
 
+Run a pod with just one container from a MySQL image to use the mysql client and connect to existing MySQL service in that cluster. Note --restart=Never sets a restart policy the creates a pod. The default, Always, would create a deployment. Also note --rm to remove the pod after it exits.
+
+.. code-block:: bash
+
+  kubectl run -it --image=mysql:5.7.17 --restart=Never --env="MYSQL_ROOT_PASSWORD=secret" mysql-client -- mysql -u root -psecret -h NAME-OF-EXISTING-MYSQL-SERVICE-IN-CLUSTER
 
 Deployment
 --------------------------------------------------------------------------------

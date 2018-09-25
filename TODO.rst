@@ -1,6 +1,10 @@
 TODO
 ==================================================
 
+try connecting to MySQL service. Note ClusterIP None. See https://kubernetes.io/docs/tasks/run-application/run-single-instance-stateful-application/
+kubectl run -it --image=mysql:5.7.17 --restart=Never --env="MYSQL_ROOT_PASSWORD=secret" mysql-client -- mysql -u root -psecret -h NAME-OF-EXISTING-MYSQL-SERVICE-IN-CLUSTER
+
+I can use /mnt/data for volumes
 
 create deployment for pod just for django gnuicorn image, volume mapping and secrets to make sure it starts and when ready add nginx in front to same Pod
 use kubectl exec to access each of the containers using -c (container) option

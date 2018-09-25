@@ -46,17 +46,20 @@ kind: ReplicaSet
 metadata:
   name: database-rs-pv
   labels:
+    # labels will be used to bind a Service to this ReplicaSet
     app: mysql-database-pv
     version: "1"
 spec:
   replicas: 1
   selector:
+    # select the pods for this ReplicaSet
     matchLabels:
       app: mysql-database-pv
       version: "1"
   template:
     metadata:
       labels:
+        # labels used by ReplicaSet to match the pods defined in this template
         app: mysql-database-pv
         version: "1"
     spec:
@@ -64,6 +67,10 @@ spec:
         - name: mysql-database-pv
           # should use Deployment to manage versions
           image: "mysql:5.7.17"
+          resources:
+            requests:
+              cpu: 1
+              memory: 2Gi
           volumeMounts:
             - mountPath: /var/lib/mysql
               name: data-volume
@@ -74,7 +81,20 @@ spec:
           livenessProbe:
             tcpSocket:
               port: 3306
+          ports:
+            - containerPort: 3306
       volumes:
         - name: data-volume
           persistentVolumeClaim:
             claimName: mysql-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+spec:
+  ports:
+    - port: 3306
+      protocol: TCP
+  selector:
+    app: mysql-database-pv
