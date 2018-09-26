@@ -1,0 +1,15 @@
+# https://kubernetes.io/docs/concepts/services-networking/connect-applications-service/
+# service/networking/nginx-svc.yaml  
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-nginx
+  labels:
+    run: my-nginx
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    protocol: TCP
+  selector:
+    run: my-nginx

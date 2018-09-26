@@ -63,6 +63,12 @@ Run a pod with just one container from a MySQL image to use the mysql client and
 
   kubectl run -it --image=mysql:5.7.17 --restart=Never --env="MYSQL_ROOT_PASSWORD=secret" mysql-client -- mysql -u root -psecret -h NAME-OF-EXISTING-MYSQL-SERVICE-IN-CLUSTER
 
+Run pod using an image with curl to test reaching other pods.
+
+.. code-block:: bash
+
+  kubectl run -it --rm curl --image=radial/busyboxplus:curl
+
 Deployment
 --------------------------------------------------------------------------------
 
