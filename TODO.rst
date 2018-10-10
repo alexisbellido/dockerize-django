@@ -1,6 +1,10 @@
 TODO
 ==================================================
 
+create Docker image for Varnish 6.1 and put it in its own GitHub repo. Follow instructions from good Docker repos.
+
+See how PostgreSQL and MySQL Docker images use secrets using variables ending in _FILE.
+
 create deployment for pod just for django gnuicorn image, volume mapping and secrets to make sure it starts and when ready add nginx in front to same Pod
 use kubectl exec to access each of the containers using -c (container) option
 
