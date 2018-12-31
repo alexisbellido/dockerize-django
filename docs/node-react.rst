@@ -71,10 +71,10 @@ With Docker this would be something like the following (verify path to mount).
 
 Review how collectstatic should be run to move files from application directory to project static directory.
 
-This does not prompt user for input and ignores the admin path.
+This does not prompt user for input and ignores the admin path (useful if it's been processed already).
 
 .. code-block:: bash
 
-  $ docker exec -it CONTAINER_ID docker-entrypoint.sh django-admin.py collectstatic --noinput -i admin
+  $ docker exec -it CONTAINER_ID docker-entrypoint.sh django-admin.py collectstatic --no-input -i admin
 
 I think it would be easier if the webpack build would be provided by just one Django application but I suppose more than on app could build their own files if that makes sense.
