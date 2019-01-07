@@ -34,3 +34,5 @@ Install with pip from private VCS's
   $ pip install -e git://github.com/username/app-nam  e.git#egg=app-name
   
 See `requirements file format <https://pip.pypa.io/en/stable/reference/pip_install/#requirements-file-format>`_.
+
+`Packaging to distribute via PyPi <https://packaging.python.org/tutorials/packaging-projects/>`_ 
