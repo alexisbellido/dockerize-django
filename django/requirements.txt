@@ -1,5 +1,5 @@
 django==2.0.6
 gunicorn==19.8.1
 psycopg2-binary==2.7.4
-PyYAML==3.12
+PyYAML==4.2b4
 requests==2.18.4
