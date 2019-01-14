@@ -1,6 +1,10 @@
 TODO
 ==================================================
 
+create Docker image for Varnish 6.1 and put it in its own GitHub repo. Follow instructions from good Docker repos.
+
+See how PostgreSQL and MySQL Docker images use secrets using variables ending in _FILE.
+
 create deployment for pod just for django gnuicorn image, volume mapping and secrets to make sure it starts and when ready add nginx in front to same Pod
 use kubectl exec to access each of the containers using -c (container) option
 
@@ -54,10 +58,6 @@ modify Django project to use /run/secrets/config.yaml and copy generic result to
 set up compose file to use production command for django docker-entrypoint.sh
 
 redis
-
-Docker images need to be in public registry or built locally for this to work so far. See how to use images from private registry.
-
-Explore how K8s to use secrets similar to Docker's.
 
 Never embed configuration or secrets into a Docker image. Instead, when building a Docker image, expect that any required runtime configuration and secrets will be supplied to the container using the orchestration runtime (Kubernetes Secrets, Docker Secrets), or, for for non-sensitive data, environment variables (docker compose) or configmaps (k8s). Sane configuration defaults are okay. Be careful to not include secrets in hidden layers of an image. Running a Docker container in production should be the assembly of an image with various configuration and secrets. It doesn’t matter if you are running this container in Docker, Kubernetes, Swarm or another orchestration layer, the orchestration platform should be responsible for creating containers by assembling these parts into a running container.
 

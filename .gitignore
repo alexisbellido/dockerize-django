@@ -2,7 +2,6 @@
 __pycache__/
 *.py[cod]
 *$py.class
-config.yaml
 
 # vim
 *.sw[po]
@@ -99,3 +98,7 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+**/config.yaml
+**/db_user.txt
+**/db_password.txt

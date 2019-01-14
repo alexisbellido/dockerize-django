@@ -1,0 +1,15 @@
+$font-non-fancy: Arial, sans-serif;
+$font-fancy: "apertura", sans-serif;
+$font-monospace: Consolas, Monaco, "Lucida Console", "Liberation Mono", "DejaVu Sans Mono", "Courier New", monospace; 
+
+strong {
+    font-weight: bold;
+}
+
+em {
+    font-style: italic;
+}
+
+tt {
+    font-family: $font-monospace;
+}

@@ -3,6 +3,13 @@ Running kubectl Commands
 
 Make sure you have autocompletion enabled to get the most out of kubectl.
 
+You can also add an alias and completion for the alias adding these lines to your .bashrc and running source to reload it.
+
+alias k=kubectl
+source <(kubectl completion bash | sed s/kubectl/k/g)
+
+Note that completion won't work for kubectl after this and it may not work for OSX. I tested it with Ubuntu.
+
 You can use contexts to run kubectl commands against a particular namespace in a cluster. Let's create my-context to interact with objects in the kube-system namespace but first let's see what's the current context.
 
 .. code-block:: bash

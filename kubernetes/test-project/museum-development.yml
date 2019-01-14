@@ -1,30 +1,8 @@
 version: "3.6"
 services:
-  web:
-    image: alexisbellido/nginx:1.15.0
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: on-failure
-    ports:
-      - "33334:80"
-    depends_on:
-      - app
-    volumes:
-      # use bind to replace /etc/nginx/nginx.conf with test.conf on host for debugging
-      # - type: bind
-      #   source: ../nginx/test.conf
-      #   target: /etc/nginx/nginx.conf
-      - type: volume
-        source: media
-        target: /usr/share/nginx/public/media
-      - type: volume
-        source: static
-        target: /usr/share/nginx/public/static
-    environment:
-      - NGINX_SERVER_NAME=twsweb-local.example.com
   app:
-    image: alexisbellido/museum:2.1
+    # AWS ECR image
+    image: 777216051792.dkr.ecr.us-east-1.amazonaws.com/cooperhewitt/museum-project:2.1-20181009
     command: development
     extra_hosts:
       - "bill:172.21.34.207"
@@ -48,6 +26,8 @@ services:
       - type: volume
         source: static
         target: /root/project/static
+      # bind mount to try latest code during development
+      # the image should contain the final production version
       - type: bind
         source: ../django/project
         target: /root/project
@@ -63,6 +43,7 @@ services:
     secrets:
       - config.yaml
   database:
+    # will use RDS for production
     image: postgres:10.4
     deploy:
       replicas: 1
@@ -74,12 +55,13 @@ services:
         target: /var/lib/postgresql/data
         volume:
           nocopy: true
-    # using env variables just for development
-    # will use RDS for production
+    secrets:
+      - db_user
+      - db_password
     environment:
-      - POSTGRES_USER=user1
-      - POSTGRES_PASSWORD=user_secret
       - POSTGRES_DB=db1
+      - POSTGRES_USER_FILE=/run/secrets/db_user
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db_password
   redis:
     image: redis:4.0.10
     deploy:
@@ -92,4 +74,8 @@ volumes:
   database:
 secrets:
   config.yaml:
-    file: ./config.yaml
+    file: config.yaml
+  db_user:
+    file: db_user.txt
+  db_password:
+    file: db_password.txt

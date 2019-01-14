@@ -1,0 +1,40 @@
+$width-max: 1440px;
+$width-wrapper: 1300px;
+$padding-default: 10px;
+$margin-default: 10px;
+$max-image-width: 850px;
+$max-small-image-width: 400px;
+
+@mixin hide-text {
+  text-indent: -9999px;
+  text-align: left;
+}
+
+@mixin show-text {
+  text-indent: 0;
+}
+
+// borrowed from compass
+@mixin link-colors($normal, $hover: false, $active: false, $visited: false, $focus: false) {
+    color: $normal;
+    @if $visited {
+        &:visited {
+            color: $visited;
+        }
+    }
+    @if $focus {
+        &:focus {
+            color: $focus;
+        }
+    }
+    @if $hover {
+        &:hover {
+            color: $hover;
+        }
+    }
+    @if $active {
+        &:active {
+            color: $active;
+        }
+    }
+}
