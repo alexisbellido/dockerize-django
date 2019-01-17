@@ -88,3 +88,82 @@ Use Kubernetes dashboard with bearer token as described on `<https://github.com/
   ca.crt:     1025 bytes
   namespace:  11 bytes
   token:      eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJhZG1pbi11c2VyLXRva2VuLThtZDVxIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImFkbWluLXVzZXIiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiJjM2EzZWUwNC1iMmVjLTExZTgtOGRjYy1mMDFmYWYyYTRkNWYiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6a3ViZS1zeXN0ZW06YWRtaW4tdXNlciJ9.ssFJl6HGWYtZKAIdjaWcQ5oRIh_h9jeJkP3vEwIyzk41_rAuYUcClWClmMajxSTAlLY2mf3QYOPHqU84QosLVJevqxam4aR090ZYXtJOfQ4WJzSutKH9TLiQVQgCeUP3Rcv8GaTq4AmEwcBUCSb3EKjibtGp2gEVtw9-H_VnK7s7-6-S0an8C8jer8BF9XRMuUEKPPj9-WjeBCILK0yU2Ubb_UczMSprbUO8ub6nPAuEmipEgFaZW0UfSLKVeLO68eDEkMH3cnt-eswgXvRCzX5v-OtGTQGDdtPwwJB1l8iyYadswFeXFjeS-gj_jpsQm-MzmTHzz6u8684TQ06HQA
+  
+===
+
+1/17/19
+
+before trying to upgrade kubeadm
+
+$ kubectl version
+Client Version: version.Info{Major:"1", Minor:"12", GitVersion:"v1.12.2", GitCommit:"17c77c7898218073f14c8d573582e8d2313dc740", GitTreeState:"clean", BuildDate:"2018-10-24T06:54:59Z", GoVersion:"go1.10.4", Compiler:"gc", Platform:"linux/amd64"}
+Server Version: version.Info{Major:"1", Minor:"11", GitVersion:"v1.11.2", GitCommit:"bb9ffb1654d4a729bb4cec18ff088eacc153c239", GitTreeState:"clean", BuildDate:"2018-08-07T23:08:19Z", GoVersion:"go1.10.3", Compiler:"gc", Platform:"linux/amd64"}
+
+upgrade plan didn't work so I did
+
+sudo apt-get update
+sudo apt-get install -y kubelet kubeadm kubectl
+sudo kubeadm upgrade apply 1.13.2
+
+upgrade didn't work so I reset the local test cluster
+
+sudo kubeadm reset
+sudo kubeadm init pod-network-cidr=10.244.0.0/16
+
+Your Kubernetes master has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+You can now join any number of machines by running the following on each node
+as root:
+
+  kubeadm join 192.168.1.183:6443 --token smyeu2.qvcej08e7sgha6lt --discovery-token-ca-cert-hash sha256:8ecdfcd403aba95f92f72f013dcdfe64538bf9e18d885da4289fb92109da3d27
+
+Now I need to remove old $HOME/.kube and run the suggested commands and then deploy a pod network (I got Weave Net working). 
+
+sudo kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+kubectl version
+
+
+CrashLoopBackOff for coredns pods
+-------------------------------------------------------
+
+https://coredns.io/plugins/loop/#troubleshooting
+
+.. code-block:: bash
+
+  $ kubectl get pod --namespace=kube-system
+
+https://kubernetes.io/docs/tasks/debug-application-cluster/debug-pod-replication-controller/
+
+replace local DNS in /etc/resolv.conf like this
+
+.. code-block:: bash
+
+  #nameserver 127.0.1.1
+  #https://developers.google.com/speed/public-dns/
+  nameserver 8.8.8.8
+
+.. code-block:: bash
+
+  $ kubectl -n kube-system delete pod coredns-7655b945bc-zs665
+
+take a look at the logs of the current container:
+
+.. code-block:: bash
+
+  $ kubectl logs ${POD_NAME} ${CONTAINER_NAME}
+
+For example:
+
+.. code-block:: bash
+
+  $ kubectl logs -n kube-system coredns-7655b945bc-k2xgt coredns 
