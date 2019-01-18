@@ -14,14 +14,14 @@ You can use contexts to run kubectl commands against a particular namespace in a
 
 .. code-block:: bash
 
-  kubectl config get-contexts
+  $ kubectl config get-contexts
 
 Now create a context to access the kube-system namespace and start using it.
 
 .. code-block:: bash
 
-  kubectl config set-context my-context --namespace=kube-system --cluster=kubernetes --user=kubernetes-admin
-  kubectl config use-context my-context
+  $ kubectl config set-context my-context --namespace=kube-system --cluster=kubernetes --user=kubernetes-admin
+  $ kubectl config use-context my-context
   
 Once you can go back to original context.
 
