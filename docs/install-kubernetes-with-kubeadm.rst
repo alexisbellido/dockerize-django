@@ -71,7 +71,7 @@ Use Kubernetes dashboard with bearer token as described on `<https://github.com/
 
 .. code-block:: bash
 
-  kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}')
+  $ kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}')
 
 .. code-block:: bash
 
@@ -88,6 +88,12 @@ Use Kubernetes dashboard with bearer token as described on `<https://github.com/
   ca.crt:     1025 bytes
   namespace:  11 bytes
   token:      eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJhZG1pbi11c2VyLXRva2VuLThtZDVxIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImFkbWluLXVzZXIiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiJjM2EzZWUwNC1iMmVjLTExZTgtOGRjYy1mMDFmYWYyYTRkNWYiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6a3ViZS1zeXN0ZW06YWRtaW4tdXNlciJ9.ssFJl6HGWYtZKAIdjaWcQ5oRIh_h9jeJkP3vEwIyzk41_rAuYUcClWClmMajxSTAlLY2mf3QYOPHqU84QosLVJevqxam4aR090ZYXtJOfQ4WJzSutKH9TLiQVQgCeUP3Rcv8GaTq4AmEwcBUCSb3EKjibtGp2gEVtw9-H_VnK7s7-6-S0an8C8jer8BF9XRMuUEKPPj9-WjeBCILK0yU2Ubb_UczMSprbUO8ub6nPAuEmipEgFaZW0UfSLKVeLO68eDEkMH3cnt-eswgXvRCzX5v-OtGTQGDdtPwwJB1l8iyYadswFeXFjeS-gj_jpsQm-MzmTHzz6u8684TQ06HQA
+
+By default, your cluster will not schedule pods on the master for security reasons. If you want to be able to schedule pods on the master, e.g. for a single-machine Kubernetes cluster for development, run:
+
+.. code-block:: bash
+
+  $ kubectl taint nodes --all node-role.kubernetes.io/master-
   
 ===
 
